@@ -1,8 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import appCss from '../styles.css?url'
+import WrappedApp from '@/components/layout/Wrapper'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,6 +26,7 @@ export const Route = createRootRoute({
   }),
 
   shellComponent: RootDocument,
+  notFoundComponent: () => (<p>Not Found</p>)
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -36,18 +36,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <WrappedApp>
+          {children}
+        </WrappedApp>
         <Scripts />
       </body>
     </html>
