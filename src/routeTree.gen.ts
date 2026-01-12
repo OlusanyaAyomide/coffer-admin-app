@@ -9,11 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthVerifyDeviceRouteImport } from './routes/_auth/verify-device'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AdminOverviewRouteImport } from './routes/_admin/overview'
+import { Route as AdminKycRouteImport } from './routes/_admin/kyc'
+import { Route as AdminUsersReferralTreeRouteImport } from './routes/_admin/users/referral-tree'
+import { Route as AdminUsersAllRouteImport } from './routes/_admin/users/all'
+import { Route as AdminUsersActivityLogsRouteImport } from './routes/_admin/users/activity-logs'
+import { Route as AdminSettingsCountriesRouteImport } from './routes/_admin/settings/countries'
+import { Route as AdminSettingsConfigRouteImport } from './routes/_admin/settings/config'
+import { Route as AdminSettingsAccessRouteImport } from './routes/_admin/settings/access'
+import { Route as AdminLockerRulesRouteImport } from './routes/_admin/locker/rules'
+import { Route as AdminLockerRatesRouteImport } from './routes/_admin/locker/rates'
+import { Route as AdminLockerAnalyticsRouteImport } from './routes/_admin/locker/analytics'
+import { Route as AdminFinancialsWithdrawalsRouteImport } from './routes/_admin/financials/withdrawals'
+import { Route as AdminFinancialsProviderConfigRouteImport } from './routes/_admin/financials/provider-config'
+import { Route as AdminFinancialsLedgerRouteImport } from './routes/_admin/financials/ledger'
+import { Route as AdminFinancialsInternalRouteImport } from './routes/_admin/financials/internal'
+import { Route as AdminCommunicationUpdatesRouteImport } from './routes/_admin/communication/updates'
+import { Route as AdminCommunicationNotificationsRouteImport } from './routes/_admin/communication/notifications'
+import { Route as AdminCommunicationEmailRouteImport } from './routes/_admin/communication/email'
+import { Route as AdminCofferPerformanceRouteImport } from './routes/_admin/coffer/performance'
+import { Route as AdminCofferMarketplaceRouteImport } from './routes/_admin/coffer/marketplace'
+import { Route as AdminCofferDividendsRouteImport } from './routes/_admin/coffer/dividends'
+import { Route as AdminCofferActiveRouteImport } from './routes/_admin/coffer/active'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -33,39 +60,306 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AdminOverviewRoute = AdminOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersReferralTreeRoute = AdminUsersReferralTreeRouteImport.update({
+  id: '/users/referral-tree',
+  path: '/users/referral-tree',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersAllRoute = AdminUsersAllRouteImport.update({
+  id: '/users/all',
+  path: '/users/all',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersActivityLogsRoute = AdminUsersActivityLogsRouteImport.update({
+  id: '/users/activity-logs',
+  path: '/users/activity-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsCountriesRoute = AdminSettingsCountriesRouteImport.update({
+  id: '/settings/countries',
+  path: '/settings/countries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsConfigRoute = AdminSettingsConfigRouteImport.update({
+  id: '/settings/config',
+  path: '/settings/config',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsAccessRoute = AdminSettingsAccessRouteImport.update({
+  id: '/settings/access',
+  path: '/settings/access',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLockerRulesRoute = AdminLockerRulesRouteImport.update({
+  id: '/locker/rules',
+  path: '/locker/rules',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLockerRatesRoute = AdminLockerRatesRouteImport.update({
+  id: '/locker/rates',
+  path: '/locker/rates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLockerAnalyticsRoute = AdminLockerAnalyticsRouteImport.update({
+  id: '/locker/analytics',
+  path: '/locker/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFinancialsWithdrawalsRoute =
+  AdminFinancialsWithdrawalsRouteImport.update({
+    id: '/financials/withdrawals',
+    path: '/financials/withdrawals',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminFinancialsProviderConfigRoute =
+  AdminFinancialsProviderConfigRouteImport.update({
+    id: '/financials/provider-config',
+    path: '/financials/provider-config',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminFinancialsLedgerRoute = AdminFinancialsLedgerRouteImport.update({
+  id: '/financials/ledger',
+  path: '/financials/ledger',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFinancialsInternalRoute = AdminFinancialsInternalRouteImport.update({
+  id: '/financials/internal',
+  path: '/financials/internal',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCommunicationUpdatesRoute =
+  AdminCommunicationUpdatesRouteImport.update({
+    id: '/communication/updates',
+    path: '/communication/updates',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminCommunicationNotificationsRoute =
+  AdminCommunicationNotificationsRouteImport.update({
+    id: '/communication/notifications',
+    path: '/communication/notifications',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminCommunicationEmailRoute = AdminCommunicationEmailRouteImport.update({
+  id: '/communication/email',
+  path: '/communication/email',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCofferPerformanceRoute = AdminCofferPerformanceRouteImport.update({
+  id: '/coffer/performance',
+  path: '/coffer/performance',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCofferMarketplaceRoute = AdminCofferMarketplaceRouteImport.update({
+  id: '/coffer/marketplace',
+  path: '/coffer/marketplace',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCofferDividendsRoute = AdminCofferDividendsRouteImport.update({
+  id: '/coffer/dividends',
+  path: '/coffer/dividends',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCofferActiveRoute = AdminCofferActiveRouteImport.update({
+  id: '/coffer/active',
+  path: '/coffer/active',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kyc': typeof AdminKycRoute
+  '/overview': typeof AdminOverviewRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
+  '/coffer/active': typeof AdminCofferActiveRoute
+  '/coffer/dividends': typeof AdminCofferDividendsRoute
+  '/coffer/marketplace': typeof AdminCofferMarketplaceRoute
+  '/coffer/performance': typeof AdminCofferPerformanceRoute
+  '/communication/email': typeof AdminCommunicationEmailRoute
+  '/communication/notifications': typeof AdminCommunicationNotificationsRoute
+  '/communication/updates': typeof AdminCommunicationUpdatesRoute
+  '/financials/internal': typeof AdminFinancialsInternalRoute
+  '/financials/ledger': typeof AdminFinancialsLedgerRoute
+  '/financials/provider-config': typeof AdminFinancialsProviderConfigRoute
+  '/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
+  '/locker/analytics': typeof AdminLockerAnalyticsRoute
+  '/locker/rates': typeof AdminLockerRatesRoute
+  '/locker/rules': typeof AdminLockerRulesRoute
+  '/settings/access': typeof AdminSettingsAccessRoute
+  '/settings/config': typeof AdminSettingsConfigRoute
+  '/settings/countries': typeof AdminSettingsCountriesRoute
+  '/users/activity-logs': typeof AdminUsersActivityLogsRoute
+  '/users/all': typeof AdminUsersAllRoute
+  '/users/referral-tree': typeof AdminUsersReferralTreeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/kyc': typeof AdminKycRoute
+  '/overview': typeof AdminOverviewRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
+  '/coffer/active': typeof AdminCofferActiveRoute
+  '/coffer/dividends': typeof AdminCofferDividendsRoute
+  '/coffer/marketplace': typeof AdminCofferMarketplaceRoute
+  '/coffer/performance': typeof AdminCofferPerformanceRoute
+  '/communication/email': typeof AdminCommunicationEmailRoute
+  '/communication/notifications': typeof AdminCommunicationNotificationsRoute
+  '/communication/updates': typeof AdminCommunicationUpdatesRoute
+  '/financials/internal': typeof AdminFinancialsInternalRoute
+  '/financials/ledger': typeof AdminFinancialsLedgerRoute
+  '/financials/provider-config': typeof AdminFinancialsProviderConfigRoute
+  '/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
+  '/locker/analytics': typeof AdminLockerAnalyticsRoute
+  '/locker/rates': typeof AdminLockerRatesRoute
+  '/locker/rules': typeof AdminLockerRulesRoute
+  '/settings/access': typeof AdminSettingsAccessRoute
+  '/settings/config': typeof AdminSettingsConfigRoute
+  '/settings/countries': typeof AdminSettingsCountriesRoute
+  '/users/activity-logs': typeof AdminUsersActivityLogsRoute
+  '/users/all': typeof AdminUsersAllRoute
+  '/users/referral-tree': typeof AdminUsersReferralTreeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/_admin': typeof AdminRouteWithChildren
+  '/_admin/kyc': typeof AdminKycRoute
+  '/_admin/overview': typeof AdminOverviewRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/verify-device': typeof AuthVerifyDeviceRoute
+  '/_admin/coffer/active': typeof AdminCofferActiveRoute
+  '/_admin/coffer/dividends': typeof AdminCofferDividendsRoute
+  '/_admin/coffer/marketplace': typeof AdminCofferMarketplaceRoute
+  '/_admin/coffer/performance': typeof AdminCofferPerformanceRoute
+  '/_admin/communication/email': typeof AdminCommunicationEmailRoute
+  '/_admin/communication/notifications': typeof AdminCommunicationNotificationsRoute
+  '/_admin/communication/updates': typeof AdminCommunicationUpdatesRoute
+  '/_admin/financials/internal': typeof AdminFinancialsInternalRoute
+  '/_admin/financials/ledger': typeof AdminFinancialsLedgerRoute
+  '/_admin/financials/provider-config': typeof AdminFinancialsProviderConfigRoute
+  '/_admin/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
+  '/_admin/locker/analytics': typeof AdminLockerAnalyticsRoute
+  '/_admin/locker/rates': typeof AdminLockerRatesRoute
+  '/_admin/locker/rules': typeof AdminLockerRulesRoute
+  '/_admin/settings/access': typeof AdminSettingsAccessRoute
+  '/_admin/settings/config': typeof AdminSettingsConfigRoute
+  '/_admin/settings/countries': typeof AdminSettingsCountriesRoute
+  '/_admin/users/activity-logs': typeof AdminUsersActivityLogsRoute
+  '/_admin/users/all': typeof AdminUsersAllRoute
+  '/_admin/users/referral-tree': typeof AdminUsersReferralTreeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/verify-device'
+  fullPaths:
+    | '/'
+    | '/kyc'
+    | '/overview'
+    | '/login'
+    | '/verify-device'
+    | '/coffer/active'
+    | '/coffer/dividends'
+    | '/coffer/marketplace'
+    | '/coffer/performance'
+    | '/communication/email'
+    | '/communication/notifications'
+    | '/communication/updates'
+    | '/financials/internal'
+    | '/financials/ledger'
+    | '/financials/provider-config'
+    | '/financials/withdrawals'
+    | '/locker/analytics'
+    | '/locker/rates'
+    | '/locker/rules'
+    | '/settings/access'
+    | '/settings/config'
+    | '/settings/countries'
+    | '/users/activity-logs'
+    | '/users/all'
+    | '/users/referral-tree'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/verify-device'
-  id: '__root__' | '/' | '/_auth' | '/_auth/login' | '/_auth/verify-device'
+  to:
+    | '/'
+    | '/kyc'
+    | '/overview'
+    | '/login'
+    | '/verify-device'
+    | '/coffer/active'
+    | '/coffer/dividends'
+    | '/coffer/marketplace'
+    | '/coffer/performance'
+    | '/communication/email'
+    | '/communication/notifications'
+    | '/communication/updates'
+    | '/financials/internal'
+    | '/financials/ledger'
+    | '/financials/provider-config'
+    | '/financials/withdrawals'
+    | '/locker/analytics'
+    | '/locker/rates'
+    | '/locker/rules'
+    | '/settings/access'
+    | '/settings/config'
+    | '/settings/countries'
+    | '/users/activity-logs'
+    | '/users/all'
+    | '/users/referral-tree'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_admin'
+    | '/_admin/kyc'
+    | '/_admin/overview'
+    | '/_auth/login'
+    | '/_auth/verify-device'
+    | '/_admin/coffer/active'
+    | '/_admin/coffer/dividends'
+    | '/_admin/coffer/marketplace'
+    | '/_admin/coffer/performance'
+    | '/_admin/communication/email'
+    | '/_admin/communication/notifications'
+    | '/_admin/communication/updates'
+    | '/_admin/financials/internal'
+    | '/_admin/financials/ledger'
+    | '/_admin/financials/provider-config'
+    | '/_admin/financials/withdrawals'
+    | '/_admin/locker/analytics'
+    | '/_admin/locker/rates'
+    | '/_admin/locker/rules'
+    | '/_admin/settings/access'
+    | '/_admin/settings/config'
+    | '/_admin/settings/countries'
+    | '/_admin/users/activity-logs'
+    | '/_admin/users/all'
+    | '/_admin/users/referral-tree'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -94,6 +388,160 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_admin/overview': {
+      id: '/_admin/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof AdminOverviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/kyc': {
+      id: '/_admin/kyc'
+      path: '/kyc'
+      fullPath: '/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/users/referral-tree': {
+      id: '/_admin/users/referral-tree'
+      path: '/users/referral-tree'
+      fullPath: '/users/referral-tree'
+      preLoaderRoute: typeof AdminUsersReferralTreeRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/users/all': {
+      id: '/_admin/users/all'
+      path: '/users/all'
+      fullPath: '/users/all'
+      preLoaderRoute: typeof AdminUsersAllRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/users/activity-logs': {
+      id: '/_admin/users/activity-logs'
+      path: '/users/activity-logs'
+      fullPath: '/users/activity-logs'
+      preLoaderRoute: typeof AdminUsersActivityLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/settings/countries': {
+      id: '/_admin/settings/countries'
+      path: '/settings/countries'
+      fullPath: '/settings/countries'
+      preLoaderRoute: typeof AdminSettingsCountriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/settings/config': {
+      id: '/_admin/settings/config'
+      path: '/settings/config'
+      fullPath: '/settings/config'
+      preLoaderRoute: typeof AdminSettingsConfigRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/settings/access': {
+      id: '/_admin/settings/access'
+      path: '/settings/access'
+      fullPath: '/settings/access'
+      preLoaderRoute: typeof AdminSettingsAccessRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/rules': {
+      id: '/_admin/locker/rules'
+      path: '/locker/rules'
+      fullPath: '/locker/rules'
+      preLoaderRoute: typeof AdminLockerRulesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/rates': {
+      id: '/_admin/locker/rates'
+      path: '/locker/rates'
+      fullPath: '/locker/rates'
+      preLoaderRoute: typeof AdminLockerRatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/analytics': {
+      id: '/_admin/locker/analytics'
+      path: '/locker/analytics'
+      fullPath: '/locker/analytics'
+      preLoaderRoute: typeof AdminLockerAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/financials/withdrawals': {
+      id: '/_admin/financials/withdrawals'
+      path: '/financials/withdrawals'
+      fullPath: '/financials/withdrawals'
+      preLoaderRoute: typeof AdminFinancialsWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/financials/provider-config': {
+      id: '/_admin/financials/provider-config'
+      path: '/financials/provider-config'
+      fullPath: '/financials/provider-config'
+      preLoaderRoute: typeof AdminFinancialsProviderConfigRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/financials/ledger': {
+      id: '/_admin/financials/ledger'
+      path: '/financials/ledger'
+      fullPath: '/financials/ledger'
+      preLoaderRoute: typeof AdminFinancialsLedgerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/financials/internal': {
+      id: '/_admin/financials/internal'
+      path: '/financials/internal'
+      fullPath: '/financials/internal'
+      preLoaderRoute: typeof AdminFinancialsInternalRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/communication/updates': {
+      id: '/_admin/communication/updates'
+      path: '/communication/updates'
+      fullPath: '/communication/updates'
+      preLoaderRoute: typeof AdminCommunicationUpdatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/communication/notifications': {
+      id: '/_admin/communication/notifications'
+      path: '/communication/notifications'
+      fullPath: '/communication/notifications'
+      preLoaderRoute: typeof AdminCommunicationNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/communication/email': {
+      id: '/_admin/communication/email'
+      path: '/communication/email'
+      fullPath: '/communication/email'
+      preLoaderRoute: typeof AdminCommunicationEmailRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/coffer/performance': {
+      id: '/_admin/coffer/performance'
+      path: '/coffer/performance'
+      fullPath: '/coffer/performance'
+      preLoaderRoute: typeof AdminCofferPerformanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/coffer/marketplace': {
+      id: '/_admin/coffer/marketplace'
+      path: '/coffer/marketplace'
+      fullPath: '/coffer/marketplace'
+      preLoaderRoute: typeof AdminCofferMarketplaceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/coffer/dividends': {
+      id: '/_admin/coffer/dividends'
+      path: '/coffer/dividends'
+      fullPath: '/coffer/dividends'
+      preLoaderRoute: typeof AdminCofferDividendsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/coffer/active': {
+      id: '/_admin/coffer/active'
+      path: '/coffer/active'
+      fullPath: '/coffer/active'
+      preLoaderRoute: typeof AdminCofferActiveRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -111,9 +559,62 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface AdminRouteChildren {
+  AdminKycRoute: typeof AdminKycRoute
+  AdminOverviewRoute: typeof AdminOverviewRoute
+  AdminCofferActiveRoute: typeof AdminCofferActiveRoute
+  AdminCofferDividendsRoute: typeof AdminCofferDividendsRoute
+  AdminCofferMarketplaceRoute: typeof AdminCofferMarketplaceRoute
+  AdminCofferPerformanceRoute: typeof AdminCofferPerformanceRoute
+  AdminCommunicationEmailRoute: typeof AdminCommunicationEmailRoute
+  AdminCommunicationNotificationsRoute: typeof AdminCommunicationNotificationsRoute
+  AdminCommunicationUpdatesRoute: typeof AdminCommunicationUpdatesRoute
+  AdminFinancialsInternalRoute: typeof AdminFinancialsInternalRoute
+  AdminFinancialsLedgerRoute: typeof AdminFinancialsLedgerRoute
+  AdminFinancialsProviderConfigRoute: typeof AdminFinancialsProviderConfigRoute
+  AdminFinancialsWithdrawalsRoute: typeof AdminFinancialsWithdrawalsRoute
+  AdminLockerAnalyticsRoute: typeof AdminLockerAnalyticsRoute
+  AdminLockerRatesRoute: typeof AdminLockerRatesRoute
+  AdminLockerRulesRoute: typeof AdminLockerRulesRoute
+  AdminSettingsAccessRoute: typeof AdminSettingsAccessRoute
+  AdminSettingsConfigRoute: typeof AdminSettingsConfigRoute
+  AdminSettingsCountriesRoute: typeof AdminSettingsCountriesRoute
+  AdminUsersActivityLogsRoute: typeof AdminUsersActivityLogsRoute
+  AdminUsersAllRoute: typeof AdminUsersAllRoute
+  AdminUsersReferralTreeRoute: typeof AdminUsersReferralTreeRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminKycRoute: AdminKycRoute,
+  AdminOverviewRoute: AdminOverviewRoute,
+  AdminCofferActiveRoute: AdminCofferActiveRoute,
+  AdminCofferDividendsRoute: AdminCofferDividendsRoute,
+  AdminCofferMarketplaceRoute: AdminCofferMarketplaceRoute,
+  AdminCofferPerformanceRoute: AdminCofferPerformanceRoute,
+  AdminCommunicationEmailRoute: AdminCommunicationEmailRoute,
+  AdminCommunicationNotificationsRoute: AdminCommunicationNotificationsRoute,
+  AdminCommunicationUpdatesRoute: AdminCommunicationUpdatesRoute,
+  AdminFinancialsInternalRoute: AdminFinancialsInternalRoute,
+  AdminFinancialsLedgerRoute: AdminFinancialsLedgerRoute,
+  AdminFinancialsProviderConfigRoute: AdminFinancialsProviderConfigRoute,
+  AdminFinancialsWithdrawalsRoute: AdminFinancialsWithdrawalsRoute,
+  AdminLockerAnalyticsRoute: AdminLockerAnalyticsRoute,
+  AdminLockerRatesRoute: AdminLockerRatesRoute,
+  AdminLockerRulesRoute: AdminLockerRulesRoute,
+  AdminSettingsAccessRoute: AdminSettingsAccessRoute,
+  AdminSettingsConfigRoute: AdminSettingsConfigRoute,
+  AdminSettingsCountriesRoute: AdminSettingsCountriesRoute,
+  AdminUsersActivityLogsRoute: AdminUsersActivityLogsRoute,
+  AdminUsersAllRoute: AdminUsersAllRoute,
+  AdminUsersReferralTreeRoute: AdminUsersReferralTreeRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
