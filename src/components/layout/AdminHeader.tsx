@@ -46,7 +46,7 @@ export default function AdminHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="/avatars/01.png" alt="@shadcn" />
+                {/* <AvatarImage src="/avatars/01.png" alt="@shadcn" /> */}
                 <AvatarFallback>AD</AvatarFallback>
               </Avatar>
               <span className="sr-only">Toggle user menu</span>

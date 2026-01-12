@@ -1,7 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { toast } from 'sonner'
 import { useState } from 'react'
 import type { UserLoginFormData } from '@/validations/AuthValidations';
 import { loginSchema } from '@/validations/AuthValidations'
@@ -10,31 +9,56 @@ import { Button } from '@/components/ui/button'
 import InputField from '@/components/shared/InputField'
 import RequiredLabel from '@/components/shared/RequiredLabel'
 import { Checkbox } from '@/components/ui/checkbox'
-
 import TransitionLink from '@/components/layout/TransitionLink'
 import { LoadingIconSmall } from '@/components/shared/LoadingIconLarge'
+import usePostRequest from '@/hooks/usePostRequests'
+import type { UserAuthApiResponse } from '@/types/AuthTypes'
+import type { QueryError } from '@/types/ResponseTypes'
+import { setAuthCookies } from '@/services/CookiesServices'
+import { toast } from 'sonner';
+import CloseToast from '@/components/shared/CloseToast';
 
 export const Route = createFileRoute('/_auth/login')({
   component: LoginPage,
 })
 
 function LoginPage() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<UserLoginFormData>({
     resolver: yupResolver(loginSchema),
   })
 
   const [isPassword, setIsPassword] = useState(false)
 
-  const onSubmit = async (data: UserLoginFormData) => {
-    // Simulate API call
-    console.log('Login attempt:', data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    toast.success('Login successful (simulated)')
+  const { mutate: login, isPending } = usePostRequest<UserAuthApiResponse, UserLoginFormData>({
+    URL: '/auth/sign-in',
+    showErrorToast: true,
+    onSuccess: (response) => {
 
+      toast.success(`Welcome back !`, { action: <CloseToast />, duration: 3000 })
+      // Save tokens to cookies
+      setAuthCookies(response.data)
+      // Navigate to dashboard
+      navigate({ to: '/overview' })
+    },
+    onError: (error: QueryError) => {
+      // Check for device verification required
+      if (error.status === 403) {
+        const errorData = error.response?.data as { redirect_action?: string } | undefined
+        console.log(errorData, error.response)
+        if (errorData?.redirect_action === 'verify_device') {
+          navigate({ to: '/verify-device' })
+        }
+      }
+    },
+  })
+
+  const onSubmit = (data: UserLoginFormData) => {
+    login(data)
   }
 
   return (
@@ -55,7 +79,7 @@ function LoginPage() {
             fieldName="email"
             register={register}
             error={errors.email?.message}
-            placeHolderText="Admin@gamil.com"
+            placeHolderText="Admin@gmail.com"
             showPlaceholder
             type="email"
           />
@@ -79,7 +103,6 @@ function LoginPage() {
           <div className="flex items-center space-x-2">
             <Checkbox id="remember-me" />
             <span
-
               className="text-sm font-medium text-muted-foreground cursor-pointer"
             >
               Remember me
@@ -96,9 +119,9 @@ function LoginPage() {
         <Button
           type="submit"
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 text-base"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? <LoadingIconSmall /> : 'Login'}
+          {isPending ? <LoadingIconSmall /> : 'Login'}
         </Button>
       </form>
     </Card>

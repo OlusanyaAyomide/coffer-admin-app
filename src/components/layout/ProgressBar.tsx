@@ -60,7 +60,7 @@ export default function ProgressBar() {
     const id = setTimeout(() => {
       setIsVisible(false);
       setProgress(0);
-    }, 400);
+    }, 600);
 
     timeoutIdsRef.current.push(id);
   };

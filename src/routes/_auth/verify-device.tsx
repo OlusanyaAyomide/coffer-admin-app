@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'sonner'
@@ -9,17 +9,21 @@ import { Button } from '@/components/ui/button'
 import OTPInputField from '@/components/shared/OTPInputField'
 import RequiredLabel from '@/components/shared/RequiredLabel'
 import { LoadingIconSmall } from '@/components/shared/LoadingIconLarge'
+import usePostRequest from '@/hooks/usePostRequests'
+import type { UserAuthApiResponse } from '@/types/AuthTypes'
+import { setAuthCookies } from '@/services/CookiesServices'
 
 export const Route = createFileRoute('/_auth/verify-device')({
   component: VerifyDevicePage,
 })
 
 function VerifyDevicePage() {
+  const navigate = useNavigate()
   const {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<UserOTPFormData>({
     resolver: yupResolver(otpSchema),
   })
@@ -27,11 +31,20 @@ function VerifyDevicePage() {
   // Watch the OTP value to pass it to the OTPInputField
   const otpValue = watch('otp')
 
-  const onSubmit = async (data: UserOTPFormData) => {
-    // Simulate API call
-    console.log('OTP Verification attempt:', data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    toast.success('Device verified successfully (simulated)')
+  const { mutate: verifyDevice, isPending } = usePostRequest<UserAuthApiResponse, UserOTPFormData>({
+    URL: '/auth/verify-device',
+    successText: 'Device verification successful',
+    showErrorToast: true,
+    onSuccess: (response) => {
+      // Save tokens to cookies
+      setAuthCookies(response.data)
+      // Navigate to dashboard
+      navigate({ to: '/overview' })
+    },
+  })
+
+  const onSubmit = (data: UserOTPFormData) => {
+    verifyDevice(data)
   }
 
   const handleResend = () => {
@@ -72,13 +85,12 @@ function VerifyDevicePage() {
           </Button>
         </div>
 
-
         <Button
           type="submit"
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 text-base"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? <LoadingIconSmall /> : 'Verify'}
+          {isPending ? <LoadingIconSmall /> : 'Verify'}
         </Button>
       </form>
     </Card>

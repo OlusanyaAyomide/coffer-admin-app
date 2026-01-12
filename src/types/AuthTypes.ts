@@ -3,9 +3,9 @@ export type AuthTokenData = {
   access_token_expiry: number;  // in seconds
   refresh_token: string;
   refresh_token_expiry: number; // in seconds
+  biometrics_token: string;
+  biometrics_token_expiry: number; // in seconds
 };
-
-
 
 export type UserWorkSpaceApps = {
   id: string;
@@ -15,11 +15,14 @@ export type UserWorkSpaceApps = {
 export type UserData = {
   user_id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  account_tier: string;
+  country_id: string;
+  first_name?: string;
+  last_name?: string;
 };
 
 export type UserAuthResponse = {
+  two_fa_enabled: boolean;
   token: AuthTokenData;
   user: UserData;
 };
@@ -60,3 +63,8 @@ export type AcceptInvitationPayload = {
   password: string;
 };
 
+// Error response for device verification
+export type DeviceVerificationError = {
+  message: string;
+  redirect_action: 'verify_device';
+};

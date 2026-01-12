@@ -146,8 +146,7 @@ export default function AdminSidebar() {
               return (
                 <Collapsible
                   key={item.title}
-                  defaultOpen={isActive}
-                  open={isActive ? true : undefined}
+                  defaultOpen={isActive || false}
                   className="group/collapsible"
                 >
                   <li>

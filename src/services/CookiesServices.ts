@@ -46,8 +46,9 @@ export function setAuthCookies(res: UserAuthResponse) {
   // Set basic user info
   setCookie('user_id', user.user_id);
   setCookie('userEmail', user.email);
-  setCookie('first_name', user.first_name);
-  setCookie('last_name', user.last_name);
+  setCookie('country_id', user.country_id);
+  if (user.first_name) setCookie('first_name', user.first_name);
+  if (user.last_name) setCookie('last_name', user.last_name);
 
   // Set token expiry date as ISO string
   const expiryDate = new Date(Date.now() + token.access_token_expiry * 1000);
@@ -57,6 +58,8 @@ export function setAuthCookies(res: UserAuthResponse) {
 
 /* --- Getters --- */
 export function getAccessToken(): string | undefined {
+  // Return undefined during SSR (no document available)
+
   const [a, b, c] = ACC_KEYS.map(k => Cookies.get(k));
   return a && b && c ? a + b + c : undefined;
 }
