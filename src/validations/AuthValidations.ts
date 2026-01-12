@@ -26,3 +26,21 @@ export const signUpSchema: yup.ObjectSchema<UserRegistrationFormData> = yup.obje
   date_of_birth: validateRequiredString("Date of birth"),
   otp: validateRequiredString("OTP")
 });
+
+export type UserLoginFormData = {
+  email: string;
+  password: string;
+}
+
+export const loginSchema: yup.ObjectSchema<UserLoginFormData> = yup.object({
+  email: validateRequiredEmail('E-mail'),
+  password: validateRequiredPassword('Password'),
+});
+
+export type UserOTPFormData = {
+  otp: string;
+}
+
+export const otpSchema: yup.ObjectSchema<UserOTPFormData> = yup.object({
+  otp: validateRequiredString('OTP'),
+});

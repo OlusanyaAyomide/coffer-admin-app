@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { useRouter } from '@tanstack/react-router';
+import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 import SvgIcons from '@/icons/SvgIcon';

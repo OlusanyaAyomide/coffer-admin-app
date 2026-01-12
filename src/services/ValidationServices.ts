@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { DocumentMetaData, NullableType } from '../types/GenericTypes';
+import type { DocumentMetaData, NullableType } from '../types/GenericTypes';
 import { returnDataOrNull } from '@/services/emptyDataServices';
 
 

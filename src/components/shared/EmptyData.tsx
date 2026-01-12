@@ -7,7 +7,7 @@ type EmptyDataProps<T> = {
   entityType: string,
   showAction?: boolean,
   actionPath?: string,
-  data?: T[],
+  data?: Array<T>,
   isFilterActive?: boolean
   actionWord?: string
 };

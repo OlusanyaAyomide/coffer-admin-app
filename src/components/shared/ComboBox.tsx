@@ -1,29 +1,31 @@
 import {
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { ChevronDown } from 'lucide-react';
+import type {
   FieldValues,
   Path,
   PathValue,
   UseFormSetValue,
 } from 'react-hook-form';
-import {
-  Ref,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import type {
+  Ref} from 'react';
 
+import type { ComboboxContent } from '@/types/GenericTypes';
+import type {
+  ComboBoxContentImperativeRef,
+} from '@/components/shared/ComboBoxContent';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { ComboboxContent } from '@/types/GenericTypes';
 
-import ComboBoxContent, {
-  ComboBoxContentImperativeRef,
-} from '@/components/shared/ComboBoxContent';
+import ComboBoxContent from '@/components/shared/ComboBoxContent';
 import { LoadingIconSmall } from '@/components/shared/LoadingIconLarge';
-import { ChevronDown } from 'lucide-react';
 import SvgIcons from '@/icons/SvgIcon';
 
 type ActionConfigProp = {
@@ -40,7 +42,7 @@ export type ComboboxFieldType<T extends FieldValues> = {
   className?: string;
   error?: string;
   disabled?: boolean;
-  searchOptionsArray: ComboboxContent[];
+  searchOptionsArray: Array<ComboboxContent>;
   setValue: UseFormSetValue<T>;
   fieldName: Path<T>;
   value: string | number;

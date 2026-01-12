@@ -1,6 +1,6 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
-import { PaginationType } from '@/types/ResponseTypes';
+import type { PaginationType } from '@/types/ResponseTypes';
 import TablePaginator from '@/components/shared/TablePaginator';
 import { cn } from '@/lib/utils';
 
@@ -11,8 +11,8 @@ export type MobileRow<CardData> = {
 };
 
 type MobileCardsProps<CardData> = {
-  data: CardData[];
-  columns: MobileRow<CardData>[];
+  data: Array<CardData>;
+  columns: Array<MobileRow<CardData>>;
   title: (row: CardData) => string | ReactNode;
   action?: ({ row }: { row: CardData }) => ReactNode;
   meta?: PaginationType;

@@ -1,15 +1,18 @@
 /* eslint-disable  react-hooks/incompatible-library */
 
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
-  useReactTable,
-  CoreColumn,
+  useReactTable
 } from '@tanstack/react-table';
+import type { Dispatch, SetStateAction} from 'react';
+import type {
+  ColumnDef,
+  CoreColumn} from '@tanstack/react-table';
 
+import type { PaginationType } from '@/types/ResponseTypes';
 import {
   Table,
   TableBody,
@@ -18,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { PaginationType } from '@/types/ResponseTypes';
 import { ITEMS_COUNT_PER_PAGE } from '@/constants/Constants';
 import TablePaginator from '@/components/shared/TablePaginator';
 import { cn } from '@/lib/utils';
@@ -38,8 +40,8 @@ export type ExtendedColumnDef<TData> = ColumnDef<TData> & {
 };
 
 export type DataTableProps<TData> = {
-  columns: ExtendedColumnDef<TData>[];
-  data: TData[];
+  columns: Array<ExtendedColumnDef<TData>>;
+  data: Array<TData>;
   addCheckBox?: boolean
   meta?: PaginationType;
   isSecondary?: boolean
@@ -69,7 +71,7 @@ export default function BaseDataTable<TData>({
     manualPagination: true,
   });
 
-  const [checkedRows, setCheckedRows] = useState<string[]>([]);
+  const [checkedRows, setCheckedRows] = useState<Array<string>>([]);
 
   const handleCheckedChange = (rowId: string) => {
     setCheckedRows((prev) => {

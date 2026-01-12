@@ -1,24 +1,26 @@
-import {
-  Dispatch, SetStateAction, useEffect, useRef, useState,
+import { useEffect, useRef, useState,
 } from 'react';
 import { titleCase } from 'title-case';
+import type {
+  Dispatch, SetStateAction} from 'react';
 
 
-import { Popover, PopoverContent, PopoverTrigger, PopoverClose } from '@/components/ui/popover';
+import type { ComboBoxContentImperativeRef } from '@/components/shared/ComboBoxContent';
+import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 
 
-import ComboBoxContent, { ComboBoxContentImperativeRef } from '@/components/shared/ComboBoxContent';
+import ComboBoxContent from '@/components/shared/ComboBoxContent';
 import { FilterTrigger } from '@/components/shared/FilterButtons';
 import SvgIcons from '@/icons/SvgIcon';
 import useFilterSearchParam from '@/hooks/useFilterSearchParam';
 
 type FilterOption = { label: string; value: string };
 type FilterButtonType = {
-  activeFilters: string[];
-  setActiveFilters: Dispatch<SetStateAction<string[]>>;
+  activeFilters: Array<string>;
+  setActiveFilters: Dispatch<SetStateAction<Array<string>>>;
   title: string;
-  filterOptions: FilterOption[];
+  filterOptions: Array<FilterOption>;
   filterKey: string
   setSearchResult: (val: string) => void
   isError?: boolean
@@ -40,7 +42,7 @@ export default function ComboBoxFilter({
 }: FilterButtonType) {
   const { setParam } = useFilterSearchParam(filterKey);
 
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(activeFilters);
+  const [selectedOptions, setSelectedOptions] = useState<Array<string>>(activeFilters);
 
   const handleFilterChange = (filter: FilterOption) => {
     if (filterMode === 'single') {

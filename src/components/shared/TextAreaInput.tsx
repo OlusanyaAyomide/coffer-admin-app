@@ -1,6 +1,6 @@
 'use client';
 
-import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
+import type { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import './input-field-styles.css';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';

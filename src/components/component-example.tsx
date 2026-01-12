@@ -3,18 +3,19 @@
 import { useForm } from "react-hook-form"
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { signUpSchema, UserRegistrationFormData } from "@/validations/AuthValidations";
-import { Card } from "./ui/card";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import RequiredLabel from "./shared/RequiredLabel";
 import InputField from "./shared/InputField";
 import SelectField from "./shared/SelectField";
 import DatePicker from "./shared/DatePicker";
 import { Button } from "./ui/button";
-import { useTheme } from "next-themes";
 import OTPInputField from "./shared/OTPInputField";
-import useWindowProperties from "@/hooks/useWindowProperty";
-import { toast } from "sonner";
+import { Card } from "./ui/card";
 import CofferLogo from "./shared/CofferLogo";
+import type { UserRegistrationFormData } from "@/validations/AuthValidations";
+import useWindowProperties from "@/hooks/useWindowProperty";
+import { signUpSchema } from "@/validations/AuthValidations";
 // import TextAreaInput from "./shared/TextAreaInput";
 
 

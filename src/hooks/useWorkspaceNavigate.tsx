@@ -1,5 +1,5 @@
 
-import { useNavigate, useLocation } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useTransitionContext } from '@/hooks/useTransitionContext';
 
 export default function useWorkspaceNavigate() {

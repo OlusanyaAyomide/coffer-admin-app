@@ -1,6 +1,6 @@
-import { QueryError } from "@/types/ResponseTypes";
+import type { QueryError } from "@/types/ResponseTypes";
 
-export const normalizeApiErrors = (error?: QueryError): string[] => {
+export const normalizeApiErrors = (error?: QueryError): Array<string> => {
   if (!error?.response?.data) return [];
 
   const { message } = error.response.data;
@@ -13,5 +13,5 @@ export const normalizeApiErrors = (error?: QueryError): string[] => {
     ? [message]
     : Object.values(message).flat();
 
-  return messages as string[];
+  return messages as Array<string>;
 };

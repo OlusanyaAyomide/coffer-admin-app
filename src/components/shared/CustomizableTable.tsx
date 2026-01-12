@@ -1,16 +1,18 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import type { ReactNode} from 'react';
 
+import type { DataTableProps } from '@/components/shared/BaseDataTable';
 import {
   Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogDescription,
   DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import BaseDataTable, { DataTableProps } from '@/components/shared/BaseDataTable';
+import BaseDataTable from '@/components/shared/BaseDataTable';
 
 import { titleCaseUnderscoreDash } from '@/services/TextServices';
 
@@ -18,7 +20,7 @@ import { titleCaseUnderscoreDash } from '@/services/TextServices';
 type CustomizableTableProps<TData> = {
   children: ReactNode;
   tableKey: string;
-  defaultVisibleColumns: string[];
+  defaultVisibleColumns: Array<string>;
 } & DataTableProps<TData>;
 
 export default function CustomizableTable<TData>({
@@ -32,7 +34,7 @@ export default function CustomizableTable<TData>({
 }: CustomizableTableProps<TData>) {
 
   // Initialize state from localStorage or defaults
-  const [excludedFields, setExcludedFields] = useState<string[]>(() => {
+  const [excludedFields, setExcludedFields] = useState<Array<string>>(() => {
     const stored = localStorage.getItem(`table-config-${tableKey}`);
     if (stored) {
       try {
@@ -44,7 +46,7 @@ export default function CustomizableTable<TData>({
 
     // Get all accessorKeys from columns
     const allAccessorKeys = columns
-      .map((col) => col.accessorKey as string)
+      .map((col) => col.accessorKey)
       .filter(Boolean);
 
     return allAccessorKeys.filter((key) => !defaultVisibleColumns.includes(key));
@@ -66,7 +68,7 @@ export default function CustomizableTable<TData>({
 
   const handleSelectAll = () => {
     const allAccessorKeys = columns
-      .map((tableColumn) => tableColumn.accessorKey as string)
+      .map((tableColumn) => tableColumn.accessorKey)
       .filter(Boolean);
 
     if (!excludedFields.length) {
@@ -78,7 +80,7 @@ export default function CustomizableTable<TData>({
 
   const handleResetToDefault = () => {
     const allAccessorKeys = columns
-      .map((col) => col.accessorKey as string)
+      .map((col) => col.accessorKey)
       .filter(Boolean);
 
     const defaultExcluded = allAccessorKeys.filter(
@@ -89,7 +91,7 @@ export default function CustomizableTable<TData>({
 
   const isDefaultState = () => {
     const allAccessorKeys = columns
-      .map((col) => col.accessorKey as string)
+      .map((col) => col.accessorKey)
       .filter(Boolean);
 
     const defaultExcluded = allAccessorKeys.filter(
@@ -103,7 +105,7 @@ export default function CustomizableTable<TData>({
   };
 
   const filteredColumns = columns.filter(
-    (tableColumn) => !excludedFields.includes(tableColumn.accessorKey as string)
+    (tableColumn) => !excludedFields.includes(tableColumn.accessorKey)
   );
 
   return (
@@ -150,7 +152,7 @@ export default function CustomizableTable<TData>({
               </div>
               <div className="flex flex-col gap-4 mb-6">
                 {columns.map((column, index) => {
-                  const accessorKey = column.accessorKey as string;
+                  const accessorKey = column.accessorKey;
 
                   // Skip columns without accessorKey
                   if (!accessorKey) return null;

@@ -1,8 +1,8 @@
 
-import useWorkspaceNavigate from '@/hooks/useWorkspaceNavigate';
 import { Button } from '../ui/button';
-import { AxiosError } from 'axios';
-import { QueryError } from '@/types/ResponseTypes';
+import type { AxiosError } from 'axios';
+import type { QueryError } from '@/types/ResponseTypes';
+import useWorkspaceNavigate from '@/hooks/useWorkspaceNavigate';
 
 export default function ApiError<T>({
   error,

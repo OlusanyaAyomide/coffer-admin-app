@@ -1,11 +1,14 @@
 import {
-  useRef,
-  useState,
   useImperativeHandle,
-  Ref,
+  useRef,
+  useState
 } from 'react';
 import { Check } from 'lucide-react';
 
+import { LoadingIconLarge } from './LoadingIconLarge';
+import type {
+  Ref} from 'react';
+import type { ComboboxContent } from '@/types/GenericTypes';
 import {
   Command,
   CommandEmpty,
@@ -21,10 +24,8 @@ import {
 } from '@/services/TextServices';
 import SvgIcons from '@/icons/SvgIcon';
 import { DEBOUNCE_IN_MS } from '@/constants/Constants';
-import { ComboboxContent } from '@/types/GenericTypes';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { LoadingIconLarge } from './LoadingIconLarge';
 
 export type ComboBoxContentImperativeRef = {
   getSearchValue: () => string;
@@ -33,11 +34,11 @@ export type ComboBoxContentImperativeRef = {
 type ComboBoxContentProps = {
   onSelect: (option: ComboboxContent) => void;
   setSearchResult: (val: string) => void;
-  searchOptionsArray: ComboboxContent[];
+  searchOptionsArray: Array<ComboboxContent>;
   title: string;
   isPending: boolean;
   isError?: boolean;
-  selectedOptions: (string | number)[];
+  selectedOptions: Array<string | number>;
   addTitle?: boolean;
   contentRef: Ref<ComboBoxContentImperativeRef>;
 };

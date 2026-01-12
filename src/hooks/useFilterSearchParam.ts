@@ -11,7 +11,7 @@ const useFilterSearchParam = (key?: string) => {
   const filterKey = key || '_';
 
   const setParam = useCallback(
-    (values: string[]) => {
+    (values: Array<string>) => {
       // To bypass the 'never' type error, we cast the functional update 
       // or the navigate call itself.
       navigate({

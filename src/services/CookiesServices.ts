@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-import { UserAuthResponse } from '@/types/AuthTypes';
+import type { UserAuthResponse } from '@/types/AuthTypes';
 
 
 /* --- Token cookie keys --- */
@@ -8,7 +8,7 @@ const ACC_KEYS = ['A8b3fC2', '7m5nZt4', 'h9p0rG1'];
 const REF_KEYS = ['287a3jG', '51b896e', 'f3c402d'];
 
 /* --- Helpers --- */
-function splitToken(token: string): string[] {
+function splitToken(token: string): Array<string> {
   const partLength = Math.floor(token.length / 3);
   return [
     token.slice(0, partLength),

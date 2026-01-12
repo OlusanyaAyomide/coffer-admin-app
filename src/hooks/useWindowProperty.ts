@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DESKTOP_BREAKPOINT, TAB_BREAKPOINT } from '@/constants/Constants';
 

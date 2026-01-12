@@ -1,7 +1,7 @@
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 
 export type ApiErrorResponse = {
-  message: string[];
+  message: Array<string>;
   error: string;
   statusCode: number;
 };

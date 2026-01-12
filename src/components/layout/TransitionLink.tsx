@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Link, useNavigate, useLocation, LinkProps } from '@tanstack/react-router';
+import { Link, useLocation, useNavigate } from '@tanstack/react-router';
+import type { LinkProps } from '@tanstack/react-router';
 import { useTransitionContext } from '@/hooks/useTransitionContext';
 
 type TransitionLinkProps = Omit<LinkProps, 'to'> & {

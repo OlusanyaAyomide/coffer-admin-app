@@ -1,13 +1,18 @@
 import {
-  useState, ChangeEvent, useMemo, useEffect, DragEvent, useRef,
+  useEffect, useMemo, useRef, useState,
 } from 'react';
-import {
+import { toast } from 'sonner';
+import { Upload } from 'lucide-react';
+import CloseToast from './CloseToast';
+import RequiredLabel from './RequiredLabel';
+import type { ChangeEvent, DragEvent} from 'react';
+import type {
   FieldValues, Path, PathValue,
   UseFormSetValue,
 } from 'react-hook-form';
-import { toast } from 'sonner';
-import { Upload } from 'lucide-react';
 
+import type { AxiosResponse } from 'axios';
+import type { DocumentMetaData, FileMimeType, NullableType } from '@/types/GenericTypes';
 import {
   exceedsUploadSizeLimit,
   formatFileSize,
@@ -17,14 +22,10 @@ import {
 } from '@/services/FileServices';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { DocumentMetaData, FileMimeType, NullableType } from '@/types/GenericTypes';
 import useUploadRequest from '@/hooks/useUploadRequest';
 import SvgIcons from '@/icons/SvgIcon';
 import { returnDataOrNull } from '@/services/emptyDataServices';
 
-import CloseToast from './CloseToast';
-import RequiredLabel from './RequiredLabel';
-import { AxiosResponse } from 'axios';
 
 type FileUploadFieldProp<T extends FieldValues, K extends Path<T> = Path<T>> = {
   fieldName: K;

@@ -1,14 +1,15 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { Toaster as Sonner  } from "sonner"
 import {
   CircleCheckIcon,
   InfoIcon,
-  TriangleAlertIcon,
-  OctagonXIcon,
   Loader2Icon,
+  OctagonXIcon,
+  TriangleAlertIcon,
 } from "lucide-react"
+import type {ToasterProps} from "sonner";
 import { TOAST_DURATION_IN_MS } from "@/constants/Constants"
 
 const Toaster = ({ ...props }: ToasterProps) => {

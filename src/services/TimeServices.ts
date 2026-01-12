@@ -7,16 +7,16 @@ import {
   startOfYear,
 } from 'date-fns';
 
-import { NullableType } from '@/types/GenericTypes';
+import type { NullableType } from '@/types/GenericTypes';
 import { returnDataOrNull } from '@/services/emptyDataServices';
 
 
 // convert minute to milliseconds
 export const convertMinToMilliSeconds = (minute: number): number => (1000 * 60 * minute);
 
-export function generateLast100Years(): number[] {
+export function generateLast100Years(): Array<number> {
   const currentYear = new Date().getFullYear();
-  const years: number[] = [];
+  const years: Array<number> = [];
 
   for (let i = 0; i < 101; i += 1) { // 100 years back + 1 future year
     years.push(currentYear + 1 - i);
@@ -117,7 +117,7 @@ export function formatUploadedDate(dateString: Date | string): string {
   return `${month} ${day}, ${year} at ${formattedHours}:${minutes} ${period}`;
 }
 
-export function isArrayCustomDate(dates: string[]): boolean {
+export function isArrayCustomDate(dates: Array<string>): boolean {
   if (dates.length !== 2) {
     return false;
   }
@@ -128,7 +128,7 @@ export function isArrayCustomDate(dates: string[]): boolean {
 }
 
 // returns two objects, filter_key_start, filter_key_end
-export function convertDateToTimeRange<T extends string>(filterKey: T, dateRange: string[]) {
+export function convertDateToTimeRange<T extends string>(filterKey: T, dateRange: Array<string>) {
   if (!dateRange.length) {
     return null;
   }

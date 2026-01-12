@@ -1,4 +1,4 @@
-import { FileTypeResult } from "file-type";
+import type { FileTypeResult } from "file-type";
 
 export type InputType = 'password' | 'email' | 'text' | 'number' | 'date';
 

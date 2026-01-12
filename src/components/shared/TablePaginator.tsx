@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import type { Dispatch, SetStateAction } from 'react';
 
+import type { PaginationType } from '@/types/ResponseTypes';
 import { Button } from '@/components/ui/button';
-import { PaginationType } from '@/types/ResponseTypes';
 
 interface TablePaginatorProps {
   meta: PaginationType;

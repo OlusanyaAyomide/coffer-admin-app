@@ -1,12 +1,12 @@
 'use client';
 
-import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
+import type { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import './input-field-styles.css';
 
+import { Eye, EyeClosed } from 'lucide-react';
+import type { InputType } from '@/types/GenericTypes';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { Eye, EyeClosed } from 'lucide-react';
-import { InputType } from '@/types/GenericTypes';
 
 type InputFieldType<T extends FieldValues> = {
   error?: string;

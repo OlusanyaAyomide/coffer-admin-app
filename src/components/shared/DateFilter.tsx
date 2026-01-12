@@ -1,20 +1,22 @@
 'use client';
 
 import {
-  Dispatch,
-  SetStateAction,
   useRef,
   useState,
 } from 'react';
 import { titleCase } from 'title-case';
-import { DateRange } from 'react-day-picker';
 import { ChevronDown } from 'lucide-react';
 
+import CustomFilterDialog from './CustomFilterDialog';
+import type { DateRange } from 'react-day-picker';
+import type {
+  Dispatch,
+  SetStateAction} from 'react';
 import {
   Popover,
+  PopoverClose,
   PopoverContent,
   PopoverTrigger,
-  PopoverClose,
 } from '@/components/ui/popover';
 
 import {
@@ -29,7 +31,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import SvgIcons from '@/icons/SvgIcon';
-import CustomFilterDialog from './CustomFilterDialog';
 import useFilterSearchParam from '@/hooks/useFilterSearchParam';
 import { formatDate, isArrayCustomDate } from '@/services/TimeServices';
 import { cn } from '@/lib/utils';
@@ -47,8 +48,8 @@ const dateFilterOptions = [
 type FilterButtonType = {
   title: string;
   filterKey: string;
-  activeFilters: string[];
-  setActiveFilters: Dispatch<SetStateAction<string[]>>;
+  activeFilters: Array<string>;
+  setActiveFilters: Dispatch<SetStateAction<Array<string>>>;
 };
 
 function DateFilterTrigger({
@@ -90,7 +91,7 @@ function DateFilterContent({
   setActiveFilters,
   className,
 }: FilterButtonType & { className?: string }) {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(activeFilters);
+  const [selectedOptions, setSelectedOptions] = useState<Array<string>>(activeFilters);
   const closeRef = useRef<HTMLButtonElement>(null);
   const { setParam } = useFilterSearchParam(filterKey);
   const { CancelIconX } = SvgIcons;

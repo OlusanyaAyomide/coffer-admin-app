@@ -1,9 +1,9 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 
-import { QueryError } from '@/types/ResponseTypes';
+import type { QueryError } from '@/types/ResponseTypes';
 import { normalizeApiErrors } from '@/services/errorServices';
 import API from '@/services/api';
 import CloseToast from '@/components/shared/CloseToast';
@@ -13,7 +13,7 @@ type UploadRequestType<T> = {
   onSuccess?: (data: T) => void;
   showErrorToast?: boolean;
   successText?: string;
-  mutationKey?: string[];
+  mutationKey?: Array<string>;
 };
 
 type UploadProgress = {

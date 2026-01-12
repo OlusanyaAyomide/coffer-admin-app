@@ -22,7 +22,7 @@ export default function ProgressBar() {
   const location = useLocation();
   const { isTransitioning } = useTransitionContext();
 
-  const timeoutIdsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const timeoutIdsRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
   const clearTimeouts = () => {
     timeoutIdsRef.current.forEach(clearTimeout);

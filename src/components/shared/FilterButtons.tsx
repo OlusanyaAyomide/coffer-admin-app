@@ -1,10 +1,12 @@
-import {
-  Dispatch, SetStateAction, useRef, useState,
+import { useRef, useState,
 } from 'react';
 import { titleCase } from 'title-case';
 
+import { ChevronDown } from 'lucide-react';
+import type {
+  Dispatch, SetStateAction} from 'react';
 import {
-  Popover, PopoverContent, PopoverTrigger, PopoverClose
+  Popover, PopoverClose, PopoverContent, PopoverTrigger
 } from '@/components/ui/popover';
 import {
   Drawer,
@@ -19,15 +21,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import SvgIcons from '@/icons/SvgIcon';
 import useFilterSearchParam from '@/hooks/useFilterSearchParam';
 import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
 
 
 type FilterOption = { label: string, value: string };
 type FilterButtonType = {
-  activeFilters: string[]
-  setActiveFilters: Dispatch<SetStateAction<string[]>>
+  activeFilters: Array<string>
+  setActiveFilters: Dispatch<SetStateAction<Array<string>>>
   title: string
-  filterOptions: FilterOption[]
+  filterOptions: Array<FilterOption>
   filterKey: string
 };
 
@@ -73,7 +74,7 @@ function FilterContent({
   filterKey,
 }: FilterButtonType & { className?: string }) {
   const [selectedOptions, setSelectedOptions] =
-    useState<string[]>(activeFilters);
+    useState<Array<string>>(activeFilters);
 
   const closeRef = useRef<HTMLButtonElement>(null);
   const { setParam } = useFilterSearchParam(filterKey);

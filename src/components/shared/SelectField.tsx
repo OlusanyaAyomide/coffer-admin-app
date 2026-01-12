@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  FieldValues, UseFormSetValue, Path, PathValue,
+import { useTheme } from 'next-themes';
+import type {
+  FieldValues, Path, PathValue, UseFormSetValue,
 } from 'react-hook-form';
 
 import {
@@ -13,7 +14,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { titleCaseUnderscoreDash } from '@/services/TextServices';
-import { useTheme } from 'next-themes';
 
 type SelectFieldType<T extends FieldValues> = {
   className?: string;
@@ -21,10 +21,10 @@ type SelectFieldType<T extends FieldValues> = {
   disabled?: boolean;
   fieldName: Path<T>;
   options:
-  | string[]
-  | number[]
-  | (string | number)[]
-  | { label: string; value: string | number }[];
+  | Array<string>
+  | Array<number>
+  | Array<string | number>
+  | Array<{ label: string; value: string | number }>;
   placeHolderText: string;
   setValue: UseFormSetValue<T>;
   value: string | number;
@@ -75,7 +75,7 @@ export default function SelectField<T extends FieldValues>({
   const getOptionLabel = (val: string | number) => {
     if (typeof options[0] === 'object' && options[0] !== null) {
       const option = (
-        options as { label: string; value: string | number }[]
+        options as Array<{ label: string; value: string | number }>
       ).find((o) => o.value === val);
       return option?.label ?? val;
     }

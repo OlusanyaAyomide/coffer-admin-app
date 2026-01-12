@@ -1,4 +1,4 @@
-import { NullableType } from '@/types/GenericTypes';
+import type { NullableType } from '@/types/GenericTypes';
 
 /**
  * Check if an optional field value returned from an api call is empty or null
@@ -52,7 +52,7 @@ export function handleMultipleOptionalData(
     values,
     spacer,
   }: {
-    values: (NullableType<string>)[];
+    values: Array<NullableType<string>>;
     spacer?: string;
   },
 ): string {

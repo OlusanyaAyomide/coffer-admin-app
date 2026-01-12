@@ -129,3 +129,33 @@
     @apply font-sans;
   }
 }
+
+.toaster.group [data-sonner-toast] {
+  background: var(--popover);
+  /* border: 1px solid green; */
+  color: var(--popover-foreground);
+  border-radius: 48px;
+  box-shadow: var(--shadow);
+}
+
+.toaster.group [data-sonner-toast][data-type="success"] {
+  background: var(--primary-foreground);
+  outline: 2px solid var(--primary);
+}
+
+.toaster.group [data-sonner-toast][data-type="error"] {
+  background: #FCF5F6;
+  outline: 2px solid var(--destructive);
+}
+
+.page-title {
+  @apply text-[18px] leading-[20px] md:text-[24px] md:leading-[26px] lg:text-[28px] lg:leading-[32px] font-medium
+}
+
+.flex-center {
+  @apply flex items-center
+}
+
+[data-sonner-toaster] {
+  pointer-events: auto !important;
+}

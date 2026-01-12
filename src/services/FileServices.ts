@@ -1,6 +1,6 @@
 import { fileTypeFromBuffer } from 'file-type';
 
-import { FileMimeType, VerifyResult } from '@/types/GenericTypes';
+import type { FileMimeType, VerifyResult } from '@/types/GenericTypes';
 
 export function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -69,7 +69,7 @@ export function isImageUrl(url: string): boolean {
   return false;
 }
 
-export async function verifyFileMagicNumber(file: File, allowedFileCategories: FileMimeType[] = ['image']): Promise<VerifyResult> {
+export async function verifyFileMagicNumber(file: File, allowedFileCategories: Array<FileMimeType> = ['image']): Promise<VerifyResult> {
   // Allowed file types configuration
   // NOTE: application type = document
   const ALLOWED_TYPES = {

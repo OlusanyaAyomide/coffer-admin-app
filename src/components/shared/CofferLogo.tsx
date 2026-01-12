@@ -5,7 +5,7 @@ interface CofferLogoProps {
 
 export default function CofferLogo({ className, size = 32 }: CofferLogoProps) {
   return (
-    <div className={`flex items-center gap-0 font-medium tracking-tight text-3xl sm:text-5xl ${className}`}>
+    <div className={`flex items-center gap-0 font-medium text-3xl sm:text-5xl ${className}`}>
       {/* The letter C */}
       <span>C</span>
 
@@ -24,6 +24,7 @@ export default function CofferLogo({ className, size = 32 }: CofferLogoProps) {
           <circle cx="50" cy="50" r="45" className="fill-primary" />
 
           {/* Padlock Icon */}
+          {/* <img src="/Logo.svg" height={30} width={30} alt="" className="h-30 w-30" /> */}
           <path
             d="M32 45V38C32 28.0589 40.0589 20 50 20C59.9411 20 68 28.0589 68 38V45H70C72.2091 45 74 46.7909 74 49V76C74 78.2091 72.2091 80 70 80H30C27.7909 80 26 78.2091 26 76V49C26 46.7909 27.7909 45 30 45H32ZM40 45H60V38C60 32.4772 55.5228 28 50 28C44.4772 28 40 32.4772 40 38V45Z"
             className="fill-yellow-400"
