@@ -4,6 +4,7 @@ import { SidebarProvider } from '@/components/layout/SidebarContext'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminHeader from '@/components/layout/AdminHeader'
 import { getAccessToken } from '@/services/CookiesServices'
+import useTokenRefresh from '@/hooks/useTokenRefresh'
 
 export const Route = createFileRoute('/_admin')({
   component: AdminLayout,
@@ -12,6 +13,8 @@ export const Route = createFileRoute('/_admin')({
 function AdminLayout() {
   const navigate = useNavigate()
   const [isChecking, setIsChecking] = useState(true)
+
+  useTokenRefresh()
 
   useEffect(() => {
     // Only check auth on client after hydration
@@ -31,9 +34,11 @@ function AdminLayout() {
   return (
     <div className="flex w-full justify-center bg-background">
       <SidebarProvider>
-        <div className="flex max-w-[1600px] w-full border-x shadow-sm min-h-screen">
-          <AdminSidebar />
-          <div className="flex flex-1 flex-col">
+        <div className="flex max-w-[1800px] w-full border-x shadow-sm min-h-screen">
+          <div className='shrink-0 '>
+            <AdminSidebar />
+          </div>
+          <div className="flex flex-1 flex-col min-w-0">
             <AdminHeader />
             <main className="flex flex-1 flex-col gap-4 p-4 pt-4">
               <Outlet />

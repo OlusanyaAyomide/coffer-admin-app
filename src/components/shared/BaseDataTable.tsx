@@ -7,10 +7,11 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import type { Dispatch, SetStateAction} from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type {
   ColumnDef,
-  CoreColumn} from '@tanstack/react-table';
+  CoreColumn
+} from '@tanstack/react-table';
 
 import type { PaginationType } from '@/types/ResponseTypes';
 import {
@@ -90,12 +91,11 @@ export default function BaseDataTable<TData>({
     <div
       className={cn(
         !showOnMobile && 'hidden',
-        'lg:block rounded-lg overflow-hidden mb-[56px]',
-        'xl:max-w-[calc(100vw-252px)] 2xl:max-w-[1210px]'
+        'lg:block rounded-lg overflow-hidden mb-[56px] 2xl:max-w-[6412px]'
       )}
     >
-      <div className="border border-border rounded-lg bg-card">
-        <Table>
+      <div className="border border-border rounded-lg bg-card overflow-auto">
+        <Table className="min-w-[800px]">
           {/* HEADER */}
           <TableHeader className="bg-muted text-muted-foreground">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -106,7 +106,7 @@ export default function BaseDataTable<TData>({
                 {/* S/N or Checkbox header */}
                 <TableHead
                   className={cn(
-                    'truncate rounded-tl-lg max-w-[10vw]',
+                    'truncate rounded-tl-lg max-w-[15vw]',
                     'bg-secondary text-secondary-foreground',
                     !addCheckBox && 'border-r-0 border-border'
                   )}
