@@ -11,7 +11,8 @@ import CustomFilterDialog from './CustomFilterDialog';
 import type { DateRange } from 'react-day-picker';
 import type {
   Dispatch,
-  SetStateAction} from 'react';
+  SetStateAction
+} from 'react';
 import {
   Popover,
   PopoverClose,
@@ -68,7 +69,7 @@ function DateFilterTrigger({
       className={cn(
         'flex items-center gap-2 transition-all duration-200',
         isActive
-          ? 'bg-accent text-accent-foreground hover:bg-accent/80 ring ring-primary/70'
+          ? 'bg-accent hover:bg-accent/80 ring ring-primary/70'
           : 'border-border'
       )}
     >

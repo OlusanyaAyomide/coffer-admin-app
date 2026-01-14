@@ -7,7 +7,8 @@ import { Check } from 'lucide-react';
 
 import { LoadingIconLarge } from './LoadingIconLarge';
 import type {
-  Ref} from 'react';
+  Ref
+} from 'react';
 import type { ComboboxContent } from '@/types/GenericTypes';
 import {
   Command,
@@ -148,6 +149,14 @@ export default function ComboBoxContent({
                         : 'opacity-0',
                     )}
                   />
+
+                  {option.image_url && (
+                    <img
+                      src={option.image_url}
+                      alt={option.label}
+                      className="h-5 w-5 shrink-0 mt-0.5 rounded-sm object-cover"
+                    />
+                  )}
 
                   <div className="flex flex-col">
                     <span className="text-sm leading-[150%]">

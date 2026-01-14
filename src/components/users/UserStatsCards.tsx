@@ -1,13 +1,42 @@
 import { Users, CheckCircle, Clock, UserX } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { UserStats } from '@/types/UserTypes';
 import { cn } from '@/lib/utils';
 
 type StatsCardProps = {
-  stats: UserStats;
+  stats: UserStats | null;
+  isLoading?: boolean;
 };
 
-export default function UserStatsCards({ stats }: StatsCardProps) {
+function StatsCardSkeleton() {
+  return (
+    <Card className="bg-card border-border">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-8 w-16" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <Skeleton className="h-8 w-8 rounded-full" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function UserStatsCards({ stats, isLoading }: StatsCardProps) {
+  if (isLoading || !stats) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <StatsCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
   const cards = [
     {
       title: 'Total Users',

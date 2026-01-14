@@ -1,10 +1,12 @@
-import { useRef, useState,
+import {
+  useRef, useState,
 } from 'react';
 import { titleCase } from 'title-case';
 
 import { ChevronDown } from 'lucide-react';
 import type {
-  Dispatch, SetStateAction} from 'react';
+  Dispatch, SetStateAction
+} from 'react';
 import {
   Popover, PopoverClose, PopoverContent, PopoverTrigger
 } from '@/components/ui/popover';
@@ -48,7 +50,7 @@ export function FilterTrigger({
       className={cn(
         'flex items-center gap-1 sm:gap-3',
         'transition-colors',
-        isActive && 'bg-accent ring ring-primary/70  text-accent-foreground',
+        isActive && 'bg-accent ring ring-primary/70',
         !isActive && 'border-border'
       )}
     >

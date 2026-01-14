@@ -7,16 +7,37 @@ import CustomizableTable from '@/components/shared/CustomizableTable';
 import MobileCards from '@/components/shared/MobileCards';
 import { TableSearch } from '@/components/shared/TableSearch';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import UserListContextProvider from '@/components/users/UserListContextProvider';
 import useUserListContext from '@/components/users/useUserListContext';
 import UserFilter from '@/components/users/UserFilter';
 import UserStatsCards from '@/components/users/UserStatsCards';
 import { userColumns, userMobileColumns, getUserMobileTitle, UserMobileAction, getUserMobileFooter } from '@/components/users/user-columns';
-import { mockUsers, mockUserStats } from '@/static/usersMockData';
+import useUserStats from '@/hooks/useUserStats';
+import useUserList from '@/hooks/useUserList';
 
 export const Route = createFileRoute('/_admin/users/all')({
   component: AllUsersPage,
 });
+
+function TableSkeleton() {
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-10 flex-1" />
+        ))}
+      </div>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="flex gap-2">
+          {Array.from({ length: 6 }).map((_, j) => (
+            <Skeleton key={j} className="h-12 flex-1" />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function UsersPageContent() {
   const {
@@ -31,40 +52,18 @@ function UsersPageContent() {
     joinedAt,
   } = useUserListContext();
 
-  // Filter mock data based on filters (for demo purposes)
-  const filteredUsers = mockUsers.filter((user) => {
-    // Search filter
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      const matchesSearch =
-        user.first_name.toLowerCase().includes(search) ||
-        user.last_name.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search) ||
-        user.user_id.toLowerCase().includes(search);
-      if (!matchesSearch) return false;
-    }
+  // Fetch stats
+  const { stats, isStatsLoading } = useUserStats();
 
-    // KYC status filter
-    if (kycStatus.length > 0 && !kycStatus.includes(user.kyc_status)) {
-      return false;
-    }
-
-    // Account status filter
-    if (accountStatus.length > 0 && !accountStatus.includes(user.account_status)) {
-      return false;
-    }
-
-    // Risk level filter
-    if (riskLevel.length > 0 && !riskLevel.includes(user.risk_level)) {
-      return false;
-    }
-
-    // Country filter
-    if (country.length > 0 && !country.includes(user.country_id)) {
-      return false;
-    }
-
-    return true;
+  // Fetch users with filters
+  const { users, meta, isUsersLoading } = useUserList({
+    search_term: searchTerm || undefined,
+    kyc_status: kycStatus.length ? kycStatus : undefined,
+    account_status: accountStatus.length ? accountStatus : undefined,
+    risk_level: riskLevel.length ? riskLevel : undefined,
+    country: country.length ? country : undefined,
+    joined_at: joinedAt.length ? joinedAt : undefined,
+    page,
   });
 
   const isFilterActive =
@@ -75,19 +74,14 @@ function UsersPageContent() {
     !!country.length ||
     !!joinedAt.length;
 
-  const limit = 10;
-  // Mock meta for pagination
-  const meta = {
-    total: filteredUsers.length,
+  const paginationMeta = meta ?? {
+    total: 0,
     page,
-    limit,
-    total_page: Math.ceil(filteredUsers.length / limit),
-    has_next_page: page < Math.ceil(filteredUsers.length / limit),
-    has_previous_page: page > 1,
+    limit: 10,
+    total_page: 0,
+    has_next_page: false,
+    has_previous_page: false,
   };
-
-  // Pagination for mock data
-  const paginatedUsers = filteredUsers.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="space-y-6">
@@ -112,7 +106,7 @@ function UsersPageContent() {
       </div>
 
       {/* Stats Cards */}
-      <UserStatsCards stats={mockUserStats} />
+      <UserStatsCards stats={stats} isLoading={isStatsLoading} />
 
       {/* Search */}
       <TableSearch
@@ -125,33 +119,39 @@ function UsersPageContent() {
       />
 
       {/* Table */}
-      <CustomizableTable
-        tableKey="users-table"
-        defaultVisibleColumns={[
-          'sn', 'avatar', 'full_name', 'email', 'coffer_id', 'kyc_status', 'account_status', 'last_active', 'action'
-        ]}
-        columns={userColumns}
-        data={paginatedUsers}
-        meta={meta}
-        setPage={setPage}
-      >
-        <UserFilter />
-      </CustomizableTable>
+      {isUsersLoading ? (
+        <TableSkeleton />
+      ) : (
+        <CustomizableTable
+          tableKey="users-table"
+          defaultVisibleColumns={[
+            'sn', 'avatar', 'full_name', 'email', 'coffer_id', 'kyc_status', 'account_status', 'last_active', 'action'
+          ]}
+          columns={userColumns}
+          data={users}
+          meta={paginationMeta}
+          setPage={setPage}
+        >
+          <UserFilter />
+        </CustomizableTable>
+      )}
 
       {/* Mobile Cards */}
-      <MobileCards
-        data={paginatedUsers}
-        columns={userMobileColumns}
-        title={getUserMobileTitle}
-        action={UserMobileAction}
-        footer={getUserMobileFooter}
-        meta={meta}
-        setPage={setPage}
-        testIdKey="user_id"
-      />
+      {!isUsersLoading && (
+        <MobileCards
+          data={users}
+          columns={userMobileColumns}
+          title={getUserMobileTitle}
+          action={UserMobileAction}
+          footer={getUserMobileFooter}
+          meta={paginationMeta}
+          setPage={setPage}
+          testIdKey="user_id"
+        />
+      )}
 
       {/* Empty state */}
-      {filteredUsers.length === 0 && (
+      {!isUsersLoading && users.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
             {isFilterActive

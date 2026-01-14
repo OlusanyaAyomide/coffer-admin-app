@@ -1,12 +1,16 @@
 import { ReactNode, useMemo, useState } from 'react';
 import UserListContext, { UserListContextType } from './UserListContext';
+import useReadParams from '@/hooks/useReadParams';
 
 function UserListContextProvider({ children }: { children: ReactNode }) {
-  const [kycStatus, setKycStatus] = useState<string[]>([]);
-  const [accountStatus, setAccountStatus] = useState<string[]>([]);
-  const [riskLevel, setRiskLevel] = useState<string[]>([]);
-  const [country, setCountry] = useState<string[]>([]);
-  const [joinedAt, setJoinedAt] = useState<string[]>([]);
+
+  const params = useReadParams();
+
+  const [kycStatus, setKycStatus] = useState<string[]>(params.kyc_status || []);
+  const [accountStatus, setAccountStatus] = useState<string[]>(params.account_status || []);
+  const [riskLevel, setRiskLevel] = useState<string[]>(params.risk_level || []);
+  const [country, setCountry] = useState<string[]>(params.country || []);
+  const [joinedAt, setJoinedAt] = useState<string[]>(params.joined_at || []);
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
 

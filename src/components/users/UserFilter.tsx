@@ -5,8 +5,7 @@ import ComboBoxFilter from '@/components/shared/ComboBoxFilter';
 import { Button } from '@/components/ui/button';
 import useFilterSearchParam from '@/hooks/useFilterSearchParam';
 import { Filter } from 'lucide-react';
-import { useState } from 'react';
-import { countryOptions } from '@/static/usersMockData';
+import useCountrySearch from '@/hooks/useCountrySearch';
 
 const kycStatusOptions = [
   { label: 'Verified', value: 'verified' },
@@ -38,11 +37,11 @@ export default function UserFilter({ className }: { className?: string }) {
   } = useUserListContext();
 
   const { resetParams } = useFilterSearchParam();
-  const [countrySearchTerm, setCountrySearchTerm] = useState('');
-
-  const filteredCountryOptions = countryOptions.filter(
-    (c) => c.label.toLowerCase().includes(countrySearchTerm.toLowerCase())
-  );
+  const {
+    countrySuggestions,
+    setCountrySearchResult,
+    isCountrySearchLoading,
+  } = useCountrySearch();
 
   const ResetFilter = () => {
     setKycStatus([]);
@@ -62,8 +61,9 @@ export default function UserFilter({ className }: { className?: string }) {
     joinedAt.length,
   ].reduce((a, b) => a + b, 0);
 
+
   return (
-    <div className={`${className} flex flex-wrap gap-2 pt-1`}>
+    <div className={`${className} flex flex-wrap gap-2 pt-1 py-2`}>
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
         <Filter className="size-4 text-muted-foreground" />
         <span className="text-sm font-medium">Filters</span>
@@ -100,11 +100,11 @@ export default function UserFilter({ className }: { className?: string }) {
         <ComboBoxFilter
           title="Country"
           filterKey="country"
-          filterOptions={filteredCountryOptions}
+          filterOptions={countrySuggestions}
           activeFilters={country}
           setActiveFilters={setCountry}
-          setSearchResult={setCountrySearchTerm}
-          isPending={false}
+          setSearchResult={setCountrySearchResult}
+          isPending={isCountrySearchLoading}
         />
 
         <DateFilterButtons

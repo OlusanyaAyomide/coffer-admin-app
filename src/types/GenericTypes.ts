@@ -21,6 +21,7 @@ export type ComboboxContent = {
   label: string,
   value: string,
   sub_label?: string;
+  image_url?: string;
   meta?: Record<string, string>
 };
 

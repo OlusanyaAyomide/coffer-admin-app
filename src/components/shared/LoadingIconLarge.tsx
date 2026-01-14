@@ -21,14 +21,14 @@ export function LoadingIconLarge({ isLoading, className, svgClassName }:
   }
 
   const { theme } = useTheme();
-  const loader = theme === 'dark' ? '/PageLoader.gif' : '/PageLoadeDark.gif';
+  const loader = theme === 'dark' ? '/PageLoaderDark.gif' : '/PageLoader.gif';
   return (
     <div className={cn('flex items-center justify-center h-screen', className)}>
       <img
         src={loader}
         alt="Loading..."
-        width={150}
-        height={150}
+        width={350}
+        height={350}
         className={cn(svgClassName, "text-primary")}
       />
     </div>
