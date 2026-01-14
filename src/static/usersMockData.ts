@@ -8,120 +8,35 @@ export const mockUserStats: UserStats = {
   growth_percentage: 12,
 };
 
-export const mockUsers: UserData[] = [
-  {
-    id: '1',
-    user_id: 'UID-5501',
-    first_name: 'Alex',
-    last_name: 'Sterling',
-    email: 'alex.sterling@example.com',
-    kyc_status: 'verified',
-    account_status: 'active',
-    balance: 12450,
-    risk_level: 'low',
-    country_id: 'US',
-    last_active: '2026-01-13T20:00:00Z',
-    created_at: '2025-06-15T10:00:00Z',
-  },
-  {
-    id: '2',
-    user_id: 'UID-5502',
-    first_name: 'Jessica',
-    last_name: 'Morgan',
-    email: 'jessica.m@example.com',
-    kyc_status: 'pending',
-    account_status: 'active',
-    balance: 8750,
-    risk_level: 'low',
-    country_id: 'UK',
-    last_active: '2026-01-12T15:00:00Z',
-    created_at: '2025-07-20T14:30:00Z',
-  },
-  {
-    id: '3',
-    user_id: 'UID-5503',
-    first_name: 'Michael',
-    last_name: 'Chen',
-    email: 'mchen@example.com',
-    kyc_status: 'verified',
-    account_status: 'suspended',
-    balance: 0,
-    risk_level: 'high',
-    country_id: 'SG',
-    last_active: '2026-01-08T12:00:00Z',
-    created_at: '2025-03-10T08:00:00Z',
-  },
-  {
-    id: '4',
-    user_id: 'UID-5504',
-    first_name: 'Sarah',
-    last_name: 'Johnson',
-    email: 'sarah.j@example.com',
-    kyc_status: 'rejected',
-    account_status: 'inactive',
-    balance: 500,
-    risk_level: 'high',
-    country_id: 'CA',
-    last_active: '2026-01-05T09:00:00Z',
-    created_at: '2025-09-01T11:00:00Z',
-  },
-  {
-    id: '5',
-    user_id: 'UID-5505',
-    first_name: 'David',
-    last_name: 'Williams',
-    email: 'dwilliams@example.com',
-    kyc_status: 'verified',
-    account_status: 'active',
-    balance: 25000,
-    risk_level: 'medium',
-    country_id: 'NG',
-    last_active: '2026-01-13T18:00:00Z',
-    created_at: '2025-01-15T16:00:00Z',
-  },
-  {
-    id: '6',
-    user_id: 'UID-5506',
-    first_name: 'Emily',
-    last_name: 'Brown',
-    email: 'emily.b@example.com',
-    kyc_status: 'not_started',
-    account_status: 'active',
-    balance: 100,
-    risk_level: 'low',
-    country_id: 'AU',
-    last_active: '2026-01-13T21:00:00Z',
-    created_at: '2026-01-10T10:00:00Z',
-  },
-  {
-    id: '7',
-    user_id: 'UID-5507',
-    first_name: 'James',
-    last_name: 'Taylor',
-    email: 'jtaylor@example.com',
-    kyc_status: 'verified',
-    account_status: 'active',
-    balance: 45000,
-    risk_level: 'low',
-    country_id: 'DE',
-    last_active: '2026-01-13T19:00:00Z',
-    created_at: '2024-11-20T14:00:00Z',
-  },
-  {
-    id: '8',
-    user_id: 'UID-5508',
-    first_name: 'Olivia',
-    last_name: 'Martinez',
-    email: 'olivia.m@example.com',
-    kyc_status: 'pending',
-    account_status: 'active',
-    balance: 3200,
-    risk_level: 'medium',
-    country_id: 'MX',
-    last_active: '2026-01-12T11:00:00Z',
-    created_at: '2025-08-05T09:00:00Z',
-  },
-];
+const firstNames = ['Alex', 'Jessica', 'Michael', 'Sarah', 'David', 'Emily', 'James', 'Olivia', 'Robert', 'Sophia', 'William', 'Isabella', 'Joseph', 'Mia', 'Thomas', 'Charlotte', 'Christopher', 'Amelia', 'Daniel', 'Evelyn'];
+const lastNames = ['Sterling', 'Morgan', 'Chen', 'Johnson', 'Williams', 'Brown', 'Taylor', 'Martinez', 'Anderson', 'Thomas', 'Garcia', 'White', 'Harris', 'Martin', 'Thompson', 'Moore', 'Young', 'Allen', 'King', 'Wright'];
+const countries = ['US', 'UK', 'SG', 'CA', 'NG', 'AU', 'DE', 'MX', 'BR', 'FR'];
+const kycStatuses: ('verified' | 'pending' | 'rejected' | 'not_started')[] = ['verified', 'pending', 'rejected', 'not_started'];
+const accountStatuses: ('active' | 'suspended' | 'inactive')[] = ['active', 'suspended', 'inactive'];
+const riskLevels: ('low' | 'medium' | 'high')[] = ['low', 'medium', 'high'];
+
+export const mockUsers: UserData[] = Array.from({ length: 50 }, (_, i) => {
+  const firstName = firstNames[i % firstNames.length];
+  const lastName = lastNames[i % lastNames.length];
+  const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`;
+
+  return {
+    id: (i + 1).toString(),
+    user_id: `UID-${5501 + i}`,
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    kyc_status: kycStatuses[i % kycStatuses.length],
+    account_status: accountStatuses[i % accountStatuses.length],
+    balance: Math.floor(Math.random() * 50000),
+    naira_balance: Math.floor(Math.random() * 1000000),
+    usdt_balance: Math.floor(Math.random() * 10000),
+    risk_level: riskLevels[i % riskLevels.length],
+    country_id: countries[i % countries.length],
+    last_active: new Date(Date.now() - Math.random() * 1000000000).toISOString(),
+    created_at: new Date(Date.now() - Math.random() * 50000000000).toISOString(),
+  };
+});
 
 export const countryOptions = [
   { label: 'United States', value: 'US' },
@@ -132,4 +47,6 @@ export const countryOptions = [
   { label: 'Australia', value: 'AU' },
   { label: 'Germany', value: 'DE' },
   { label: 'Mexico', value: 'MX' },
+  { label: 'Brazil', value: 'BR' },
+  { label: 'France', value: 'FR' },
 ];

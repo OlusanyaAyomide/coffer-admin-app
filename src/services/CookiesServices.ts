@@ -21,7 +21,7 @@ function setTokenCookie(name: string, value: string, expiryDays: number) {
   Cookies.set(name, value, { secure: true, expires: expiryDays });
 }
 
-function setSplitAuthToken(token: string, expirySeconds: number, type: 'access' | 'refresh') {
+export function setSplitAuthToken(token: string, expirySeconds: number, type: 'access' | 'refresh') {
   const tokenArr = splitToken(token);
   const keys = type === 'access' ? ACC_KEYS : REF_KEYS;
   const expiryDays = expirySeconds / 86400; // convert seconds to days

@@ -68,3 +68,14 @@ export type DeviceVerificationError = {
   message: string;
   redirect_action: 'verify_device';
 };
+
+export type RefreshTokenResponse = {
+  data: {
+    token: {
+      access_token: string;
+      access_token_expiry: number
+      refresh_token: string;
+      refresh_token_expiry: number
+    }
+  }
+}

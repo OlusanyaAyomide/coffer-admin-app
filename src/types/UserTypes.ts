@@ -9,6 +9,8 @@ export type UserData = {
   kyc_status: 'verified' | 'pending' | 'rejected' | 'not_started';
   account_status: 'active' | 'suspended' | 'inactive';
   balance: number;
+  naira_balance: number;
+  usdt_balance: number;
   risk_level: 'low' | 'medium' | 'high';
   country_id: string;
   last_active: string;

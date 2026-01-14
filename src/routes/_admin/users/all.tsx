@@ -74,15 +74,19 @@ function UsersPageContent() {
     !!country.length ||
     !!joinedAt.length;
 
+  const limit = 10;
   // Mock meta for pagination
   const meta = {
     total: filteredUsers.length,
     page,
-    limit: 10,
-    total_page: Math.ceil(filteredUsers.length / 10),
-    has_next_page: page < Math.ceil(filteredUsers.length / 10),
+    limit,
+    total_page: Math.ceil(filteredUsers.length / limit),
+    has_next_page: page < Math.ceil(filteredUsers.length / limit),
     has_previous_page: page > 1,
   };
+
+  // Pagination for mock data
+  const paginatedUsers = filteredUsers.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="space-y-6">
@@ -123,10 +127,10 @@ function UsersPageContent() {
       <CustomizableTable
         tableKey="users-table"
         defaultVisibleColumns={[
-          'sn', 'avatar', 'full_name', 'coffer_id', 'kyc_status', 'account_status', 'balance', 'last_active', 'action'
+          'sn', 'avatar', 'full_name', 'email', 'coffer_id', 'kyc_status', 'account_status', 'last_active', 'action'
         ]}
         columns={userColumns}
-        data={filteredUsers}
+        data={paginatedUsers}
         meta={meta}
         setPage={setPage}
       >
