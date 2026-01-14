@@ -4,13 +4,14 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Download, Filter } from 'lucide-react';
 
 import CustomizableTable from '@/components/shared/CustomizableTable';
+import MobileCards from '@/components/shared/MobileCards';
 import { TableSearch } from '@/components/shared/TableSearch';
 import { Button } from '@/components/ui/button';
 import UserListContextProvider from '@/components/users/UserListContextProvider';
 import useUserListContext from '@/components/users/useUserListContext';
 import UserFilter from '@/components/users/UserFilter';
 import UserStatsCards from '@/components/users/UserStatsCards';
-import { userColumns } from '@/components/users/user-columns';
+import { userColumns, userMobileColumns, getUserMobileTitle, UserMobileAction, getUserMobileFooter } from '@/components/users/user-columns';
 import { mockUsers, mockUserStats } from '@/static/usersMockData';
 
 export const Route = createFileRoute('/_admin/users/all')({
@@ -136,6 +137,18 @@ function UsersPageContent() {
       >
         <UserFilter />
       </CustomizableTable>
+
+      {/* Mobile Cards */}
+      <MobileCards
+        data={paginatedUsers}
+        columns={userMobileColumns}
+        title={getUserMobileTitle}
+        action={UserMobileAction}
+        footer={getUserMobileFooter}
+        meta={meta}
+        setPage={setPage}
+        testIdKey="user_id"
+      />
 
       {/* Empty state */}
       {filteredUsers.length === 0 && (

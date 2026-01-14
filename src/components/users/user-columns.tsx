@@ -175,3 +175,63 @@ export const userColumns: ExtendedColumnDef<UserData>[] = [
     ),
   },
 ];
+
+// Mobile columns for MobileCards component
+import type { MobileRow } from '@/components/shared/MobileCards';
+
+export const userMobileColumns: MobileRow<UserData>[] = [
+  {
+    cell: ({ row }) => (
+      <span className="text-muted-foreground text-xs">{row.email}</span>
+    ),
+    showBorder: true,
+  },
+  {
+    cell: ({ row }) => (
+      <span className={cn('text-xs font-medium', getKycStatusColor(row.kyc_status))}>
+        {titleCase(row.kyc_status.replace('_', ' '))}
+      </span>
+    ),
+    showBorder: true,
+  },
+  {
+    cell: ({ row }) => (
+      <span className={cn('text-xs font-medium', getAccountStatusColor(row.account_status))}>
+        {titleCase(row.account_status)}
+      </span>
+    ),
+    showBorder: false,
+  },
+];
+
+// Mobile card title component
+export const getUserMobileTitle = (row: UserData) => (
+  <div className="flex items-center gap-3">
+    <Avatar className={cn('h-9 w-9', getAvatarColor(row.first_name))}>
+      <AvatarFallback className={cn('text-white text-sm font-medium', getAvatarColor(row.first_name))}>
+        {getInitials(row.first_name, row.last_name)}
+      </AvatarFallback>
+    </Avatar>
+    <div className="flex flex-col">
+      <span className="font-medium text-foreground">
+        {row.first_name} {row.last_name}
+      </span>
+      <span className="text-xs text-muted-foreground">{row.user_id}</span>
+    </div>
+  </div>
+);
+
+// Mobile card action component
+export const UserMobileAction = ({ row: _row }: { row: UserData }) => (
+  <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
+    View
+  </Button>
+);
+
+// Mobile card footer component
+export const getUserMobileFooter = ({ row }: { row: UserData }) => (
+  <div className="flex justify-between text-xs text-muted-foreground">
+    <span>Joined {format(new Date(row.created_at), 'MMM d, yyyy')}</span>
+    <span>Active {formatDistanceToNow(new Date(row.last_active), { addSuffix: true })}</span>
+  </div>
+);
