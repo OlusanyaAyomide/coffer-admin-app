@@ -181,16 +181,20 @@ export const userColumns: ExtendedColumnDef<UserData>[] = [
     meta: {
       className: 'w-[80px]',
     },
-    cell: () => (
-      <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
-        View
-      </Button>
+    cell: ({ row }) => (
+      <TransitionLink
+        to={`/users/${row.original.id}`}>
+        <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
+          View
+        </Button>
+      </TransitionLink>
     ),
   },
 ];
 
 // Mobile columns for MobileCards component
 import type { MobileRow } from '@/components/shared/MobileCards';
+import TransitionLink from '../layout/TransitionLink';
 
 export const userMobileColumns: MobileRow<UserData>[] = [
   {

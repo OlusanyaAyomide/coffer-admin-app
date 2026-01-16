@@ -64,8 +64,8 @@ export default function AdminSidebar() {
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-center h-11 px-0 text-sidebar-foreground hover:bg-accent hover:text-sidebar-foreground relative",
-              isActive && "text-primary font-semibold hover:text-primary"
+              "w-full justify-center h-11 px-0 text-white/70 hover:bg-white/10 hover:text-white relative transition-all duration-200 ease-in-out",
+              isActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary"
             )}
           >
             {item.icon && <item.icon className="size-5 shrink-0" />}
@@ -82,8 +82,8 @@ export default function AdminSidebar() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start h-8 px-2 text-sidebar-foreground hover:bg-accent hover:text-sidebar-foreground",
-                        isSubActive && "text-primary font-semibold hover:text-primary"
+                        "w-full justify-start h-8 px-2 text-white/70 hover:bg-white/10 text-foreground",
+                        isSubActive && "text-foreground font-semibold bg-white/10"
                       )}
                     >
                       <span className="text-sm">{subItem.title}</span>
@@ -101,7 +101,7 @@ export default function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-sidebar border-r transition-all duration-200 ease-linear sticky top-0",
+        "flex flex-col h-screen bg-primary border-r transition-all duration-200 ease-linear sticky top-0",
         isCollapsed ? "w-16" : "w-64"
       )}
     >
@@ -117,7 +117,7 @@ export default function AdminSidebar() {
           size="icon-sm"
           onClick={toggleSidebar}
           className={cn(
-            "text-sidebar-foreground hover:bg-sidebar-accent",
+            "text-white/70 hover:bg-white/10 hover:text-white",
             isCollapsed && "mx-auto"
           )}
         >
@@ -126,7 +126,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-2">
+      <nav className="flex-1 overflow-y-auto pl-2 py-2 pr-0">
         <ul className="flex flex-col gap-4">
           {adminNavData.navMain.map((item) => {
             // Check if item has sub-items
@@ -152,11 +152,12 @@ export default function AdminSidebar() {
                   <li>
                     <CollapsibleTrigger asChild disabled={isActive}>
                       <Button
-                        variant="ghost"
+                        // variant="ghost"
                         className={cn(
-                          "w-full justify-start gap-3 h-11 px-3 text-sidebar-foreground hover:bg-accent hover:text-sidebar-foreground relative disabled:opacity-100",
-                          isActive && "text-primary font-semibold hover:text-primary",
-                          isActive && "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-7 before:w-1 before:bg-primary before:rounded-r-full"
+                          "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5 hover:text-white relative disabled:opacity-100",
+                          "data-[state=open]:text-white data-[state=open]:font-semibold",
+                          isActive && "text-white font-semibold bg-white/5",
+                          isActive && "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-7 before:w-1 before:bg-white before:rounded-r-full"
                         )}
                       >
                         {item.icon && <item.icon className="size-5 shrink-0" />}
@@ -172,10 +173,10 @@ export default function AdminSidebar() {
                             <li key={subItem.title}>
                               <TransitionLink to={subItem.url}>
                                 <Button
-                                  variant="ghost"
+                                  // variant="ghost"
                                   className={cn(
-                                    "w-full justify-start h-8 px-3 text-sidebar-foreground hover:bg-accent hover:text-sidebar-foreground relative",
-                                    isSubActive && "text-primary font-semibold hover:text-primary before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:bg-primary before:rounded-r-full"
+                                    "w-full justify-start h-8 px-3 text-white/70 hover:bg-white/5 hover:text-white relative font-medium transition-all duration-200 ease-in-out",
+                                    isSubActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7"
                                   )}
                                 >
                                   <span className="text-sm">{subItem.title}</span>
@@ -210,9 +211,9 @@ export default function AdminSidebar() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start gap-3 h-11 px-3 text-sidebar-foreground hover:bg-accent hover:text-sidebar-foreground relative",
+                        "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5 hover:text-white relative transition-all duration-200 ease-in-out",
                         isCollapsed && "justify-center px-0",
-                        isItemActive && "text-primary font-semibold hover:text-primary before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-7 before:w-1 before:bg-primary before:rounded-r-full"
+                        isItemActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-2"
                       )}
                     >
                       {item.icon && <item.icon className="size-5 shrink-0" />}
@@ -233,7 +234,7 @@ export default function AdminSidebar() {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+              className="w-full text-red-300 hover:text-red-200 hover:bg-red-500/10"
             >
               <LogOut className="size-4" />
             </Button>
@@ -241,13 +242,14 @@ export default function AdminSidebar() {
         ) : (
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 h-11 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="w-full justify-start gap-3 h-11 px-3 text-red-300 hover:text-red-200 hover:bg-red-500/10"
           >
             <LogOut className="size-5 shrink-0" />
             <span className="text-sm">Logout</span>
           </Button>
-        )}
-      </div>
-    </aside>
+        )
+        }
+      </div >
+    </aside >
   )
 }

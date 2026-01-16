@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
@@ -23,6 +21,7 @@ type ChartContextProps = {
 }
 
 const ChartContext = React.createContext<ChartContextProps | null>(null)
+
 
 function useChart() {
   const context = React.useContext(ChartContext)
@@ -118,13 +117,15 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+}: React.ComponentProps<typeof RechartsPrimitive.Tooltip<any, any>> &
   React.ComponentProps<"div"> & {
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
+    payload: any[]
+    label: any
   }) {
   const { config } = useChart()
 
@@ -138,7 +139,7 @@ function ChartTooltipContent({
     const itemConfig = getPayloadConfigFromPayload(config, item, key)
     const value =
       !labelKey && typeof label === "string"
-        ? config[label]?.label || label
+        ? config[label as keyof typeof config]?.label || label
         : itemConfig?.label
 
     if (labelFormatter) {
@@ -173,7 +174,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "border-border/50 bg-background gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl grid min-w-32 items-start",
+        "border-border/50 bg-background gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl grid min-w-[8rem] items-start",
         className
       )}
     >
@@ -259,9 +260,10 @@ function ChartLegendContent({
   verticalAlign = "bottom",
   nameKey,
 }: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  Pick<RechartsPrimitive.LegendProps, "verticalAlign"> & {
     hideIcon?: boolean
     nameKey?: string
+    payload?: any[]
   }) {
   const { config } = useChart()
 
@@ -343,7 +345,7 @@ function getPayloadConfigFromPayload(
 
   return configLabelKey in config
     ? config[configLabelKey]
-    : config[key]
+    : config[key as keyof typeof config]
 }
 
 export {

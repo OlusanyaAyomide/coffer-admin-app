@@ -19,6 +19,7 @@ import { Route as AdminKycRouteImport } from './routes/_admin/kyc'
 import { Route as AdminUsersReferralTreeRouteImport } from './routes/_admin/users/referral-tree'
 import { Route as AdminUsersAllRouteImport } from './routes/_admin/users/all'
 import { Route as AdminUsersActivityLogsRouteImport } from './routes/_admin/users/activity-logs'
+import { Route as AdminUsersUserIdRouteImport } from './routes/_admin/users/$userId'
 import { Route as AdminSettingsCountriesRouteImport } from './routes/_admin/settings/countries'
 import { Route as AdminSettingsConfigRouteImport } from './routes/_admin/settings/config'
 import { Route as AdminSettingsAccessRouteImport } from './routes/_admin/settings/access'
@@ -83,6 +84,11 @@ const AdminUsersAllRoute = AdminUsersAllRouteImport.update({
 const AdminUsersActivityLogsRoute = AdminUsersActivityLogsRouteImport.update({
   id: '/users/activity-logs',
   path: '/users/activity-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSettingsCountriesRoute = AdminSettingsCountriesRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/settings/access': typeof AdminSettingsAccessRoute
   '/settings/config': typeof AdminSettingsConfigRoute
   '/settings/countries': typeof AdminSettingsCountriesRoute
+  '/users/$userId': typeof AdminUsersUserIdRoute
   '/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/settings/access': typeof AdminSettingsAccessRoute
   '/settings/config': typeof AdminSettingsConfigRoute
   '/settings/countries': typeof AdminSettingsCountriesRoute
+  '/users/$userId': typeof AdminUsersUserIdRoute
   '/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/_admin/settings/access': typeof AdminSettingsAccessRoute
   '/_admin/settings/config': typeof AdminSettingsConfigRoute
   '/_admin/settings/countries': typeof AdminSettingsCountriesRoute
+  '/_admin/users/$userId': typeof AdminUsersUserIdRoute
   '/_admin/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/_admin/users/all': typeof AdminUsersAllRoute
   '/_admin/users/referral-tree': typeof AdminUsersReferralTreeRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/settings/access'
     | '/settings/config'
     | '/settings/countries'
+    | '/users/$userId'
     | '/users/activity-logs'
     | '/users/all'
     | '/users/referral-tree'
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/settings/access'
     | '/settings/config'
     | '/settings/countries'
+    | '/users/$userId'
     | '/users/activity-logs'
     | '/users/all'
     | '/users/referral-tree'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/_admin/settings/access'
     | '/_admin/settings/config'
     | '/_admin/settings/countries'
+    | '/_admin/users/$userId'
     | '/_admin/users/activity-logs'
     | '/_admin/users/all'
     | '/_admin/users/referral-tree'
@@ -421,6 +433,13 @@ declare module '@tanstack/react-router' {
       path: '/users/activity-logs'
       fullPath: '/users/activity-logs'
       preLoaderRoute: typeof AdminUsersActivityLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/users/$userId': {
+      id: '/_admin/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof AdminUsersUserIdRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/settings/countries': {
@@ -579,6 +598,7 @@ interface AdminRouteChildren {
   AdminSettingsAccessRoute: typeof AdminSettingsAccessRoute
   AdminSettingsConfigRoute: typeof AdminSettingsConfigRoute
   AdminSettingsCountriesRoute: typeof AdminSettingsCountriesRoute
+  AdminUsersUserIdRoute: typeof AdminUsersUserIdRoute
   AdminUsersActivityLogsRoute: typeof AdminUsersActivityLogsRoute
   AdminUsersAllRoute: typeof AdminUsersAllRoute
   AdminUsersReferralTreeRoute: typeof AdminUsersReferralTreeRoute
@@ -604,6 +624,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSettingsAccessRoute: AdminSettingsAccessRoute,
   AdminSettingsConfigRoute: AdminSettingsConfigRoute,
   AdminSettingsCountriesRoute: AdminSettingsCountriesRoute,
+  AdminUsersUserIdRoute: AdminUsersUserIdRoute,
   AdminUsersActivityLogsRoute: AdminUsersActivityLogsRoute,
   AdminUsersAllRoute: AdminUsersAllRoute,
   AdminUsersReferralTreeRoute: AdminUsersReferralTreeRoute,
