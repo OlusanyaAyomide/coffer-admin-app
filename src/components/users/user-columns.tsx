@@ -40,7 +40,7 @@ const getInitials = (firstName: string, lastName: string) => {
 
 const getAvatarColor = (name: string) => {
   const colors = [
-    'bg-blue-500/50',
+    'bg-primary/50',
     'bg-green-500/50',
     'bg-purple-500/50',
     'bg-orange-500/50',

@@ -35,7 +35,7 @@ export default function HeaderNavButton({ children, className, iconClassName }: 
   return (
     <div
       className={cn(
-        'flex justify-between gap-2 mb-10 max-w-[1205px]',
+        'flex justify-between gap-2 mb-4 max-w-[1205px]',
         className,
       )}
     >

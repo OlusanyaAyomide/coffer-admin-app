@@ -7,6 +7,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import UserDetailsHeader from '@/components/users/details/UserDetailsHeader';
 import UserDetailsStats from '@/components/users/details/UserDetailsStats';
 import UserDetailsTabs from '@/components/users/details/UserDetailsTabs';
+import HeaderNavButton from '@/components/shared/HeaderNavButton';
 
 export const Route = createFileRoute('/_admin/users/$userId')({
   component: UserDetailsPage,
@@ -23,18 +24,9 @@ function UserDetailsPage() {
   return (
     <div className="space-y-6 pb-10">
       {/* Back Button */}
-      {/* <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-1 text-muted-foreground hover:text-foreground pl-0"
-          onClick={handleBack}
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Back to Users
-        </Button>
-      </div> */}
-
+      <HeaderNavButton>
+        <span />
+      </HeaderNavButton>
       {/* Header Section */}
       <UserDetailsHeader userId={userId} />
 

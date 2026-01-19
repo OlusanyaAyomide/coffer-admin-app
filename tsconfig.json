@@ -25,7 +25,7 @@
     "noEmit": true,
     /* Linting */
     "skipLibCheck": true,
-    // "strict": true,
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,

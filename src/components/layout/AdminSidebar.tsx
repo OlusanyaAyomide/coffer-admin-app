@@ -1,5 +1,6 @@
 import { ChevronRight, LogOut, PanelLeft } from 'lucide-react'
 import { useLocation } from '@tanstack/react-router'
+import { useCallback } from 'react'
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,10 +22,20 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
+import useWindowProperties from '@/hooks/useWindowProperty'
 
 export default function AdminSidebar() {
   const { pathname } = useLocation()
-  const { isCollapsed, toggleSidebar } = useSidebar()
+  const { isCollapsed, setIsCollapsed, toggleSidebar } = useSidebar()
+
+  // Auto-collapse sidebar on mobile/tablet
+  const handleMobile = useCallback(() => {
+    setIsCollapsed(true)
+  }, [setIsCollapsed])
+
+  useWindowProperties({
+    onTabCallBack: handleMobile,
+  })
 
   // Helper to check if a route is active
   const checkActive = (url: string) => {
@@ -65,7 +76,7 @@ export default function AdminSidebar() {
             variant="ghost"
             className={cn(
               "w-full justify-center h-11 px-0 text-white/70 hover:bg-white/10 hover:text-white relative transition-all duration-200 ease-in-out",
-              isActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary"
+              isActive && "bg-background text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary"
             )}
           >
             {item.icon && <item.icon className="size-5 shrink-0" />}
@@ -176,7 +187,7 @@ export default function AdminSidebar() {
                                   // variant="ghost"
                                   className={cn(
                                     "w-full justify-start h-8 px-3 text-white/70 hover:bg-white/5 hover:text-white relative font-medium transition-all duration-200 ease-in-out",
-                                    isSubActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7"
+                                    isSubActive && "bg-white text-primary! rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7"
                                   )}
                                 >
                                   <span className="text-sm">{subItem.title}</span>
@@ -211,9 +222,9 @@ export default function AdminSidebar() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5 hover:text-white relative transition-all duration-200 ease-in-out",
+                        "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5! hover:text-white relative transition-all duration-200 ease-in-out",
                         isCollapsed && "justify-center px-0",
-                        isItemActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-2"
+                        isItemActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white! hover:text-primary pl-2"
                       )}
                     >
                       {item.icon && <item.icon className="size-5 shrink-0" />}

@@ -4,6 +4,7 @@ import * as React from "react"
 
 type SidebarContextProps = {
   isCollapsed: boolean
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>
   toggleSidebar: () => void
 }
 
@@ -38,7 +39,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   }, [toggleSidebar])
 
   const contextValue = React.useMemo(
-    () => ({ isCollapsed, toggleSidebar }),
+    () => ({ isCollapsed, setIsCollapsed, toggleSidebar }),
     [isCollapsed, toggleSidebar]
   )
 
@@ -48,3 +49,4 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     </SidebarContext.Provider>
   )
 }
+

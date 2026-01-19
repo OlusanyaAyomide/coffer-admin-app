@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
 // import { Separator } from '@/components/ui/separator';
-import { Calendar, Mail, Smartphone, Share2, User } from 'lucide-react';
+import { Calendar, Mail, Share2, CheckCircle2, Clock, Circle, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -19,14 +19,12 @@ export default function OverviewTab() {
     accountType: 'Premium Individual',
   };
 
-  const riskScore = 96;
-
   const adminNotes = [
     {
       author: 'Sarah Admin',
       date: 'Nov 12, 10:00 AM',
       content: 'User requested withdrawal limit increase. Approved based on tenure and clean history.',
-      avatarColor: 'bg-blue-500',
+      avatarColor: 'bg-primary',
     },
     {
       author: 'System Bot',
@@ -71,8 +69,8 @@ export default function OverviewTab() {
               <div>
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">REFERRAL STATUS</span>
                 <div className="mt-1 flex items-center gap-2">
-                  <Share2 className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm font-medium text-blue-500">{accountInfo.referralStatus}</span>
+                  <Share2 className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">{accountInfo.referralStatus}</span>
                 </div>
               </div>
             </div>
@@ -88,57 +86,82 @@ export default function OverviewTab() {
                 </div>
               </div>
 
-              <div>
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">PHONE VERIFICATION</span>
-                <div className="mt-1 flex items-center gap-2">
-                  <Smartphone className="h-4 w-4 text-green-500" />
-                  <span className="text-sm font-medium text-green-500">Verified ({accountInfo.phoneNumber})</span>
-                </div>
-              </div>
-
-              <div>
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">ACCOUNT TYPE</span>
-                <div className="mt-1 flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">{accountInfo.accountType}</span>
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Risk Assessment */}
+        {/* KYC Tier Progress */}
         <Card className="bg-card border-border">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <h3 className="text-lg font-medium">Risk Assessment</h3>
-                <p className="text-sm text-muted-foreground max-w-lg mt-1">
-                  User has passed all Tier 3 KYC checks. No suspicious login activity detected in the last 90 days.
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-4xl font-bold">{riskScore}/100</div>
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mt-1">TRUST SCORE</div>
-              </div>
-            </div>
+          <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-lg font-medium">KYC Tier Progress</CardTitle>
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              View All KYC
+            </Button>
+          </CardHeader>
+          <CardContent className="p-6 pt-2">
+            <div className="relative pl-2">
+              {/* Vertical Line - Centered through the 24px circles */}
+              <div className="absolute left-[18px] top-3 bottom-8 w-[2px] bg-border/60"></div>
 
-            <div className="mt-6">
-              <div className="flex justify-between text-xs font-medium mb-2">
-                <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 uppercase">
-                  Low Risk
-                </Badge>
-                <div className="flex gap-8 text-muted-foreground">
-                  <span className="text-foreground">Low</span>
-                  <span>Medium</span>
-                  <span>High</span>
+              {/* Band C (Completed) */}
+              <div className="relative flex gap-4 mb-8">
+                <div className="relative z-10">
+                  <div className="h-6 w-6 rounded-full bg-primary border-2 border-background shadow-sm flex items-center justify-center">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1 pt-0.5">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-semibold text-sm text-foreground">Band C</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">Verified - Basic Identity</p>
+                    </div>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs text-primary hover:text-primary brightness-105 px-2 -mr-2">
+                      View
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground bg-secondary/30 w-fit px-2 py-1 rounded-md">
+                    <Clock className="h-3 w-3" />
+                    <span>Oct 24, 2023, 10:00 AM</span>
+                  </div>
                 </div>
               </div>
-              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-linear-to-r from-green-500 via-green-400 to-green-500 rounded-full"
-                  style={{ width: `${riskScore}%` }}
-                />
+
+              {/* Band B (Completed) */}
+              <div className="relative flex gap-4 mb-8">
+                <div className="relative z-10">
+                  <div className="h-6 w-6 rounded-full bg-primary border-2 border-background shadow-sm flex items-center justify-center">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1 pt-0.5">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-semibold text-sm text-foreground">Band B</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">Verified - Address Proof</p>
+                    </div>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs text-primary hover:primary px-2 -mr-2">
+                      View
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground bg-secondary/30 w-fit px-2 py-1 rounded-md">
+                    <Clock className="h-3 w-3" />
+                    <span>Oct 25, 2023, 02:30 PM</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Band A (Not Completed - Grayed Out) */}
+              <div className="relative flex gap-4">
+                <div className="relative z-10">
+                  <div className="h-6 w-6 rounded-full bg-muted border-2 border-background shadow-sm flex items-center justify-center">
+                    <Circle className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+                <div className="flex-1 opacity-50 pt-0.5">
+                  <h4 className="font-semibold text-sm text-foreground">Band A</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">Not Completed - Advanced Due Diligence</p>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -150,7 +173,7 @@ export default function OverviewTab() {
         <Card className="bg-card border-border h-full flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-medium">Admin Notes</CardTitle>
-            <Button variant="ghost" size="sm" className="text-blue-500 hover:text-blue-600 hover:bg-blue-50 h-auto py-1 px-2 text-xs font-medium">
+            <Button variant="ghost" size="sm" className="text-primary hover:text-primary brightness-105 hover:bg-primary/10 h-auto py-1 px-2 text-xs font-medium">
               ADD NOTE
             </Button>
           </CardHeader>
@@ -184,7 +207,7 @@ export default function OverviewTab() {
                   className="w-full bg-secondary/50 border border-border rounded-lg py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <Button size="icon" variant="ghost" className="absolute right-1 top-1 h-7 w-7 text-primary">
-                  <Share2 className="h-3 w-3 rotate-45" /> {/* Using Share as send icon placeholder */}
+                  <Send className="h-3 w-3 rotate-45" /> {/* Using Share as send icon placeholder */}
                 </Button>
               </div>
             </div>

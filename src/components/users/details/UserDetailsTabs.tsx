@@ -1,60 +1,66 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OverviewTab from './OverviewTab';
 import WalletLedgerTab from './WalletLedgerTab';
+import CofferPlansTab from './coffer/CofferPlansTab';
+import CofferPlansContextProvider from './coffer/CofferPlansContextProvider';
+import TransactionHistoryTab from './transactions/TransactionHistoryTab';
+import TransactionHistoryContextProvider from './transactions/TransactionHistoryContextProvider';
 
 export default function UserDetailsTabs() {
   return (
     <Tabs defaultValue="overview" className="w-full space-y-6">
-      <TabsList className="w-full justify-start border-b border-border bg-transparent p-0 h-auto rounded-none space-x-6">
-        <TabsTrigger
-          value="overview"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Overview
-        </TabsTrigger>
-        <TabsTrigger
-          value="wallet"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Wallet & Ledger
-        </TabsTrigger>
-        <TabsTrigger
-          value="plans"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Coffer Plans
-        </TabsTrigger>
-        <TabsTrigger
-          value="locker"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Locker (MMF)
-        </TabsTrigger>
-        <TabsTrigger
-          value="transactions"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Transactions History
-        </TabsTrigger>
-        <TabsTrigger
-          value="security"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Security & Verification
-        </TabsTrigger>
-        <TabsTrigger
-          value="profile"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Profile & Contact
-        </TabsTrigger>
-        <TabsTrigger
-          value="logs"
-          className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
-        >
-          Admin Actions & Logs
-        </TabsTrigger>
-      </TabsList>
+      <div className="overflow-x-auto -mx-1 px-1">
+        <TabsList className="w-max min-w-full justify-start border-b border-border bg-transparent p-0 h-auto rounded-none space-x-6 flex-nowrap">
+          <TabsTrigger
+            value="overview"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Overview
+          </TabsTrigger>
+          <TabsTrigger
+            value="wallet"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Wallet & Ledger
+          </TabsTrigger>
+          <TabsTrigger
+            value="plans"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Coffer Plans
+          </TabsTrigger>
+          <TabsTrigger
+            value="locker"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Locker (MMF)
+          </TabsTrigger>
+          <TabsTrigger
+            value="transactions"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Transactions History
+          </TabsTrigger>
+          <TabsTrigger
+            value="security"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Security & Verification
+          </TabsTrigger>
+          <TabsTrigger
+            value="profile"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Profile & Contact
+          </TabsTrigger>
+          <TabsTrigger
+            value="logs"
+            className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
+          >
+            Admin Actions & Logs
+          </TabsTrigger>
+        </TabsList>
+      </div>
 
       <TabsContent value="overview" className="space-y-6 mt-6">
         <OverviewTab />
@@ -64,11 +70,10 @@ export default function UserDetailsTabs() {
         <WalletLedgerTab />
       </TabsContent>
 
-      {/* Placeholders for other tabs */}
       <TabsContent value="plans" className="mt-6">
-        <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
-          <p className="text-muted-foreground">Coffer Plans Content</p>
-        </div>
+        <CofferPlansContextProvider>
+          <CofferPlansTab />
+        </CofferPlansContextProvider>
       </TabsContent>
       <TabsContent value="locker" className="mt-6">
         <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
@@ -76,9 +81,9 @@ export default function UserDetailsTabs() {
         </div>
       </TabsContent>
       <TabsContent value="transactions" className="mt-6">
-        <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
-          <p className="text-muted-foreground">Transactions History Content</p>
-        </div>
+        <TransactionHistoryContextProvider>
+          <TransactionHistoryTab />
+        </TransactionHistoryContextProvider>
       </TabsContent>
       <TabsContent value="security" className="mt-6">
         <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
