@@ -1,8 +1,8 @@
+import { Filter } from 'lucide-react';
 import useCofferPlansContext from './useCofferPlansContext';
 import FilterButtons from '@/components/shared/FilterButtons';
 import DateFilterButtons from '@/components/shared/DateFilter';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
 
 const investmentStatusOptions = [
   { label: 'Active', value: 'active' },

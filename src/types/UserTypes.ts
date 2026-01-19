@@ -26,7 +26,7 @@ export type UserData = {
 
 export type UserListResponse = {
   data: {
-    users: UserData[];
+    users: Array<UserData>;
   };
   meta: {
     total: number;

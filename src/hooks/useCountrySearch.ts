@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import useGetRequest from '@/hooks/useGetRequests';
 import type { QueryError } from '@/types/ResponseTypes';
+import useGetRequest from '@/hooks/useGetRequests';
 
 type CountrySearchItem = {
   label: string;
@@ -10,7 +10,7 @@ type CountrySearchItem = {
 
 type CountrySearchResponse = {
   success: boolean;
-  data: CountrySearchItem[];
+  data: Array<CountrySearchItem>;
 };
 
 export default function useCountrySearch() {

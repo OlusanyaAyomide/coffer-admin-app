@@ -1,8 +1,8 @@
+import { Filter } from 'lucide-react';
 import useTransactionHistoryContext from './useTransactionHistoryContext';
 import FilterButtons from '@/components/shared/FilterButtons';
 import DateFilterButtons from '@/components/shared/DateFilter';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
 
 const transactionTypeOptions = [
   { label: 'Deposit', value: 'deposit' },

@@ -1,5 +1,5 @@
+import { CheckCircle2, Mail, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Mail, MapPin, CheckCircle2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 

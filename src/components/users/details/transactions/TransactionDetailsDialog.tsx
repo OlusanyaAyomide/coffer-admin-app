@@ -1,21 +1,21 @@
 'use client';
 
+import { Check, Copy, X } from 'lucide-react';
+import { useState } from 'react';
+import type { Transaction } from './transaction-columns';
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { X, Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { Transaction } from './transaction-columns';
-import { useState } from 'react';
 
 interface TransactionDetailsDialogProps {
   open: boolean;

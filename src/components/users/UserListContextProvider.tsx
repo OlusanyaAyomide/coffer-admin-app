@@ -1,16 +1,18 @@
-import { ReactNode, useMemo, useState } from 'react';
-import UserListContext, { UserListContextType } from './UserListContext';
+import { useMemo, useState } from 'react';
+import UserListContext from './UserListContext';
+import type { ReactNode} from 'react';
+import type { UserListContextType } from './UserListContext';
 import useReadParams from '@/hooks/useReadParams';
 
 function UserListContextProvider({ children }: { children: ReactNode }) {
 
   const params = useReadParams();
 
-  const [kycStatus, setKycStatus] = useState<string[]>(params.kyc_status || []);
-  const [accountStatus, setAccountStatus] = useState<string[]>(params.account_status || []);
-  const [riskLevel, setRiskLevel] = useState<string[]>(params.risk_level || []);
-  const [country, setCountry] = useState<string[]>(params.country || []);
-  const [joinedAt, setJoinedAt] = useState<string[]>(params.joined_at || []);
+  const [kycStatus, setKycStatus] = useState<Array<string>>(params.kyc_status || []);
+  const [accountStatus, setAccountStatus] = useState<Array<string>>(params.account_status || []);
+  const [riskLevel, setRiskLevel] = useState<Array<string>>(params.risk_level || []);
+  const [country, setCountry] = useState<Array<string>>(params.country || []);
+  const [joinedAt, setJoinedAt] = useState<Array<string>>(params.joined_at || []);
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
 

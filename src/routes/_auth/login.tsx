@@ -2,7 +2,10 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { toast } from 'sonner';
 import type { UserLoginFormData } from '@/validations/AuthValidations';
+import type { UserAuthApiResponse } from '@/types/AuthTypes'
+import type { QueryError } from '@/types/ResponseTypes'
 import { loginSchema } from '@/validations/AuthValidations'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,10 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import TransitionLink from '@/components/layout/TransitionLink'
 import { LoadingIconSmall } from '@/components/shared/LoadingIconLarge'
 import usePostRequest from '@/hooks/usePostRequests'
-import type { UserAuthApiResponse } from '@/types/AuthTypes'
-import type { QueryError } from '@/types/ResponseTypes'
 import { setAuthCookies } from '@/services/CookiesServices'
-import { toast } from 'sonner';
 import CloseToast from '@/components/shared/CloseToast';
 
 export const Route = createFileRoute('/_auth/login')({

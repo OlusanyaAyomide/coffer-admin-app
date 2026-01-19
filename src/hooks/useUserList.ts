@@ -1,15 +1,15 @@
-import useGetRequest from '@/hooks/useGetRequests';
-import type { QueryError, PaginationType } from '@/types/ResponseTypes';
+import type { PaginationType, QueryError } from '@/types/ResponseTypes';
 import type { UserData } from '@/types/UserTypes';
+import useGetRequest from '@/hooks/useGetRequests';
 import { convertDateToTimeRange } from '@/services/TimeServices';
 
 type UserListParams = {
   search_term?: string;
-  kyc_status?: string[];
-  account_status?: string[];
-  risk_level?: string[];
-  country?: string[];
-  joined_at?: string[];
+  kyc_status?: Array<string>;
+  account_status?: Array<string>;
+  risk_level?: Array<string>;
+  country?: Array<string>;
+  joined_at?: Array<string>;
   page?: number;
   limit?: number;
 };
@@ -17,7 +17,7 @@ type UserListParams = {
 type UserListResponse = {
   success: boolean;
   data: {
-    users: UserData[];
+    users: Array<UserData>;
     paginate: PaginationType;
   };
   meta: PaginationType;
@@ -38,7 +38,7 @@ export default function useUserList({
   // Convert date range to start/end params
   const dateRange = convertDateToTimeRange('joined_at', joined_at || []);
 
-  const params: Record<string, string | number | string[]> = {
+  const params: Record<string, string | number | Array<string>> = {
     page,
     limit,
   };

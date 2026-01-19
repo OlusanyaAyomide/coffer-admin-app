@@ -40,7 +40,7 @@ export interface CofferInvestment {
     currency: 'NGN' | 'USDT';
     description: string;
   };
-  transactions: TransactionEvent[];
+  transactions: Array<TransactionEvent>;
   total_dividends_received: number;
   next_dividend_date?: string;
 }
@@ -105,7 +105,7 @@ export const CofferActions = ({
 export const createCofferColumns = (
   onViewInvestment: (investment: CofferInvestment) => void,
   onViewTransactions: (investment: CofferInvestment) => void
-): ExtendedColumnDef<CofferInvestment>[] => [
+): Array<ExtendedColumnDef<CofferInvestment>> => [
     {
       accessorKey: 'investment_name',
       header: 'Investment Name',
@@ -204,7 +204,7 @@ export const createCofferColumns = (
   ];
 
 // Mobile columns
-export const cofferMobileColumns: MobileRow<CofferInvestment>[] = [
+export const cofferMobileColumns: Array<MobileRow<CofferInvestment>> = [
   {
     cell: ({ row }) => (
       <span className={cn('text-xs font-medium capitalize', getStatusColor(row.status))}>

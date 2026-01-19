@@ -11,11 +11,11 @@ export const mockUserStats: UserStats = {
 const firstNames = ['Alex', 'Jessica', 'Michael', 'Sarah', 'David', 'Emily', 'James', 'Olivia', 'Robert', 'Sophia', 'William', 'Isabella', 'Joseph', 'Mia', 'Thomas', 'Charlotte', 'Christopher', 'Amelia', 'Daniel', 'Evelyn'];
 const lastNames = ['Sterling', 'Morgan', 'Chen', 'Johnson', 'Williams', 'Brown', 'Taylor', 'Martinez', 'Anderson', 'Thomas', 'Garcia', 'White', 'Harris', 'Martin', 'Thompson', 'Moore', 'Young', 'Allen', 'King', 'Wright'];
 const countries = ['US', 'UK', 'SG', 'CA', 'NG', 'AU', 'DE', 'MX', 'BR', 'FR'];
-const kycStatuses: ('verified' | 'pending' | 'rejected' | 'not_started')[] = ['verified', 'pending', 'rejected', 'not_started'];
-const accountStatuses: ('active' | 'suspended' | 'inactive')[] = ['active', 'suspended', 'inactive'];
-const riskLevels: ('low' | 'medium' | 'high')[] = ['low', 'medium', 'high'];
+const kycStatuses: Array<'verified' | 'pending' | 'rejected' | 'not_started'> = ['verified', 'pending', 'rejected', 'not_started'];
+const accountStatuses: Array<'active' | 'suspended' | 'inactive'> = ['active', 'suspended', 'inactive'];
+const riskLevels: Array<'low' | 'medium' | 'high'> = ['low', 'medium', 'high'];
 
-export const mockUsers: UserData[] = Array.from({ length: 50 }, (_, i) => {
+export const mockUsers: Array<UserData> = Array.from({ length: 50 }, (_, i) => {
   const firstName = firstNames[i % firstNames.length];
   const lastName = lastNames[i % lastNames.length];
   const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`;

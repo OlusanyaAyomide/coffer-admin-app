@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'sonner'
 import type { UserOTPFormData } from '@/validations/AuthValidations';
+import type { UserAuthApiResponse } from '@/types/AuthTypes'
 import { otpSchema } from '@/validations/AuthValidations'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,6 @@ import OTPInputField from '@/components/shared/OTPInputField'
 import RequiredLabel from '@/components/shared/RequiredLabel'
 import { LoadingIconSmall } from '@/components/shared/LoadingIconLarge'
 import usePostRequest from '@/hooks/usePostRequests'
-import type { UserAuthApiResponse } from '@/types/AuthTypes'
 import { setAuthCookies } from '@/services/CookiesServices'
 
 export const Route = createFileRoute('/_auth/verify-device')({

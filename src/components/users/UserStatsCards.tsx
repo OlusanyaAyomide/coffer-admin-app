@@ -1,7 +1,7 @@
-import { Users, CheckCircle, Clock, UserX } from 'lucide-react';
+import { CheckCircle, Clock, UserX, Users } from 'lucide-react';
+import type { UserStats } from '@/types/UserTypes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { UserStats } from '@/types/UserTypes';
 import { cn } from '@/lib/utils';
 
 type StatsCardProps = {

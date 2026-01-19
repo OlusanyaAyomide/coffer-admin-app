@@ -1,13 +1,15 @@
 'use client';
 
+import { CheckCircle2, Circle, Clock, X } from 'lucide-react';
+import type { CofferInvestment, TransactionEvent } from './coffer-columns';
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -19,10 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { CheckCircle2, Circle, Clock, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { CofferInvestment, TransactionEvent } from './coffer-columns';
 
 interface TransactionTimelineDialogProps {
   open: boolean;

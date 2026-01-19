@@ -2,16 +2,16 @@ import { createContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 export type UserListContextType = {
-  kycStatus: string[];
-  setKycStatus: Dispatch<SetStateAction<string[]>>;
-  accountStatus: string[];
-  setAccountStatus: Dispatch<SetStateAction<string[]>>;
-  riskLevel: string[];
-  setRiskLevel: Dispatch<SetStateAction<string[]>>;
-  country: string[];
-  setCountry: Dispatch<SetStateAction<string[]>>;
-  joinedAt: string[];
-  setJoinedAt: Dispatch<SetStateAction<string[]>>;
+  kycStatus: Array<string>;
+  setKycStatus: Dispatch<SetStateAction<Array<string>>>;
+  accountStatus: Array<string>;
+  setAccountStatus: Dispatch<SetStateAction<Array<string>>>;
+  riskLevel: Array<string>;
+  setRiskLevel: Dispatch<SetStateAction<Array<string>>>;
+  country: Array<string>;
+  setCountry: Dispatch<SetStateAction<Array<string>>>;
+  joinedAt: Array<string>;
+  setJoinedAt: Dispatch<SetStateAction<Array<string>>>;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   searchTerm: string;

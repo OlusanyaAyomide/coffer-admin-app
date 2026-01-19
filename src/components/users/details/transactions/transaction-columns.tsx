@@ -52,7 +52,7 @@ const titleCase = (str: string) => {
 // Table columns
 export const createTransactionColumns = (
   onViewDetails: (transaction: Transaction) => void
-): ExtendedColumnDef<Transaction>[] => [
+): Array<ExtendedColumnDef<Transaction>> => [
     {
       accessorKey: 'reference',
       header: 'Reference',
@@ -141,7 +141,7 @@ export const createTransactionColumns = (
   ];
 
 // Mobile columns
-export const transactionMobileColumns: MobileRow<Transaction>[] = [
+export const transactionMobileColumns: Array<MobileRow<Transaction>> = [
   {
     cell: ({ row }) => (
       <span className={cn('text-xs font-medium capitalize', getStatusColor(row.status))}>

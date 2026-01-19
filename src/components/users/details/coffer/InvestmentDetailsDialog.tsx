@@ -1,21 +1,21 @@
 'use client';
 
+import { Calendar, Clock, Coins, Layers, TrendingUp } from 'lucide-react';
+import type { CofferInvestment } from './coffer-columns';
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, TrendingUp, Coins, Clock, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { CofferInvestment } from './coffer-columns';
 
 interface InvestmentDetailsDialogProps {
   open: boolean;

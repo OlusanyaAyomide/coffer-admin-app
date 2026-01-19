@@ -1,4 +1,4 @@
-import { Wallet, ArrowDownLeft, ArrowUpRight, Coins, Users, Layers } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Coins, Layers, Users, Wallet } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 

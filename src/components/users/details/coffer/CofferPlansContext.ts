@@ -2,10 +2,10 @@ import { createContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 export type CofferPlansContextType = {
-  investmentStatus: string[];
-  setInvestmentStatus: Dispatch<SetStateAction<string[]>>;
-  startDate: string[];
-  setStartDate: Dispatch<SetStateAction<string[]>>;
+  investmentStatus: Array<string>;
+  setInvestmentStatus: Dispatch<SetStateAction<Array<string>>>;
+  startDate: Array<string>;
+  setStartDate: Dispatch<SetStateAction<Array<string>>>;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
 };

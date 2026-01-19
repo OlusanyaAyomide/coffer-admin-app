@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import usePostRequest from '@/hooks/usePostRequests';
-import { getRefreshToken, getCookieExpiryTime, clearAuthCookies, setSplitAuthToken } from '@/services/CookiesServices';
 import type { RefreshTokenResponse } from '@/types/AuthTypes';
+import usePostRequest from '@/hooks/usePostRequests';
+import { clearAuthCookies, getCookieExpiryTime, getRefreshToken, setSplitAuthToken } from '@/services/CookiesServices';
 
 type RefreshTokenPayload = {
   refresh_token: string;

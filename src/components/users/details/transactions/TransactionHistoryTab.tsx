@@ -1,23 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import CustomizableTable from '@/components/shared/CustomizableTable';
-import MobileCards from '@/components/shared/MobileCards';
-import { Button } from '@/components/ui/button';
 import {
+  
   createTransactionColumns,
-  transactionMobileColumns,
-  getTransactionMobileTitle,
   getTransactionMobileFooter,
-  type Transaction,
+  getTransactionMobileTitle,
+  transactionMobileColumns
 } from './transaction-columns';
 import TransactionHistoryFilter from './TransactionHistoryFilter';
 import TransactionDetailsDialog from './TransactionDetailsDialog';
 import useTransactionHistoryContext from './useTransactionHistoryContext';
+import type {Transaction} from './transaction-columns';
+import { Button } from '@/components/ui/button';
+import MobileCards from '@/components/shared/MobileCards';
+import CustomizableTable from '@/components/shared/CustomizableTable';
 import { convertDateToTimeRange } from '@/services/TimeServices';
 
 // Mock transaction data
-const mockTransactions: Transaction[] = [
+const mockTransactions: Array<Transaction> = [
   {
     id: '1',
     reference: 'TXN-2025-001',

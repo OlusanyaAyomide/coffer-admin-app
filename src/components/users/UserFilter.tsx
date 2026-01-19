@@ -1,10 +1,10 @@
+import { Filter } from 'lucide-react';
 import useUserListContext from './useUserListContext';
 import FilterButtons from '@/components/shared/FilterButtons';
 import DateFilterButtons from '@/components/shared/DateFilter';
 import ComboBoxFilter from '@/components/shared/ComboBoxFilter';
 import { Button } from '@/components/ui/button';
 import useFilterSearchParam from '@/hooks/useFilterSearchParam';
-import { Filter } from 'lucide-react';
 import useCountrySearch from '@/hooks/useCountrySearch';
 
 const kycStatusOptions = [

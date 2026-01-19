@@ -1,7 +1,7 @@
+import { Calendar, CheckCircle2, Circle, Clock, Mail, Send, Share2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // import { Separator } from '@/components/ui/separator';
-import { Calendar, Mail, Share2, CheckCircle2, Clock, Circle, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';

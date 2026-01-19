@@ -18,7 +18,7 @@ const useReadParams = () => {
     }
 
     return acc;
-  }, {} as Record<string, string[]>);
+  }, {} as Record<string, Array<string>>);
 
   return paramsObject;
 };

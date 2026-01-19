@@ -1,13 +1,13 @@
 'use client';
 
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
+import type { CofferInvestment } from './coffer-columns';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { CofferInvestment } from './coffer-columns';
 import { Button } from '@/components/ui/button';
 
 interface UpcomingDividendsSectionProps {
-  investments: CofferInvestment[];
+  investments: Array<CofferInvestment>;
 }
 
 interface UpcomingDividend {
@@ -28,7 +28,7 @@ const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
 };
 
 // Static mock data for upcoming dividends to ensure UI shows content
-const staticUpcomingDividends: UpcomingDividend[] = [
+const staticUpcomingDividends: Array<UpcomingDividend> = [
   {
     id: 'div-1',
     investmentTitle: 'Green Projects',
@@ -69,7 +69,7 @@ const staticUpcomingDividends: UpcomingDividend[] = [
 
 export default function UpcomingDividendsSection({ investments }: UpcomingDividendsSectionProps) {
   // Extract upcoming dividends from all investments
-  const upcomingDividends: UpcomingDividend[] = [];
+  const upcomingDividends: Array<UpcomingDividend> = [];
   const now = new Date();
 
   investments.forEach((investment) => {

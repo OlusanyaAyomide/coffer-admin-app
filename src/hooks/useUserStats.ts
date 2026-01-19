@@ -1,6 +1,6 @@
-import useGetRequest from '@/hooks/useGetRequests';
-import type { QueryError, PaginationType } from '@/types/ResponseTypes';
+import type { PaginationType, QueryError } from '@/types/ResponseTypes';
 import type { UserStats } from '@/types/UserTypes';
+import useGetRequest from '@/hooks/useGetRequests';
 
 type UserStatsResponse = {
   success: boolean;

@@ -2,14 +2,14 @@ import { createContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 export type TransactionHistoryContextType = {
-  transactionType: string[];
-  setTransactionType: Dispatch<SetStateAction<string[]>>;
-  transactionStatus: string[];
-  setTransactionStatus: Dispatch<SetStateAction<string[]>>;
-  currency: string[];
-  setCurrency: Dispatch<SetStateAction<string[]>>;
-  duration: string[];
-  setDuration: Dispatch<SetStateAction<string[]>>;
+  transactionType: Array<string>;
+  setTransactionType: Dispatch<SetStateAction<Array<string>>>;
+  transactionStatus: Array<string>;
+  setTransactionStatus: Dispatch<SetStateAction<Array<string>>>;
+  currency: Array<string>;
+  setCurrency: Dispatch<SetStateAction<Array<string>>>;
+  duration: Array<string>;
+  setDuration: Dispatch<SetStateAction<Array<string>>>;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
 };

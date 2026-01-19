@@ -2,13 +2,17 @@
 
 import { formatDistanceToNow } from 'date-fns';
 import { titleCase } from 'title-case';
+import TransitionLink from '../layout/TransitionLink';
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
 import type { UserData } from '@/types/UserTypes';
+import type { MobileRow } from '@/components/shared/MobileCards';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import handleOptionalData, { returnDataOrNull } from '@/services/emptyDataServices';
 import { formatDateToReadableShort } from '@/services/TimeServices';
+
+// Mobile columns for MobileCards component
 
 const getKycStatusColor = (status: string) => {
   switch (status) {
@@ -51,7 +55,7 @@ const getAvatarColor = (name: string) => {
   return colors[index];
 };
 
-export const userColumns: ExtendedColumnDef<UserData>[] = [
+export const userColumns: Array<ExtendedColumnDef<UserData>> = [
   {
     accessorKey: 'avatar',
     header: 'Avatar',
@@ -192,11 +196,7 @@ export const userColumns: ExtendedColumnDef<UserData>[] = [
   },
 ];
 
-// Mobile columns for MobileCards component
-import type { MobileRow } from '@/components/shared/MobileCards';
-import TransitionLink from '../layout/TransitionLink';
-
-export const userMobileColumns: MobileRow<UserData>[] = [
+export const userMobileColumns: Array<MobileRow<UserData>> = [
   {
     cell: ({ row }) => (
       <span className="text-muted-foreground text-xs">{row.email}</span>

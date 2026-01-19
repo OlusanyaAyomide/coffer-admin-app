@@ -12,7 +12,7 @@ import UserListContextProvider from '@/components/users/UserListContextProvider'
 import useUserListContext from '@/components/users/useUserListContext';
 import UserFilter from '@/components/users/UserFilter';
 import UserStatsCards from '@/components/users/UserStatsCards';
-import { userColumns, userMobileColumns, getUserMobileTitle, UserMobileAction, getUserMobileFooter } from '@/components/users/user-columns';
+import { UserMobileAction, getUserMobileFooter, getUserMobileTitle, userColumns, userMobileColumns } from '@/components/users/user-columns';
 import useUserStats from '@/hooks/useUserStats';
 import useUserList from '@/hooks/useUserList';
 

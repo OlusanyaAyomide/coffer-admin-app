@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import CustomizableTable from '@/components/shared/CustomizableTable';
-import MobileCards from '@/components/shared/MobileCards';
-import { Button } from '@/components/ui/button';
 import {
-  createCofferColumns,
+  
   cofferMobileColumns,
-  getCofferMobileTitle,
+  createCofferColumns,
   getCofferMobileFooter,
-  type CofferInvestment,
+  getCofferMobileTitle
 } from './coffer-columns';
 import TransactionTimelineDialog from './TransactionTimelineDialog';
 import InvestmentDetailsDialog from './InvestmentDetailsDialog';
@@ -17,10 +14,14 @@ import CofferFilter from './CofferFilter';
 import CofferTransactionsOverview from './CofferTransactionsOverview';
 import UpcomingDividendsSection from './UpcomingDividendsSection';
 import useCofferPlansContext from './useCofferPlansContext';
+import type {CofferInvestment} from './coffer-columns';
+import { Button } from '@/components/ui/button';
+import MobileCards from '@/components/shared/MobileCards';
+import CustomizableTable from '@/components/shared/CustomizableTable';
 import { convertDateToTimeRange } from '@/services/TimeServices';
 
 // Mock data based on UserInvestment and Investment schemas
-const mockCofferInvestments: CofferInvestment[] = [
+const mockCofferInvestments: Array<CofferInvestment> = [
   {
     id: '1',
     reference: 'COF-2024-001',

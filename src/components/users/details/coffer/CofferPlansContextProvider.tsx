@@ -1,9 +1,11 @@
-import { ReactNode, useMemo, useState } from 'react';
-import CofferPlansContext, { CofferPlansContextType } from './CofferPlansContext';
+import { useMemo, useState } from 'react';
+import CofferPlansContext from './CofferPlansContext';
+import type { ReactNode} from 'react';
+import type { CofferPlansContextType } from './CofferPlansContext';
 
 function CofferPlansContextProvider({ children }: { children: ReactNode }) {
-  const [investmentStatus, setInvestmentStatus] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<string[]>([]);
+  const [investmentStatus, setInvestmentStatus] = useState<Array<string>>([]);
+  const [startDate, setStartDate] = useState<Array<string>>([]);
   const [page, setPage] = useState<number>(1);
 
   const contextValue = useMemo<CofferPlansContextType>(() => ({

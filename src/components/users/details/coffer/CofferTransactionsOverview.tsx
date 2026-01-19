@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import CofferTransactionDetailsDialog from './CofferTransactionDetailsDialog';
+import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
+import type { CofferInvestment, TransactionEvent } from './coffer-columns';
 import CustomizableTable from '@/components/shared/CustomizableTable';
 import { Button } from '@/components/ui/button';
-import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { CofferInvestment, TransactionEvent } from './coffer-columns';
-import CofferTransactionDetailsDialog from './CofferTransactionDetailsDialog';
 
 interface CofferTransactionsOverviewProps {
-  investments: CofferInvestment[];
+  investments: Array<CofferInvestment>;
 }
 
 interface FlattenedTransaction extends TransactionEvent {
@@ -58,7 +58,7 @@ const getTypeColor = (type: string) => {
 // Create columns for the coffer transactions table
 const createCofferTransactionColumns = (
   onViewTransaction: (transaction: FlattenedTransaction) => void
-): ExtendedColumnDef<FlattenedTransaction>[] => [
+): Array<ExtendedColumnDef<FlattenedTransaction>> => [
     {
       accessorKey: 'date',
       header: 'Date',
@@ -135,7 +135,7 @@ export default function CofferTransactionsOverview({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Flatten all transactions from all investments
-  const allTransactions: FlattenedTransaction[] = [];
+  const allTransactions: Array<FlattenedTransaction> = [];
 
   investments.forEach((investment) => {
     investment.transactions.forEach((transaction) => {

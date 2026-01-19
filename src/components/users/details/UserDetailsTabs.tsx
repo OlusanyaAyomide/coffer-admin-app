@@ -1,10 +1,12 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OverviewTab from './OverviewTab';
 import WalletLedgerTab from './WalletLedgerTab';
 import CofferPlansTab from './coffer/CofferPlansTab';
 import CofferPlansContextProvider from './coffer/CofferPlansContextProvider';
 import TransactionHistoryTab from './transactions/TransactionHistoryTab';
 import TransactionHistoryContextProvider from './transactions/TransactionHistoryContextProvider';
+import SecurityVerificationTab from './security/SecurityVerificationTab';
+import KycInformationTab from './kyc/KycInformationTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function UserDetailsTabs() {
   return (
@@ -48,10 +50,10 @@ export default function UserDetailsTabs() {
             Security & Verification
           </TabsTrigger>
           <TabsTrigger
-            value="profile"
+            value="kyc"
             className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
           >
-            Profile & Contact
+            KYC Information
           </TabsTrigger>
           <TabsTrigger
             value="logs"
@@ -86,14 +88,10 @@ export default function UserDetailsTabs() {
         </TransactionHistoryContextProvider>
       </TabsContent>
       <TabsContent value="security" className="mt-6">
-        <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
-          <p className="text-muted-foreground">Security & Verification Content</p>
-        </div>
+        <SecurityVerificationTab />
       </TabsContent>
-      <TabsContent value="profile" className="mt-6">
-        <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
-          <p className="text-muted-foreground">Profile & Contact Content</p>
-        </div>
+      <TabsContent value="kyc" className="mt-6">
+        <KycInformationTab />
       </TabsContent>
       <TabsContent value="logs" className="mt-6">
         <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
