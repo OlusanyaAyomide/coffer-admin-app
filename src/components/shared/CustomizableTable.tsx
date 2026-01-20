@@ -110,35 +110,24 @@ export default function CustomizableTable<TData>({
 
   return (
     <div className="max-md:hidden mt-7 w-full">
-      {/* Filters row */}
-      <div className="mb-4 section-scroll overflow-y-hidden">
-        {children}
-      </div>
-
-      {/* Column selector row */}
-      <div className="flex items-center justify-end gap-3 mb-5 pb-2">
-        {!isDefaultState() && (
-          <Button
-            onClick={handleResetToDefault}
-            variant="ghost"
-            className="rounded-full px-4 h-9 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
-          >
-            Reset to Default
-          </Button>
-        )}
+      {/* Filters row with column selector inline */}
+      <div className="mb-5 section-scroll overflow-y-hidden flex items-center justify-between gap-4">
+        <div className="flex-1">{children}</div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex rounded-3xl items-center gap-2 px-4 h-8 bg-secondary hover:bg-secondary/80 text-secondary-foreground">
-              <img src="/TableTogge.svg" alt="TableToggle" width={20} height={20} />
-              <span className="text-sm font-medium">
-                Select Columns to Show
-              </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0 rounded-full h-10 px-3 gap-1.5 text-sm font-medium"
+            >
+              <img src="/TableTogge.svg" alt="TableToggle" width={14} height={14} />
+              Select Columns
             </Button>
           </DialogTrigger>
           <DialogContent className="w-full rounded-3xl max-md:hidden max-w-[572px] overflow-x-hidden overflow-auto max-h-[90vh] p-6 bg-card border-border">
             <div className="flex mt-4 items-center justify-between mb-2">
               <DialogTitle className="font-semibold text-xl text-popover-foreground">
-                Select Columns to Show
+                Select Columns
               </DialogTitle>
               <Button
                 onClick={handleSelectAll}
@@ -152,6 +141,17 @@ export default function CustomizableTable<TData>({
                 Choose which columns to display in the table
               </DialogDescription>
             </div>
+            {/* Reset to Default button */}
+            {!isDefaultState() && (
+              <Button
+                onClick={handleResetToDefault}
+                variant="ghost"
+                size="sm"
+                className="mb-4 px-0 h-auto text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-transparent"
+              >
+                Reset to Default
+              </Button>
+            )}
             <div className="flex flex-col gap-4 mb-6">
               {columns.map((column, index) => {
                 const accessorKey = column.accessorKey;

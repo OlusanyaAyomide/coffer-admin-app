@@ -6,6 +6,8 @@ import TransactionHistoryTab from './transactions/TransactionHistoryTab';
 import TransactionHistoryContextProvider from './transactions/TransactionHistoryContextProvider';
 import SecurityVerificationTab from './security/SecurityVerificationTab';
 import KycInformationTab from './kyc/KycInformationTab';
+import UserActivityLogTab from './activityLogs/UserActivityLogTab';
+import ActivityLogContextProvider from './activityLogs/ActivityLogContextProvider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function UserDetailsTabs() {
@@ -59,7 +61,7 @@ export default function UserDetailsTabs() {
             value="logs"
             className="rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground"
           >
-            Admin Actions & Logs
+            User Logs
           </TabsTrigger>
         </TabsList>
       </div>
@@ -94,9 +96,9 @@ export default function UserDetailsTabs() {
         <KycInformationTab />
       </TabsContent>
       <TabsContent value="logs" className="mt-6">
-        <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
-          <p className="text-muted-foreground">Admin Actions & Logs Content</p>
-        </div>
+        <ActivityLogContextProvider>
+          <UserActivityLogTab />
+        </ActivityLogContextProvider>
       </TabsContent>
     </Tabs>
   );
