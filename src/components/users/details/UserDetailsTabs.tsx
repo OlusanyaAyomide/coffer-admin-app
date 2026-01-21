@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 export default function UserDetailsTabs() {
   return (
     <Tabs defaultValue="overview" className="w-full space-y-6">
-      <div className="overflow-x-auto -mx-1 px-1">
+      <div className="sticky top-16 z-30 bg-background pt-2 -mt-2 overflow-x-auto -mx-1 px-1">
         <TabsList className="w-max min-w-full justify-start border-b border-border bg-transparent p-0 h-auto rounded-none space-x-6 flex-nowrap">
           <TabsTrigger
             value="overview"

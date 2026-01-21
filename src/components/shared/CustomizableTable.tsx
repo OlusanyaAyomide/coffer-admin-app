@@ -147,12 +147,12 @@ export default function CustomizableTable<TData>({
                 onClick={handleResetToDefault}
                 variant="ghost"
                 size="sm"
-                className="mb-4 px-0 h-auto text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-transparent"
+                className="mb-4 px-0 h-auto text-sm -mt-4 w-fit mr-auto font-medium text-muted-foreground hover:text-foreground hover:bg-transparent"
               >
                 Reset to Default
               </Button>
             )}
-            <div className="flex flex-col gap-4 mb-6">
+            <div className="flex flex-col gap-4 mb-6 -mt-3">
               {columns.map((column, index) => {
                 const accessorKey = column.accessorKey;
 

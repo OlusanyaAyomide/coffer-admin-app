@@ -40,6 +40,12 @@ export default function AdminSidebar() {
   // Helper to check if a route is active
   const checkActive = (url: string) => {
     if (url === '#' || url === '/') return false
+    // Generic: URLs ending with /all should match any path starting with the base
+    // e.g., /users/all matches /users/[uuid], /investments/all matches /investments/[id]
+    if (url.endsWith('/all')) {
+      const basePath = url.replace('/all', '')
+      return pathname.startsWith(basePath + '/')
+    }
     return pathname === url || (url !== '/_admin' && pathname.startsWith(url))
   }
 
