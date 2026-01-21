@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import {
+  activityLogMobileColumns,
   createActivityLogColumns,
   getActivityLogMobileFooter,
-  getActivityLogMobileTitle,
-  activityLogMobileColumns
+  getActivityLogMobileTitle
 } from './activity-log-columns';
 import ActivityLogFilter from './ActivityLogFilter';
 import ActivityLogDetailsDialog from './ActivityLogDetailsDialog';

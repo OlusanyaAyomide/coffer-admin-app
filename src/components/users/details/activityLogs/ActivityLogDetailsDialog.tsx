@@ -1,12 +1,12 @@
-import { X, Copy, Check } from 'lucide-react';
+import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
+import type { ActivityLog } from './activity-log-columns';
 import {
   AlertDialog,
   AlertDialogContent,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { ActivityLog } from './activity-log-columns';
 
 interface ActivityLogDetailsDialogProps {
   log: ActivityLog | null;

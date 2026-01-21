@@ -99,7 +99,7 @@ export default function AdminSidebar() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start h-8 px-2 text-white/70 hover:bg-white/10 text-foreground",
+                        "w-full justify-start h-8 px-2 text-white/70 hover:bg-white/10",
                         isSubActive && "text-foreground font-semibold bg-white/10"
                       )}
                     >

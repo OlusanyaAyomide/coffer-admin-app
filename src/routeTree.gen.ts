@@ -15,7 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthVerifyDeviceRouteImport } from './routes/_auth/verify-device'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AdminOverviewRouteImport } from './routes/_admin/overview'
-import { Route as AdminKycRouteImport } from './routes/_admin/kyc'
+import { Route as AdminKycIndexRouteImport } from './routes/_admin/kyc/index'
 import { Route as AdminUsersReferralTreeRouteImport } from './routes/_admin/users/referral-tree'
 import { Route as AdminUsersAllRouteImport } from './routes/_admin/users/all'
 import { Route as AdminUsersActivityLogsRouteImport } from './routes/_admin/users/activity-logs'
@@ -26,6 +26,7 @@ import { Route as AdminSettingsAccessRouteImport } from './routes/_admin/setting
 import { Route as AdminLockerRulesRouteImport } from './routes/_admin/locker/rules'
 import { Route as AdminLockerRatesRouteImport } from './routes/_admin/locker/rates'
 import { Route as AdminLockerAnalyticsRouteImport } from './routes/_admin/locker/analytics'
+import { Route as AdminKycKycIdRouteImport } from './routes/_admin/kyc/$kycId'
 import { Route as AdminFinancialsWithdrawalsRouteImport } from './routes/_admin/financials/withdrawals'
 import { Route as AdminFinancialsProviderConfigRouteImport } from './routes/_admin/financials/provider-config'
 import { Route as AdminFinancialsLedgerRouteImport } from './routes/_admin/financials/ledger'
@@ -66,9 +67,9 @@ const AdminOverviewRoute = AdminOverviewRouteImport.update({
   path: '/overview',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminKycRoute = AdminKycRouteImport.update({
-  id: '/kyc',
-  path: '/kyc',
+const AdminKycIndexRoute = AdminKycIndexRouteImport.update({
+  id: '/kyc/',
+  path: '/kyc/',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersReferralTreeRoute = AdminUsersReferralTreeRouteImport.update({
@@ -119,6 +120,11 @@ const AdminLockerRatesRoute = AdminLockerRatesRouteImport.update({
 const AdminLockerAnalyticsRoute = AdminLockerAnalyticsRouteImport.update({
   id: '/locker/analytics',
   path: '/locker/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKycKycIdRoute = AdminKycKycIdRouteImport.update({
+  id: '/kyc/$kycId',
+  path: '/kyc/$kycId',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminFinancialsWithdrawalsRoute =
@@ -183,7 +189,6 @@ const AdminCofferActiveRoute = AdminCofferActiveRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/kyc': typeof AdminKycRoute
   '/overview': typeof AdminOverviewRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
@@ -198,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/financials/ledger': typeof AdminFinancialsLedgerRoute
   '/financials/provider-config': typeof AdminFinancialsProviderConfigRoute
   '/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
+  '/kyc/$kycId': typeof AdminKycKycIdRoute
   '/locker/analytics': typeof AdminLockerAnalyticsRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
@@ -208,10 +214,10 @@ export interface FileRoutesByFullPath {
   '/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
+  '/kyc': typeof AdminKycIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/kyc': typeof AdminKycRoute
   '/overview': typeof AdminOverviewRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
@@ -226,6 +232,7 @@ export interface FileRoutesByTo {
   '/financials/ledger': typeof AdminFinancialsLedgerRoute
   '/financials/provider-config': typeof AdminFinancialsProviderConfigRoute
   '/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
+  '/kyc/$kycId': typeof AdminKycKycIdRoute
   '/locker/analytics': typeof AdminLockerAnalyticsRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
@@ -236,13 +243,13 @@ export interface FileRoutesByTo {
   '/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
+  '/kyc': typeof AdminKycIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_admin': typeof AdminRouteWithChildren
-  '/_admin/kyc': typeof AdminKycRoute
   '/_admin/overview': typeof AdminOverviewRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/verify-device': typeof AuthVerifyDeviceRoute
@@ -257,6 +264,7 @@ export interface FileRoutesById {
   '/_admin/financials/ledger': typeof AdminFinancialsLedgerRoute
   '/_admin/financials/provider-config': typeof AdminFinancialsProviderConfigRoute
   '/_admin/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
+  '/_admin/kyc/$kycId': typeof AdminKycKycIdRoute
   '/_admin/locker/analytics': typeof AdminLockerAnalyticsRoute
   '/_admin/locker/rates': typeof AdminLockerRatesRoute
   '/_admin/locker/rules': typeof AdminLockerRulesRoute
@@ -267,12 +275,12 @@ export interface FileRoutesById {
   '/_admin/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/_admin/users/all': typeof AdminUsersAllRoute
   '/_admin/users/referral-tree': typeof AdminUsersReferralTreeRoute
+  '/_admin/kyc/': typeof AdminKycIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/kyc'
     | '/overview'
     | '/login'
     | '/verify-device'
@@ -287,6 +295,7 @@ export interface FileRouteTypes {
     | '/financials/ledger'
     | '/financials/provider-config'
     | '/financials/withdrawals'
+    | '/kyc/$kycId'
     | '/locker/analytics'
     | '/locker/rates'
     | '/locker/rules'
@@ -297,10 +306,10 @@ export interface FileRouteTypes {
     | '/users/activity-logs'
     | '/users/all'
     | '/users/referral-tree'
+    | '/kyc'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/kyc'
     | '/overview'
     | '/login'
     | '/verify-device'
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/financials/ledger'
     | '/financials/provider-config'
     | '/financials/withdrawals'
+    | '/kyc/$kycId'
     | '/locker/analytics'
     | '/locker/rates'
     | '/locker/rules'
@@ -325,12 +335,12 @@ export interface FileRouteTypes {
     | '/users/activity-logs'
     | '/users/all'
     | '/users/referral-tree'
+    | '/kyc'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_admin'
-    | '/_admin/kyc'
     | '/_admin/overview'
     | '/_auth/login'
     | '/_auth/verify-device'
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/_admin/financials/ledger'
     | '/_admin/financials/provider-config'
     | '/_admin/financials/withdrawals'
+    | '/_admin/kyc/$kycId'
     | '/_admin/locker/analytics'
     | '/_admin/locker/rates'
     | '/_admin/locker/rules'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/_admin/users/activity-logs'
     | '/_admin/users/all'
     | '/_admin/users/referral-tree'
+    | '/_admin/kyc/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -407,11 +419,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOverviewRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/_admin/kyc': {
-      id: '/_admin/kyc'
+    '/_admin/kyc/': {
+      id: '/_admin/kyc/'
       path: '/kyc'
       fullPath: '/kyc'
-      preLoaderRoute: typeof AdminKycRouteImport
+      preLoaderRoute: typeof AdminKycIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/users/referral-tree': {
@@ -482,6 +494,13 @@ declare module '@tanstack/react-router' {
       path: '/locker/analytics'
       fullPath: '/locker/analytics'
       preLoaderRoute: typeof AdminLockerAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/kyc/$kycId': {
+      id: '/_admin/kyc/$kycId'
+      path: '/kyc/$kycId'
+      fullPath: '/kyc/$kycId'
+      preLoaderRoute: typeof AdminKycKycIdRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/financials/withdrawals': {
@@ -579,7 +598,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
-  AdminKycRoute: typeof AdminKycRoute
   AdminOverviewRoute: typeof AdminOverviewRoute
   AdminCofferActiveRoute: typeof AdminCofferActiveRoute
   AdminCofferDividendsRoute: typeof AdminCofferDividendsRoute
@@ -592,6 +610,7 @@ interface AdminRouteChildren {
   AdminFinancialsLedgerRoute: typeof AdminFinancialsLedgerRoute
   AdminFinancialsProviderConfigRoute: typeof AdminFinancialsProviderConfigRoute
   AdminFinancialsWithdrawalsRoute: typeof AdminFinancialsWithdrawalsRoute
+  AdminKycKycIdRoute: typeof AdminKycKycIdRoute
   AdminLockerAnalyticsRoute: typeof AdminLockerAnalyticsRoute
   AdminLockerRatesRoute: typeof AdminLockerRatesRoute
   AdminLockerRulesRoute: typeof AdminLockerRulesRoute
@@ -602,10 +621,10 @@ interface AdminRouteChildren {
   AdminUsersActivityLogsRoute: typeof AdminUsersActivityLogsRoute
   AdminUsersAllRoute: typeof AdminUsersAllRoute
   AdminUsersReferralTreeRoute: typeof AdminUsersReferralTreeRoute
+  AdminKycIndexRoute: typeof AdminKycIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminKycRoute: AdminKycRoute,
   AdminOverviewRoute: AdminOverviewRoute,
   AdminCofferActiveRoute: AdminCofferActiveRoute,
   AdminCofferDividendsRoute: AdminCofferDividendsRoute,
@@ -618,6 +637,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFinancialsLedgerRoute: AdminFinancialsLedgerRoute,
   AdminFinancialsProviderConfigRoute: AdminFinancialsProviderConfigRoute,
   AdminFinancialsWithdrawalsRoute: AdminFinancialsWithdrawalsRoute,
+  AdminKycKycIdRoute: AdminKycKycIdRoute,
   AdminLockerAnalyticsRoute: AdminLockerAnalyticsRoute,
   AdminLockerRatesRoute: AdminLockerRatesRoute,
   AdminLockerRulesRoute: AdminLockerRulesRoute,
@@ -628,6 +648,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersActivityLogsRoute: AdminUsersActivityLogsRoute,
   AdminUsersAllRoute: AdminUsersAllRoute,
   AdminUsersReferralTreeRoute: AdminUsersReferralTreeRoute,
+  AdminKycIndexRoute: AdminKycIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
