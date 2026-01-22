@@ -60,7 +60,7 @@ export default function KycAdminNotes({ notes, onAddNote }: KycAdminNotesProps) 
           className="max-h-[130px] bg-secondary/30 border-border resize-none"
         />
         <Button type="submit" size="sm">
-          Add Note
+          View All Note
         </Button>
       </form>
 

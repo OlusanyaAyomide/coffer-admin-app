@@ -9,7 +9,7 @@ import type { MobileRow } from '@/components/shared/MobileCards';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import handleOptionalData, { returnDataOrNull } from '@/services/emptyDataServices';
+import handleOptionalData, { handleMultipleOptionalData, returnDataOrNull } from '@/services/emptyDataServices';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 
 // Mobile columns for MobileCards component
@@ -81,11 +81,16 @@ export const userColumns: Array<ExtendedColumnDef<UserData>> = [
     accessorKey: 'full_name',
     header: 'Full Name',
     cell: ({ row }) => {
-      const firstName = handleOptionalData(row.original.first_name);
-      const lastName = handleOptionalData(row.original.last_name);
       return (
         <span className="font-medium text-foreground whitespace-nowrap">
-          {firstName} {lastName}
+          {
+            handleMultipleOptionalData({
+              values: [
+                row.original.first_name,
+                row.original.last_name
+              ]
+            })
+          }
         </span>
       );
     },

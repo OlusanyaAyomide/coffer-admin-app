@@ -15,11 +15,7 @@ export const Route = createFileRoute('/_admin/users/$userId')({
 
 function UserDetailsPage() {
   const { userId } = Route.useParams();
-  // const router = useRouter();
 
-  // const handleBack = () => {
-  //   router.history.back();
-  // };
 
   return (
     <div className="space-y-6 pb-10">
@@ -31,10 +27,10 @@ function UserDetailsPage() {
       <UserDetailsHeader userId={userId} />
 
       {/* Stats Cards */}
-      <UserDetailsStats />
+      <UserDetailsStats userId={userId} />
 
       {/* Main Content Tabs */}
-      <UserDetailsTabs />
+      <UserDetailsTabs userId={userId} />
     </div>
   );
 }

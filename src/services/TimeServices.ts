@@ -451,3 +451,29 @@ export function daysToRetentionDuration(days: number | null): string {
   return '3_months';
 }
 
+/**
+ * Formats a date string to relative format like "Today, 10:42 AM" or "Oct 24, 2023, 10:42 AM"
+ */
+export function formatRelativeDateTime(isoDate: string): string {
+  const date = new Date(isoDate);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+
+  const timeStr = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  if (isToday) {
+    return `Today, ${timeStr}`;
+  }
+
+  const dateStr = date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
+  return `${dateStr}, ${timeStr}`;
+}

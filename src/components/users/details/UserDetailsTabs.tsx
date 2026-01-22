@@ -10,7 +10,7 @@ import UserActivityLogTab from './activityLogs/UserActivityLogTab';
 import ActivityLogContextProvider from './activityLogs/ActivityLogContextProvider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function UserDetailsTabs() {
+export default function UserDetailsTabs({ userId }: { userId: string }) {
   return (
     <Tabs defaultValue="overview" className="w-full space-y-6">
       <div className="sticky top-16 z-30 bg-background pt-2 -mt-2 overflow-x-auto -mx-1 px-1">
@@ -67,7 +67,7 @@ export default function UserDetailsTabs() {
       </div>
 
       <TabsContent value="overview" className="space-y-6 mt-6">
-        <OverviewTab />
+        <OverviewTab userId={userId} />
       </TabsContent>
 
       <TabsContent value="wallet" className="space-y-6 mt-6">
