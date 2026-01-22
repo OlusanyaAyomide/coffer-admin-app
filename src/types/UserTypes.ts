@@ -80,6 +80,7 @@ export type KycTier = {
 // Admin Note
 export type AdminNote = {
   id: string;
+  title?: string;
   author_name: string;
   author_initial: string;
   content: string;

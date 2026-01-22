@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Calendar, CheckCircle2, Circle, Clock, Mail, Send, Share2, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,9 +7,13 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import useGetRequest from '@/hooks/useGetRequests';
+import usePostRequest from '@/hooks/usePostRequests';
 import type { AccountOverviewData } from '@/types/UserTypes';
 import type { QueryError } from '@/types/ResponseTypes';
 import { formatDateToReadableShort, formatRelativeDateTime } from '@/services/TimeServices';
+import handleOptionalData from '@/services/emptyDataServices';
+import AddAdminNoteDialog from './AddAdminNoteDialog';
+import ViewAllNotesDialog from './ViewAllNotesDialog';
 
 type AccountOverviewResponse = {
   success: boolean;
@@ -15,10 +21,31 @@ type AccountOverviewResponse = {
 };
 
 export default function OverviewTab({ userId }: { userId: string }) {
+  const [isAddNoteOpen, setIsAddNoteOpen] = useState(false);
+  const [isViewAllOpen, setIsViewAllOpen] = useState(false);
+  const queryClient = useQueryClient();
+
   const { data, isLoading } = useGetRequest<AccountOverviewResponse, QueryError>({
     URL: `/admin/customer/${userId}/account-overview`,
     queryKey: ['user-account-overview', userId],
   });
+
+  const { mutate: addNote, isPending: isAddingNote } = usePostRequest({
+    URL: `/admin/customer/${userId}/notes`,
+    mutationKey: ['add-admin-note', userId],
+    successText: 'Note added successfully',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-account-overview', userId] });
+      setIsAddNoteOpen(false);
+    },
+  });
+
+  const handleAddNote = (noteData: { title?: string; content: string }) => {
+    addNote({
+      title: noteData.title,
+      content: noteData.content,
+    });
+  };
 
   const accountData = data?.data;
 
@@ -97,6 +124,7 @@ export default function OverviewTab({ userId }: { userId: string }) {
 
   const adminNotes = accountData?.admin_notes || [];
   const kycTiers = accountData?.kyc_tiers || [];
+  const displayNotes = [...adminNotes].slice(0, 4).reverse();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -238,12 +266,17 @@ export default function OverviewTab({ userId }: { userId: string }) {
         <Card className="bg-card border-border h-full flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-medium">Admin Notes</CardTitle>
-            <Button variant="ghost" size="sm" className="text-primary hover:text-primary brightness-105 hover:bg-primary/10 h-auto py-1 px-2 text-xs font-medium">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:text-primary brightness-105 hover:bg-primary/10 h-auto py-1 px-2 text-xs font-medium"
+              onClick={() => setIsAddNoteOpen(true)}
+            >
               ADD NOTE
             </Button>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
-            {adminNotes.length === 0 ? (
+            {displayNotes.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
                 <div className="p-3 rounded-full bg-muted/50 mb-3">
                   <MessageSquare className="h-6 w-6 text-muted-foreground" />
@@ -253,17 +286,24 @@ export default function OverviewTab({ userId }: { userId: string }) {
               </div>
             ) : (
               <div className="space-y-6 flex-1">
-                {adminNotes.map((note) => (
+                {displayNotes.map((note) => (
                   <div key={note.id} className="flex gap-3">
                     <Avatar className="h-8 w-8 mt-0.5">
                       <AvatarFallback className="text-white text-xs bg-primary">
                         {note.author_initial}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="space-y-1">
+                    <div className="space-y-1 w-full">
                       <div className="flex justify-between items-center w-full">
-                        <span className="text-sm font-medium">{note.author_name}</span>
-                        <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{note.author_name}</span>
+                          {note.title && (
+                            <span className='text-xs font-medium text-foreground/80 mt-0.5'>
+                              {handleOptionalData(note.title)}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap self-start mt-1">
                           {formatRelativeDateTime(note.created_at)}
                         </span>
                       </div>
@@ -276,14 +316,24 @@ export default function OverviewTab({ userId }: { userId: string }) {
               </div>
             )}
 
+            {adminNotes.length > 4 && (
+              <div className="mt-4 text-center">
+                <Button variant="link" size="sm" onClick={() => setIsViewAllOpen(true)}>
+                  View All Notes
+                </Button>
+              </div>
+            )}
+
             <div className="mt-6 pt-4 border-t border-border">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Type a note..."
-                  className="w-full bg-secondary/50 border border-border rounded-lg py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full bg-secondary/50 border border-border rounded-lg py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                  onFocus={() => setIsAddNoteOpen(true)}
+                  readOnly
                 />
-                <Button size="icon" variant="ghost" className="absolute right-1 top-1 h-7 w-7 text-primary">
+                <Button size="icon" variant="ghost" className="absolute right-1 top-1 h-7 w-7 text-primary" onClick={() => setIsAddNoteOpen(true)}>
                   <Send className="h-3 w-3 rotate-45" />
                 </Button>
               </div>
@@ -291,6 +341,19 @@ export default function OverviewTab({ userId }: { userId: string }) {
           </CardContent>
         </Card>
       </div>
+
+      <AddAdminNoteDialog
+        open={isAddNoteOpen}
+        onOpenChange={setIsAddNoteOpen}
+        onSubmit={handleAddNote}
+        isSubmitting={isAddingNote}
+      />
+
+      <ViewAllNotesDialog
+        open={isViewAllOpen}
+        onOpenChange={setIsViewAllOpen}
+        notes={adminNotes}
+      />
     </div>
   );
 }

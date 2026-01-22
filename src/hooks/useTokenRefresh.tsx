@@ -11,7 +11,7 @@ type RefreshTokenPayload = {
 };
 
 const CHECK_INTERVAL_MS = 3 * 60 * 1000; // 3 minutes
-const REFRESH_THRESHOLD_MS = 5 * 60 * 1000; // 20 minutes
+const REFRESH_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_RETRY_ERRORS = 3;
 const MIN_RETRY_DELAY_MS = 20000; // Minimum 20 seconds between retries
 
@@ -123,6 +123,7 @@ export default function useTokenRefresh() {
       const expiryTime = new Date(expiryTimeStr).getTime();
       const now = Date.now();
       const timeUntilExpiry = expiryTime - now;
+      console.log(timeUntilExpiry < REFRESH_THRESHOLD_MS)
 
       // If token expires in less than threshold, refresh it
       if (timeUntilExpiry > 0 && timeUntilExpiry < REFRESH_THRESHOLD_MS) {
