@@ -1,5 +1,3 @@
-'use client';
-
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { RefreshTokenResponse } from '@/types/AuthTypes';

@@ -71,7 +71,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
       </TabsContent>
 
       <TabsContent value="wallet" className="space-y-6 mt-6">
-        <WalletLedgerTab />
+        <WalletLedgerTab userId={userId} />
       </TabsContent>
 
       <TabsContent value="plans" className="mt-6">

@@ -109,3 +109,41 @@ export type AccountOverviewData = {
   kyc_tiers: Array<KycTier>;
   admin_notes: Array<AdminNote>;
 };
+
+// Currency type for wallet ledger
+export type CurrencyType = 'USD' | 'NGN';
+
+// Wallet Ledger Response
+export type ExchangeRate = {
+  buy_rate: number;
+  sell_rate: number;
+  from_currency: string;
+  to_currency: string;
+};
+
+export type WalletLedgerData = {
+  fiat_wallet_balance_ngn: string;
+  crypto_wallet_balance_usdt: string;
+  investment_wallet_ngn: string;
+  investment_wallet_usdt: string;
+  total_portfolio_in_ngn: string;
+  total_portfolio_in_usd: string;
+  wallet_balance_in_ngn: string;
+  wallet_balance_in_usd: string;
+  currency_distribution_ngn: {
+    ngn: string;
+    usd: string;
+  };
+  currency_distribution_usd: {
+    ngn: string;
+    usd: string;
+  };
+  exchange_rate: ExchangeRate;
+  locker_balance_ngn: string;
+  locker_balance_usdt: string;
+};
+
+export type WalletLedgerResponse = {
+  success: boolean;
+  data: WalletLedgerData;
+};
