@@ -3,28 +3,24 @@
 import { useState } from 'react';
 import CofferTransactionDetailsDialog from './CofferTransactionDetailsDialog';
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
-import type { CofferInvestment, TransactionEvent } from './coffer-columns';
 import CustomizableTable from '@/components/shared/CustomizableTable';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
+import useGetRequest from '@/hooks/useGetRequests';
+import type { AllInvestmentTransactionsResponse, AllInvestmentTransactionsData, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 interface CofferTransactionsOverviewProps {
-  investments: Array<CofferInvestment>;
+  userId: string;
 }
 
-interface FlattenedTransaction extends TransactionEvent {
-  investmentTitle: string;
-  investmentRef: string;
-  currency: 'NGN' | 'USDT';
-  parentInvestment: CofferInvestment;
-}
-
-const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
+const formatCurrency = (amount: string | number, currency: InvestmentCurrency) => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
   if (currency === 'NGN') {
-    return `₦${amount.toLocaleString()}`;
+    return `₦${numAmount.toLocaleString()}`;
   }
-  return `$${amount.toLocaleString()}`;
+  return `$${numAmount.toLocaleString()}`;
 };
 
 const getStatusColor = (status: string) => {
@@ -35,6 +31,8 @@ const getStatusColor = (status: string) => {
       return 'text-orange-600 dark:text-orange-400';
     case 'upcoming':
       return 'text-muted-foreground';
+    case 'failed':
+      return 'text-red-600 dark:text-red-400';
     default:
       return 'text-muted-foreground';
   }
@@ -57,8 +55,8 @@ const getTypeColor = (type: string) => {
 
 // Create columns for the coffer transactions table
 const createCofferTransactionColumns = (
-  onViewTransaction: (transaction: FlattenedTransaction) => void
-): Array<ExtendedColumnDef<FlattenedTransaction>> => [
+  onViewTransaction: (transaction: AllInvestmentTransactionsData) => void
+): Array<ExtendedColumnDef<AllInvestmentTransactionsData>> => [
     {
       accessorKey: 'date',
       header: 'Date',
@@ -73,7 +71,7 @@ const createCofferTransactionColumns = (
       header: 'Investment',
       cell: ({ row }) => (
         <span className="font-medium text-foreground text-sm truncate max-w-[180px]">
-          {row.original.investmentTitle}
+          {row.original.investment_name}
         </span>
       ),
     },
@@ -128,45 +126,21 @@ const createCofferTransactionColumns = (
   ];
 
 export default function CofferTransactionsOverview({
-  investments,
+  userId,
 }: CofferTransactionsOverviewProps) {
-  // Dialog state
-  const [selectedTransaction, setSelectedTransaction] = useState<FlattenedTransaction | null>(null);
+  const [page, setPage] = useState(1);
+  const [selectedTransaction, setSelectedTransaction] = useState<AllInvestmentTransactionsData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Flatten all transactions from all investments
-  const allTransactions: Array<FlattenedTransaction> = [];
-
-  investments.forEach((investment) => {
-    investment.transactions.forEach((transaction) => {
-      allTransactions.push({
-        ...transaction,
-        investmentTitle: investment.investment.title,
-        investmentRef: investment.reference,
-        currency: investment.investment.currency,
-        parentInvestment: investment,
-      });
-    });
+  const { data, isLoading, isError } = useGetRequest<AllInvestmentTransactionsResponse, Error>({
+    URL: `/admin/customer/${userId}/investment-transactions`,
+    queryKey: ['all-investment-transactions', userId, String(page)],
+    params: { page, limit: 10 },
   });
 
-  // Sort by date (most recent first)
-  allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  // Show only the most recent 10 transactions
-  const recentTransactions = allTransactions.slice(0, 10);
-
-  // Handler for viewing transaction
-  const handleViewTransaction = (transaction: FlattenedTransaction) => {
-    setSelectedTransaction(transaction);
-    setIsDialogOpen(true);
-  };
-
-  // Create columns
-  const columns = createCofferTransactionColumns(handleViewTransaction);
-
-  // Pagination meta (mock for now)
-  const paginationMeta = {
-    total: recentTransactions.length,
+  const transactions = data?.data?.transactions ?? [];
+  const paginationMeta = data?.data?.meta ?? {
+    total: 0,
     page: 1,
     limit: 10,
     total_page: 1,
@@ -174,7 +148,33 @@ export default function CofferTransactionsOverview({
     has_previous_page: false,
   };
 
-  if (recentTransactions.length === 0) {
+  const handleViewTransaction = (transaction: AllInvestmentTransactionsData) => {
+    setSelectedTransaction(transaction);
+    setIsDialogOpen(true);
+  };
+
+  const columns = createCofferTransactionColumns(handleViewTransaction);
+
+  if (isLoading) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-4 w-64" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6">
+        <h3 className="text-lg font-semibold mb-4">Coffer Transactions Overview</h3>
+        <p className="text-muted-foreground text-sm">Failed to load transactions.</p>
+      </div>
+    );
+  }
+
+  if (transactions.length === 0) {
     return (
       <div className="rounded-lg border border-border bg-card p-6">
         <h3 className="text-lg font-semibold mb-4">Coffer Transactions Overview</h3>
@@ -203,9 +203,9 @@ export default function CofferTransactionsOverview({
           'action',
         ]}
         columns={columns}
-        data={recentTransactions}
+        data={transactions}
         meta={paginationMeta}
-        setPage={() => { }}
+        setPage={setPage}
       >
         <span />
       </CustomizableTable>

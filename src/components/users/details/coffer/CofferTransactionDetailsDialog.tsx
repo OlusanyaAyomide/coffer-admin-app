@@ -2,7 +2,6 @@
 
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
-import type { TransactionEvent } from './coffer-columns';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,22 +15,20 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
+import type { AllInvestmentTransactionsData, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 interface CofferTransactionDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  transaction: (TransactionEvent & {
-    investmentTitle: string;
-    investmentRef: string;
-    currency: 'NGN' | 'USDT';
-  }) | null;
+  transaction: AllInvestmentTransactionsData | null;
 }
 
-const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
+const formatCurrency = (amount: string | number, currency: InvestmentCurrency) => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
   if (currency === 'NGN') {
-    return `₦${amount.toLocaleString()}`;
+    return `₦${numAmount.toLocaleString()}`;
   }
-  return `$${amount.toLocaleString()}`;
+  return `$${numAmount.toLocaleString()}`;
 };
 
 const getStatusColor = (status: string) => {
@@ -42,6 +39,8 @@ const getStatusColor = (status: string) => {
       return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
     case 'upcoming':
       return 'bg-muted text-muted-foreground';
+    case 'failed':
+      return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
     default:
       return 'bg-muted text-muted-foreground';
   }
@@ -159,13 +158,11 @@ export default function CofferTransactionDetailsDialog({
             Transaction Info
           </h3>
           <DetailRow label="Transaction ID" value={transaction.id} mono />
+          <DetailRow label="Reference" value={transaction.reference} mono />
           <DetailRow label="Type" value={getTypeLabel(transaction.type)} />
           <DetailRow label="Status" value={transaction.status} />
           <DetailRow label="Currency" value={transaction.currency} />
           <DetailRow label="Amount" value={formatCurrency(transaction.amount, transaction.currency)} />
-          {transaction.description && (
-            <DetailRow label="Description" value={transaction.description} />
-          )}
         </div>
 
         <Separator />
@@ -175,8 +172,7 @@ export default function CofferTransactionDetailsDialog({
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
             Investment Info
           </h3>
-          <DetailRow label="Investment" value={transaction.investmentTitle} />
-          <DetailRow label="Reference" value={transaction.investmentRef} mono />
+          <DetailRow label="Investment" value={transaction.investment_name} />
         </div>
 
         <Separator />

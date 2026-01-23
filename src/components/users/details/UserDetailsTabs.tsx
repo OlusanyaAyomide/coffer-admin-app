@@ -76,7 +76,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
 
       <TabsContent value="plans" className="mt-6">
         <CofferPlansContextProvider>
-          <CofferPlansTab />
+          <CofferPlansTab userId={userId} />
         </CofferPlansContextProvider>
       </TabsContent>
       <TabsContent value="locker" className="mt-6">

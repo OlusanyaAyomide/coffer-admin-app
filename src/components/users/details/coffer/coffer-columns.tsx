@@ -12,41 +12,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-
-// Types based on UserInvestment schema
-export interface TransactionEvent {
-  id: string;
-  type: 'deposit' | 'dividend' | 'withdrawal' | 'maturity';
-  amount: number;
-  date: string;
-  status: 'completed' | 'pending' | 'upcoming';
-  description?: string;
-}
-
-export interface CofferInvestment {
-  id: string;
-  reference: string;
-  status: 'active' | 'matured' | 'withdrawn' | 'cancelled' | 'not_started';
-  total_units_purchased: number;
-  created_at: string;
-  investment: {
-    id: string;
-    title: string;
-    category: string;
-    price_per_unit: number;
-    roi_percentage: number;
-    start_date: string;
-    maturity_date: string;
-    currency: 'NGN' | 'USDT';
-    description: string;
-  };
-  transactions: Array<TransactionEvent>;
-  total_dividends_received: number;
-  next_dividend_date?: string;
-}
+import type { UserInvestmentData, UserInvestmentStatus, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 // Status color helper
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: UserInvestmentStatus) => {
   switch (status) {
     case 'active':
       return 'text-green-600 dark:text-green-400';
@@ -64,18 +33,19 @@ const getStatusColor = (status: string) => {
 };
 
 // Format currency
-const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
+const formatCurrency = (amount: string | number, currency: InvestmentCurrency) => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
   if (currency === 'NGN') {
-    return `₦${amount.toLocaleString()}`;
+    return `₦${numAmount.toLocaleString()}`;
   }
-  return `$${amount.toLocaleString()}`;
+  return `$${numAmount.toLocaleString()}`;
 };
 
 // Actions component for table
 interface CofferActionsProps {
-  investment: CofferInvestment;
-  onViewInvestment: (investment: CofferInvestment) => void;
-  onViewTransactions: (investment: CofferInvestment) => void;
+  investment: UserInvestmentData;
+  onViewInvestment: (investment: UserInvestmentData) => void;
+  onViewTransactions: (investment: UserInvestmentData) => void;
 }
 
 export const CofferActions = ({
@@ -103,9 +73,9 @@ export const CofferActions = ({
 
 // Table columns
 export const createCofferColumns = (
-  onViewInvestment: (investment: CofferInvestment) => void,
-  onViewTransactions: (investment: CofferInvestment) => void
-): Array<ExtendedColumnDef<CofferInvestment>> => [
+  onViewInvestment: (investment: UserInvestmentData) => void,
+  onViewTransactions: (investment: UserInvestmentData) => void
+): Array<ExtendedColumnDef<UserInvestmentData>> => [
     {
       accessorKey: 'investment_name',
       header: 'Investment Name',
@@ -139,16 +109,11 @@ export const createCofferColumns = (
     {
       accessorKey: 'total_value',
       header: 'Total Value',
-      cell: ({ row }) => {
-        const total =
-          row.original.total_units_purchased *
-          row.original.investment.price_per_unit;
-        return (
-          <span className="font-medium whitespace-nowrap">
-            {formatCurrency(total, row.original.investment.currency)}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <span className="font-medium whitespace-nowrap">
+          {formatCurrency(row.original.total_value, row.original.investment.currency)}
+        </span>
+      ),
     },
     {
       accessorKey: 'roi',
@@ -182,10 +147,7 @@ export const createCofferColumns = (
       header: 'Dividends Received',
       cell: ({ row }) => (
         <span className="font-medium whitespace-nowrap">
-          {formatCurrency(
-            row.original.total_dividends_received,
-            row.original.investment.currency
-          )}
+          {formatCurrency(row.original.dividends_received, row.original.investment.currency)}
         </span>
       ),
     },
@@ -204,7 +166,7 @@ export const createCofferColumns = (
   ];
 
 // Mobile columns
-export const cofferMobileColumns: Array<MobileRow<CofferInvestment>> = [
+export const cofferMobileColumns: Array<MobileRow<UserInvestmentData>> = [
   {
     cell: ({ row }) => (
       <span className={cn('text-xs font-medium capitalize', getStatusColor(row.status))}>
@@ -232,7 +194,7 @@ export const cofferMobileColumns: Array<MobileRow<CofferInvestment>> = [
 ];
 
 // Mobile card title
-export const getCofferMobileTitle = (row: CofferInvestment) => (
+export const getCofferMobileTitle = (row: UserInvestmentData) => (
   <div className="flex flex-col">
     <span className="font-medium text-foreground">{row.investment.title}</span>
     <span className="text-xs text-muted-foreground">{row.investment.category}</span>
@@ -244,8 +206,8 @@ export const CofferMobileAction = ({
   row,
   onViewTransactions,
 }: {
-  row: CofferInvestment;
-  onViewTransactions: (investment: CofferInvestment) => void;
+  row: UserInvestmentData;
+  onViewTransactions: (investment: UserInvestmentData) => void;
 }) => (
   <Button
     variant="ghost"
@@ -258,16 +220,13 @@ export const CofferMobileAction = ({
 );
 
 // Mobile card footer
-export const getCofferMobileFooter = ({ row }: { row: CofferInvestment }) => {
-  const total = row.total_units_purchased * row.investment.price_per_unit;
-  return (
-    <div className="flex justify-between text-xs">
-      <span className="text-muted-foreground">
-        Value: {formatCurrency(total, row.investment.currency)}
-      </span>
-      <span className="text-muted-foreground">
-        Maturity: {formatDateToReadableShort(row.investment.maturity_date)}
-      </span>
-    </div>
-  );
-};
+export const getCofferMobileFooter = ({ row }: { row: UserInvestmentData }) => (
+  <div className="flex justify-between text-xs">
+    <span className="text-muted-foreground">
+      Value: {formatCurrency(row.total_value, row.investment.currency)}
+    </span>
+    <span className="text-muted-foreground">
+      Maturity: {formatDateToReadableShort(row.investment.maturity_date)}
+    </span>
+  </div>
+);

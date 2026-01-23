@@ -1,127 +1,92 @@
 'use client';
 
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
-import type { CofferInvestment } from './coffer-columns';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import useGetRequest from '@/hooks/useGetRequests';
+import type { RecentDividendsResponse, DividendScheduleData } from '@/types/InvestmentTypes';
 
 interface UpcomingDividendsSectionProps {
-  investments: Array<CofferInvestment>;
+  userId: string;
 }
 
-interface UpcomingDividend {
-  id: string;
-  investmentTitle: string;
-  description: string;
-  date: string;
-  amount: number;
-  currency: 'NGN' | 'USDT';
-  isPast: boolean;
-}
-
-const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
+const formatCurrency = (amount: string | number, currency: string = 'NGN') => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
   if (currency === 'NGN') {
-    return `₦${amount.toLocaleString()}`;
+    return `₦${numAmount.toLocaleString()}`;
   }
-  return `$${amount.toLocaleString()}`;
+  return `$${numAmount.toLocaleString()}`;
 };
 
-// Static mock data for upcoming dividends to ensure UI shows content
-const staticUpcomingDividends: Array<UpcomingDividend> = [
-  {
-    id: 'div-1',
-    investmentTitle: 'Green Projects',
-    description: 'Q4 2025 Dividend Payment',
-    date: '2025-12-15T10:00:00Z',
-    amount: 450,
-    currency: 'USDT',
-    isPast: false,
-  },
-  {
-    id: 'div-2',
-    investmentTitle: 'Harvest Hill Van',
-    description: 'Q1 2026 Dividend Payment',
-    date: '2026-03-29T14:30:00Z',
-    amount: 320,
-    currency: 'USDT',
-    isPast: false,
-  },
-  {
-    id: 'div-3',
-    investmentTitle: 'Meat Processing',
-    description: 'Q2 2026 Dividend Payment',
-    date: '2026-07-15T09:00:00Z',
-    amount: 580,
-    currency: 'USDT',
-    isPast: false,
-  },
-  {
-    id: 'div-4',
-    investmentTitle: 'Banana Island',
-    description: 'Not Completed - Pending Maturity',
-    date: '2026-08-30T12:00:00Z',
-    amount: 720,
-    currency: 'USDT',
-    isPast: false,
-  },
-];
-
-export default function UpcomingDividendsSection({ investments }: UpcomingDividendsSectionProps) {
-  // Extract upcoming dividends from all investments
-  const upcomingDividends: Array<UpcomingDividend> = [];
-  const now = new Date();
-
-  investments.forEach((investment) => {
-    investment.transactions
-      .filter((t) => t.type === 'dividend')
-      .forEach((t) => {
-        const dividendDate = new Date(t.date);
-        upcomingDividends.push({
-          id: t.id,
-          investmentTitle: investment.investment.title,
-          description: t.description || `${investment.investment.category} Dividend`,
-          date: t.date,
-          amount: t.amount,
-          currency: investment.investment.currency,
-          isPast: dividendDate < now,
-        });
-      });
+export default function UpcomingDividendsSection({ userId }: UpcomingDividendsSectionProps) {
+  const { data, isLoading, isError } = useGetRequest<RecentDividendsResponse, Error>({
+    URL: `/admin/customer/${userId}/recent-dividends`,
+    queryKey: ['recent-dividends', userId],
   });
 
-  // Sort by date
-  upcomingDividends.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  if (isLoading) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+        <Skeleton className="h-6 w-40" />
+        <div className="space-y-4">
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+        </div>
+      </div>
+    );
+  }
 
-  // Show only upcoming or recent dividends (within last 6 months or future)
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Dividends</h3>
+        <p className="text-muted-foreground text-sm">Failed to load dividend data.</p>
+      </div>
+    );
+  }
 
-  let filteredDividends = upcomingDividends.filter((d) => {
-    const date = new Date(d.date);
-    return date >= sixMonthsAgo;
+  const lastDividend = data?.data?.last_dividend;
+  const upcomingDividends = data?.data?.upcoming_dividends ?? [];
+
+  // Combine last dividend (completed) with upcoming dividends
+  const allDividends: Array<DividendScheduleData & { isCompleted: boolean }> = [];
+
+  if (lastDividend) {
+    allDividends.push({ ...lastDividend, isCompleted: true });
+  }
+
+  upcomingDividends.forEach((dividend) => {
+    allDividends.push({ ...dividend, isCompleted: dividend.status === 'completed' });
   });
 
-  // If no dividends from investments, use static mock data
-  if (filteredDividends.length === 0) {
-    filteredDividends = staticUpcomingDividends;
+  if (allDividends.length === 0) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Dividends</h3>
+        <p className="text-muted-foreground text-sm">No dividend records found.</p>
+      </div>
+    );
   }
 
   return (
     <div className="rounded-lg border border-border bg-card p-6">
-      <h3 className="text-lg font-semibold mb-6">Upcoming Dividends</h3>
+      <h3 className="text-lg font-semibold mb-6">Recent Dividends</h3>
 
       <div className="space-y-0">
-        {filteredDividends.map((dividend, index) => (
+        {allDividends.map((dividend, index) => (
           <div
             key={dividend.id}
             className={cn(
               'flex items-start gap-4 py-4',
-              index !== filteredDividends.length - 1 && 'border-b border-border'
+              index !== allDividends.length - 1 && 'border-b border-border'
             )}
           >
             {/* Icon */}
             <div className="shrink-0 mt-1">
-              {dividend.isPast ? (
+              {dividend.isCompleted ? (
                 <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
                   <CheckCircle2 className="h-4 w-4 text-white" />
                 </div>
@@ -133,23 +98,23 @@ export default function UpcomingDividendsSection({ investments }: UpcomingDivide
             </div>
 
             {/* Content */}
-            <div className={cn('flex-1', !dividend.isPast && 'opacity-60')}>
+            <div className={cn('flex-1', !dividend.isCompleted && 'opacity-60')}>
               <h4 className="font-medium text-sm text-foreground">
-                {dividend.investmentTitle}
+                {dividend.investment_name}
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {dividend.description}
+                {dividend.isCompleted ? 'Dividend Paid' : 'Upcoming Dividend'}
               </p>
               <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                <span>{formatDateToReadableShort(dividend.date)}</span>
+                <span>{formatDateToReadableShort(dividend.payment_date)}</span>
               </div>
             </div>
 
             {/* Amount and View */}
             <div className="flex flex-col items-end gap-1">
               <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                +{formatCurrency(dividend.amount, dividend.currency)}
+                +{formatCurrency(dividend.amount)}
               </span>
               <Button
                 variant="ghost"
