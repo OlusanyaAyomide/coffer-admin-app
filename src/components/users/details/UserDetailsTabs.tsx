@@ -86,7 +86,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
       </TabsContent>
       <TabsContent value="transactions" className="mt-6">
         <TransactionHistoryContextProvider>
-          <TransactionHistoryTab />
+          <TransactionHistoryTab userId={userId} />
         </TransactionHistoryContextProvider>
       </TabsContent>
       <TabsContent value="security" className="mt-6">

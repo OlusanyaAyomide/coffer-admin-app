@@ -2,7 +2,6 @@
 
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
-import type { Transaction } from './transaction-columns';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,18 +15,25 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
+import { Skeleton } from '@/components/ui/skeleton';
+import useGetRequest from '@/hooks/useGetRequests';
+import type { SingleTransactionResponse, TransactionHistoryItem } from '@/types/UserTypes';
+import { QueryError } from '@/types/ResponseTypes';
 
 interface TransactionDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  transaction: Transaction | null;
+  transaction: TransactionHistoryItem | null;
+  userId: string;
 }
 
-const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
-  if (currency === 'NGN') {
-    return `₦${amount.toLocaleString()}`;
-  }
-  return `$${amount.toLocaleString()}`;
+const formatCurrency = (amount: string, currency: string) => {
+  const numAmount = parseFloat(amount);
+  const currencySymbol = currency === 'NGN' ? '₦' : '$';
+  return `${currencySymbol}${numAmount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 };
 
 const getStatusColor = (status: string) => {
@@ -45,8 +51,8 @@ const getStatusColor = (status: string) => {
   }
 };
 
-// Detail row component for consistent formatting
-function DetailRow({ label, value, mono = false }: { label: string; value: string | undefined; mono?: boolean }) {
+// Detail row component
+function DetailRow({ label, value, mono = false }: { label: string; value: string | undefined | null; mono?: boolean }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -87,10 +93,22 @@ export default function TransactionDetailsDialog({
   open,
   onOpenChange,
   transaction,
+  userId,
 }: TransactionDetailsDialogProps) {
+  // Fetch full details when dialog is open
+  const { data, isLoading } = useGetRequest<SingleTransactionResponse, QueryError>({
+    URL: `/admin/customer/${userId}/transactions/${transaction?.id}`,
+    queryKey: ['admin-transaction-detail', userId, transaction?.id || ''],
+    enabled: open && !!transaction?.id,
+  });
+
   if (!transaction) return null;
 
-  const isCredit = ['deposit', 'dividend'].includes(transaction.type);
+  const details = data?.data;
+  const isCredit = transaction.direction === 'credit';
+
+  // Use base transaction info if details loading
+  const displayData = details || transaction;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -106,73 +124,148 @@ export default function TransactionDetailsDialog({
             <span className="sr-only">Close</span>
           </Button>
           <AlertDialogTitle className="text-xl">
-            Transaction Details
+            {displayData.reference}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground">
-            Debug information for admin review
+            Transaction Details
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {/* Amount and Status Header */}
-        <div className="flex items-center justify-between py-4 px-4 bg-secondary/30 rounded-lg">
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">Amount</p>
-            <p className={cn(
-              'text-2xl font-bold',
-              isCredit ? 'text-green-600 dark:text-green-400' : 'text-foreground'
-            )}>
-              {isCredit ? '+' : ''}{formatCurrency(transaction.amount, transaction.currency)}
-            </p>
+        {isLoading ? (
+          <div className="space-y-4 py-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
           </div>
-          <span className={cn(
-            'text-xs font-medium capitalize px-3 py-1.5 rounded-full',
-            getStatusColor(transaction.status)
-          )}>
-            {transaction.status}
-          </span>
-        </div>
+        ) : (
+          <>
+            {/* Amount and Status Header */}
+            <div className="flex items-center justify-between py-4 px-4 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Amount</p>
+                <p className={cn(
+                  'text-2xl font-bold',
+                  isCredit ? 'text-green-600 dark:text-green-400' : 'text-foreground'
+                )}>
+                  {isCredit ? '+' : ''}{formatCurrency(displayData.amount, displayData.currency)}
+                </p>
+              </div>
+              <span className={cn(
+                'text-xs font-medium capitalize px-3 py-1.5 rounded-full',
+                getStatusColor(displayData.status)
+              )}>
+                {displayData.status}
+              </span>
+            </div>
 
-        <Separator />
+            <Separator />
 
-        {/* Transaction Details */}
-        <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Transaction Info
-          </h3>
-          <DetailRow label="Transaction ID" value={transaction.id} mono />
-          <DetailRow label="Reference" value={transaction.reference} mono />
-          <DetailRow label="Type" value={transaction.type} />
-          <DetailRow label="Status" value={transaction.status} />
-          <DetailRow label="Currency" value={transaction.currency} />
-          <DetailRow label="Description" value={transaction.description} />
-        </div>
+            {/* Basic Info */}
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                Information
+              </h3>
+              <DetailRow label="ID" value={displayData.id} mono />
+              <DetailRow label="Category" value={displayData.category?.replace('_', ' ')} />
+              <DetailRow label="Description" value={displayData.description} />
+              <DetailRow label="Wallet Type" value={displayData.wallet_type} />
+              <DetailRow label="Date" value={formatDateToReadableShort(displayData.created_at)} />
+            </div>
 
-        <Separator />
+            {/* Rate info if swap */}
+            {details?.rate && (
+              <>
+                <Separator />
+                <div className="space-y-1">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                    Exchange Details
+                  </h3>
+                  <DetailRow label="Rate" value={details.rate} />
+                </div>
+              </>
+            )}
 
-        {/* Source and Destination */}
-        <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Flow Details
-          </h3>
-          <DetailRow label="Source" value={transaction.source} />
-          <DetailRow label="Destination" value={transaction.destination} />
-        </div>
+            {/* Flow Details (Entries) */}
+            {details?.entries && details.entries.length > 0 && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                    Flow Details
+                  </h3>
+                  <div className="border rounded-md divide-y">
+                    {details.entries.map((entry) => (
+                      <div key={entry.id} className="p-3 text-sm flex justify-between items-center bg-card">
+                        <div className="flex flex-col gap-1">
+                          <span className={cn(
+                            "font-medium",
+                            entry.direction === 'credit' ? "text-green-600" : "text-red-500"
+                          )}>
+                            {entry.direction === 'credit' ? 'Credit' : 'Debit'} ({entry.currency})
+                          </span>
+                          <span className="text-muted-foreground text-xs">
+                            {entry.direction === 'credit' ? 'To: ' : 'From: '}
+                            {entry.direction === 'credit' ? entry.destination_details : entry.source_details}
+                          </span>
+                        </div>
+                        <span className="font-mono font-medium">
+                          {formatCurrency(entry.amount, entry.currency)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
-        <Separator />
+            {/* Charges */}
+            {details?.charges && details.charges.length > 0 && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                    Charges
+                  </h3>
+                  <div className="border rounded-md divide-y">
+                    {details.charges.map((charge) => (
+                      <div key={charge.id} className="p-3 text-sm flex justify-between items-center bg-card">
+                        <span className="capitalize">{charge.type?.replace('_', ' ')}</span>
+                        <span className="font-mono text-red-500">
+                          -{formatCurrency(charge.amount, charge.currency)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
-        {/* Timestamps */}
-        <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Timestamps
-          </h3>
-          <DetailRow label="Created At" value={formatDateToReadableShort(transaction.created_at)} />
-          <DetailRow label="Raw Timestamp" value={transaction.created_at} mono />
-        </div>
+            {/* Metadata */}
+            {displayData.meta_data && Object.keys(displayData.meta_data).length > 0 && (
+              <>
+                <Separator />
+                <div className="space-y-1">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                    Metadata
+                  </h3>
+                  <div className="bg-muted/30 p-3 rounded-md border border-border/50">
+                    {Object.entries(displayData.meta_data).map(([key, value]) => (
+                      <div key={key} className="flex justify-between py-1 text-xs">
+                        <span className="text-muted-foreground font-medium">{key}:</span>
+                        <span className="font-mono truncate max-w-[200px]" title={String(value)}>
+                          {String(value)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
 
-        {/* Raw JSON for debugging */}
-        <Separator />
-
-        <AlertDialogFooter>
+        <AlertDialogFooter className="mt-4">
           <AlertDialogCancel asChild>
             <Button variant="outline">Close</Button>
           </AlertDialogCancel>

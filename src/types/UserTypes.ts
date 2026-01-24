@@ -147,3 +147,57 @@ export type WalletLedgerResponse = {
   success: boolean;
   data: WalletLedgerData;
 };
+
+// Transaction History Types
+export type TransactionHistoryItem = {
+  id: string;
+  reference: string;
+  amount: string;
+  currency: string;
+  status: 'pending' | 'completed' | 'failed' | 'reversed' | 'cancelled';
+  category: string;
+  direction: 'debit' | 'credit' | null;
+  description: string | null;
+  wallet_type: 'fiat' | 'crypto';
+  wallet_id: string | null;
+  created_at: string;
+  meta_data?: any;
+};
+
+export type TransactionEntry = {
+  id: string;
+  amount: string;
+  currency: string;
+  direction: 'debit' | 'credit';
+  source_details: string;
+  destination_details: string;
+  created_at: string;
+};
+
+export type TransactionCharge = {
+  id: string;
+  amount: string;
+  currency: string;
+  type: string;
+};
+
+export type TransactionDetails = TransactionHistoryItem & {
+  rate?: string;
+  entries: TransactionEntry[];
+  charges: TransactionCharge[];
+};
+
+import type { PaginationType } from '@/types/ResponseTypes';
+
+export type TransactionHistoryResponse = {
+  success: boolean;
+  data: {
+    data: Array<TransactionHistoryItem>;
+  };
+  meta: PaginationType;
+};
+
+export type SingleTransactionResponse = {
+  success: boolean;
+  data: TransactionDetails;
+};

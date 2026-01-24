@@ -13,6 +13,8 @@ export type PaginationType = {
   page: number;
   limit: number;
   total_page: number;
+  total_pages?: number;
+  totalPages?: number;
   has_next_page: boolean;
   has_previous_page: boolean;
 };

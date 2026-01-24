@@ -12,4 +12,6 @@ export const TEXT_TRUNCATE_LENGTH = 150;
 
 export const ITEMS_COUNT_PER_PAGE = 10
 
+export const LONG_ITEMS_COUNT_PER_PAGE = 20
+
 export const DEBOUNCE_IN_MS = 500;

@@ -8,9 +8,9 @@ const transactionTypeOptions = [
   { label: 'Deposit', value: 'deposit' },
   { label: 'Withdrawal', value: 'withdrawal' },
   { label: 'Transfer', value: 'transfer' },
-  { label: 'Investment', value: 'investment' },
-  { label: 'Dividend', value: 'dividend' },
-  { label: 'Swap', value: 'swap' },
+  { label: 'Exchange', value: 'exchange' },
+  { label: 'Investment Purchase', value: 'investment_purchase' },
+  { label: 'Investment Withdrawal', value: 'investment_withdrawal' },
 ];
 
 const transactionStatusOptions = [
@@ -62,7 +62,7 @@ export default function TransactionHistoryFilter({ className }: { className?: st
 
         <FilterButtons
           title="Type"
-          filterKey="transaction_type"
+          filterKey="category"
           filterOptions={transactionTypeOptions}
           activeFilters={transactionType}
           setActiveFilters={setTransactionType}
@@ -70,7 +70,7 @@ export default function TransactionHistoryFilter({ className }: { className?: st
 
         <FilterButtons
           title="Status"
-          filterKey="transaction_status"
+          filterKey="status"
           filterOptions={transactionStatusOptions}
           activeFilters={transactionStatus}
           setActiveFilters={setTransactionStatus}

@@ -1,24 +1,10 @@
-'use client';
-
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
 import type { MobileRow } from '@/components/shared/MobileCards';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import handleOptionalData from '@/services/emptyDataServices';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-
-// Transaction types
-export interface Transaction {
-  id: string;
-  reference: string;
-  type: 'deposit' | 'withdrawal' | 'transfer' | 'investment' | 'dividend' | 'swap';
-  status: 'completed' | 'pending' | 'failed' | 'cancelled';
-  amount: number;
-  currency: 'NGN' | 'USDT';
-  description: string;
-  created_at: string;
-  source?: string;
-  destination?: string;
-}
+import type { TransactionHistoryItem } from '@/types/UserTypes';
 
 // Status color helper
 const getStatusColor = (status: string) => {
@@ -37,11 +23,13 @@ const getStatusColor = (status: string) => {
 };
 
 // Format currency
-const formatCurrency = (amount: number, currency: 'NGN' | 'USDT') => {
-  if (currency === 'NGN') {
-    return `₦${amount.toLocaleString()}`;
-  }
-  return `$${amount.toLocaleString()}`;
+const formatCurrency = (amount: string | number, currency: string) => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  const currencySymbol = currency === 'NGN' ? '₦' : '$';
+  return `${currencySymbol}${numAmount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 };
 
 // Title case helper
@@ -51,8 +39,8 @@ const titleCase = (str: string) => {
 
 // Table columns
 export const createTransactionColumns = (
-  onViewDetails: (transaction: Transaction) => void
-): Array<ExtendedColumnDef<Transaction>> => [
+  onViewDetails: (transaction: TransactionHistoryItem) => void
+): Array<ExtendedColumnDef<TransactionHistoryItem>> => [
     {
       accessorKey: 'reference',
       header: 'Reference',
@@ -63,10 +51,10 @@ export const createTransactionColumns = (
       ),
     },
     {
-      accessorKey: 'type',
+      accessorKey: 'category',
       header: 'Type',
       cell: ({ row }) => (
-        <span className="font-medium capitalize">{row.original.type}</span>
+        <span className="font-medium capitalize">{row.original.category.replace('_', ' ')}</span>
       ),
     },
     {
@@ -74,7 +62,7 @@ export const createTransactionColumns = (
       header: 'Description',
       cell: ({ row }) => (
         <span className="text-sm text-foreground max-w-[200px] truncate block">
-          {row.original.description}
+          {handleOptionalData(row.original.description)}
         </span>
       ),
     },
@@ -82,7 +70,7 @@ export const createTransactionColumns = (
       accessorKey: 'amount',
       header: 'Amount',
       cell: ({ row }) => {
-        const isCredit = ['deposit', 'dividend'].includes(row.original.type);
+        const isCredit = row.original.direction === 'credit';
         return (
           <span className={cn(
             'font-medium whitespace-nowrap',
@@ -141,7 +129,7 @@ export const createTransactionColumns = (
   ];
 
 // Mobile columns
-export const transactionMobileColumns: Array<MobileRow<Transaction>> = [
+export const transactionMobileColumns: Array<MobileRow<TransactionHistoryItem>> = [
   {
     cell: ({ row }) => (
       <span className={cn('text-xs font-medium capitalize', getStatusColor(row.status))}>
@@ -169,11 +157,11 @@ export const transactionMobileColumns: Array<MobileRow<Transaction>> = [
 ];
 
 // Mobile card title
-export const getTransactionMobileTitle = (row: Transaction) => {
-  const isCredit = ['deposit', 'dividend'].includes(row.type);
+export const getTransactionMobileTitle = (row: TransactionHistoryItem) => {
+  const isCredit = row.direction === 'credit';
   return (
     <div className="flex flex-col">
-      <span className="font-medium text-foreground capitalize">{row.type}</span>
+      <span className="font-medium text-foreground capitalize">{row.category.replace('_', ' ')}</span>
       <span className={cn(
         'text-sm font-medium',
         isCredit ? 'text-green-600 dark:text-green-400' : 'text-foreground'
@@ -189,8 +177,8 @@ export const TransactionMobileAction = ({
   row,
   onViewDetails,
 }: {
-  row: Transaction;
-  onViewDetails: (transaction: Transaction) => void;
+  row: TransactionHistoryItem;
+  onViewDetails: (transaction: TransactionHistoryItem) => void;
 }) => (
   <Button
     variant="ghost"
@@ -203,10 +191,10 @@ export const TransactionMobileAction = ({
 );
 
 // Mobile card footer
-export const getTransactionMobileFooter = ({ row }: { row: Transaction }) => (
+export const getTransactionMobileFooter = ({ row }: { row: TransactionHistoryItem }) => (
   <div className="flex justify-between text-xs">
     <span className="text-muted-foreground truncate max-w-[70%]">
-      {row.description}
+      {handleOptionalData(row.description)}
     </span>
     <span className="font-mono text-muted-foreground text-[10px]">
       {row.reference}

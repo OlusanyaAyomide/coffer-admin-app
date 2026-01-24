@@ -17,6 +17,8 @@ export default function TablePaginator({
 }: TablePaginatorProps) {
   const { page, total_page, has_next_page, has_previous_page } = meta;
 
+  console.log(page, total_page, has_next_page, has_previous_page)
+
   if (!showPagination) return null;
 
   return (

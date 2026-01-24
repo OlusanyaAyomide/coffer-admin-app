@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import useGetRequest from '@/hooks/useGetRequests';
 import type { AllInvestmentTransactionsResponse, AllInvestmentTransactionsData, InvestmentCurrency } from '@/types/InvestmentTypes';
+import { titleCase } from 'title-case';
+import { titleCaseUnderscoreDash } from '@/services/TextServices';
 
 interface CofferTransactionsOverviewProps {
   userId: string;
@@ -71,7 +73,7 @@ const createCofferTransactionColumns = (
       header: 'Investment',
       cell: ({ row }) => (
         <span className="font-medium text-foreground text-sm truncate max-w-[180px]">
-          {row.original.investment_name}
+          {titleCase(row.original.investment_name)}
         </span>
       ),
     },
@@ -80,7 +82,7 @@ const createCofferTransactionColumns = (
       header: 'Type',
       cell: ({ row }) => (
         <span className={cn('font-medium capitalize', getTypeColor(row.original.type))}>
-          {row.original.type}
+          {titleCaseUnderscoreDash(row.original.type)}
         </span>
       ),
     },
