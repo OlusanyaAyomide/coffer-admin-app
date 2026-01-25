@@ -237,6 +237,10 @@ export type SecurityOverviewResponse = {
     permissions: Record<string, boolean>;
     kyc_notes: Array<AdminNote>;
     is_account_locked: boolean;
+    country_code: string;
+    latest_kyc_submission_id?: string;
+    current_tier: string; // AccountTier
+    is_two_fa_enabled: boolean;
   };
 };
 

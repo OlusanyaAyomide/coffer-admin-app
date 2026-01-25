@@ -7,22 +7,47 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { formatRelativeDateTime } from '@/services/TimeServices';
 import handleOptionalData from '@/services/emptyDataServices';
+import usePostRequest from '@/hooks/usePostRequests';
 
 interface SecurityNotesCardProps {
   notes: Array<AdminNote>;
+  userId: string;
+  latestKycSubmissionId?: string;
+  onSuccess: () => void;
 }
 
-export default function SecurityNotesCard({ notes }: SecurityNotesCardProps) {
+interface NoteForm {
+  title?: string;
+  content: string;
+}
+
+export default function SecurityNotesCard({
+  notes,
+  userId,
+  latestKycSubmissionId,
+  onSuccess,
+}: SecurityNotesCardProps) {
   const [isAddNoteOpen, setIsAddNoteOpen] = useState(false);
   const [isViewAllOpen, setIsViewAllOpen] = useState(false);
 
   const displayNotes = [...notes].slice(0, 4);
 
-  // Placeholder query logic for note submission
-  const handleAddNote = () => {
-    // console.log('Add note submitted:', noteData);
-    // Void function as requested for now
-    setIsAddNoteOpen(false);
+  const { mutate: addNote, isPending } = usePostRequest<void, NoteForm & { kycId?: string }>({
+    URL: `/admin/customer/${userId}/notes`,
+    mutationKey: ['add-admin-note', userId],
+    showErrorToast: true,
+    successText: 'Note added successfully',
+    onSuccess: () => {
+      setIsAddNoteOpen(false);
+      onSuccess();
+    },
+  });
+
+  const handleAddNote = (data: NoteForm) => {
+    addNote({
+      ...data,
+      kycId: latestKycSubmissionId,
+    });
   };
 
   return (
@@ -107,7 +132,7 @@ export default function SecurityNotesCard({ notes }: SecurityNotesCardProps) {
         open={isAddNoteOpen}
         onOpenChange={setIsAddNoteOpen}
         onSubmit={handleAddNote}
-        isSubmitting={false} // Placeholder
+        isSubmitting={isPending}
       />
 
       <ViewAllNotesDialog

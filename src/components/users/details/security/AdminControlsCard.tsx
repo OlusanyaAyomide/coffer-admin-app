@@ -21,10 +21,13 @@ import RequiredLabel from '@/components/shared/RequiredLabel';
 import { validateRequiredString } from '@/services/ValidationServices';
 
 interface AdminControlsCardProps {
-  onForceKycRecheck: (level: number, reason: string) => void;
+  onForceKycRecheck: (level: string, reason: string) => void;
   onReset2FA: () => void;
   onLockAccount: () => void;
   isAccountLocked?: boolean;
+  countryCode?: string;
+  currentTier?: string;
+  isTwoFaEnabled?: boolean;
 }
 
 type DialogType = 'kyc' | '2fa' | 'lock' | null;
@@ -42,9 +45,12 @@ export default function AdminControlsCard({
   onReset2FA,
   onLockAccount,
   isAccountLocked = false,
+  countryCode,
+  currentTier = 'NA',
+  isTwoFaEnabled = false,
 }: AdminControlsCardProps) {
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
-  const [selectedKycLevel, setSelectedKycLevel] = useState<string>('1');
+  const [selectedKycLevel, setSelectedKycLevel] = useState<string>(currentTier !== 'NA' ? currentTier : 'band_c');
 
   const {
     register,
@@ -59,15 +65,15 @@ export default function AdminControlsCard({
   });
 
   const handleKycConfirm = (data: KycFormData) => {
-    onForceKycRecheck(parseInt(selectedKycLevel), data.reason);
+    onForceKycRecheck(selectedKycLevel, data.reason);
     setActiveDialog(null);
-    setSelectedKycLevel('1');
+    setSelectedKycLevel('band_a');
     reset();
   };
 
   const handleCloseKycDialog = () => {
     setActiveDialog(null);
-    setSelectedKycLevel('1');
+    setSelectedKycLevel('band_a');
     reset();
   };
 
@@ -80,6 +86,13 @@ export default function AdminControlsCard({
     onLockAccount();
     setActiveDialog(null);
   };
+
+  const showBandA = currentTier === 'band_a';
+  const showBandB = currentTier === 'band_a' || currentTier === 'band_b';
+  const showBandC =
+    currentTier === 'band_a' ||
+    currentTier === 'band_b' ||
+    currentTier === 'band_c';
 
   return (
     <>
@@ -95,6 +108,7 @@ export default function AdminControlsCard({
             variant="ghost"
             className="w-full justify-between h-11 px-3 hover:bg-muted"
             onClick={() => setActiveDialog('kyc')}
+            disabled={currentTier === 'NA'}
           >
             <div className="flex items-center gap-3">
               <RefreshCw className="h-4 w-4 text-muted-foreground" />
@@ -108,6 +122,7 @@ export default function AdminControlsCard({
             variant="ghost"
             className="w-full justify-between h-11 px-3 hover:bg-muted"
             onClick={() => setActiveDialog('2fa')}
+            disabled={!isTwoFaEnabled}
           >
             <div className="flex items-center gap-3">
               <Key className="h-4 w-4 text-muted-foreground" />
@@ -148,27 +163,33 @@ export default function AdminControlsCard({
 
             <form onSubmit={handleSubmit(handleKycConfirm)} className='mt-4'>
               <RadioGroup value={selectedKycLevel} onValueChange={setSelectedKycLevel} className="mb-4">
-                <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 cursor-pointer">
-                  <RadioGroupItem value="1" id="level-1" />
-                  <div className="flex-1 cursor-pointer">
-                    <span className="font-medium">Level 1</span>
-                    <span className="text-xs text-muted-foreground ml-2">- Basic Identity</span>
+                {showBandC && countryCode === 'NG' && (
+                  <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 cursor-pointer">
+                    <RadioGroupItem value="band_c" id="level-1" />
+                    <div className="flex-1 cursor-pointer">
+                      <span className="font-medium">Band C</span>
+                      <span className="text-xs text-muted-foreground ml-2">- Band C</span>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 cursor-pointer">
-                  <RadioGroupItem value="2" id="level-2" />
-                  <div className="flex-1 cursor-pointer">
-                    <span className="font-medium">Level 2</span>
-                    <span className="text-xs text-muted-foreground ml-2">- Address Proof</span>
+                )}
+                {showBandB && (
+                  <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 cursor-pointer">
+                    <RadioGroupItem value="band_b" id="level-2" />
+                    <div className="flex-1 cursor-pointer">
+                      <span className="font-medium">Band B</span>
+                      <span className="text-xs text-muted-foreground ml-2">- Band B</span>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 cursor-pointer">
-                  <RadioGroupItem value="3" id="level-3" />
-                  <div className="flex-1 cursor-pointer">
-                    <span className="font-medium">Level 3</span>
-                    <span className="text-xs text-muted-foreground ml-2">- Advanced Due Diligence</span>
+                )}
+                {showBandA && (
+                  <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-muted/50 cursor-pointer">
+                    <RadioGroupItem value="band_a" id="level-3" />
+                    <div className="flex-1 cursor-pointer">
+                      <span className="font-medium">Band A</span>
+                      <span className="text-xs text-muted-foreground ml-2">- Band A</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </RadioGroup>
 
               <div className="mb-2">
