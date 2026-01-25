@@ -2,6 +2,8 @@
 
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
+import type { SingleTransactionResponse, TransactionHistoryItem } from '@/types/UserTypes';
+import type { QueryError } from '@/types/ResponseTypes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,8 +19,6 @@ import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import { Skeleton } from '@/components/ui/skeleton';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { SingleTransactionResponse, TransactionHistoryItem } from '@/types/UserTypes';
-import { QueryError } from '@/types/ResponseTypes';
 
 interface TransactionDetailsDialogProps {
   open: boolean;

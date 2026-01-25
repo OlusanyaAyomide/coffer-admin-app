@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CheckCircle2, Circle, Clock, X } from 'lucide-react';
+import type { InvestmentCurrency, InvestmentTransactionData, InvestmentTransactionsResponse } from '@/types/InvestmentTypes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -25,7 +26,6 @@ import {
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { InvestmentTransactionsResponse, InvestmentTransactionData, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 interface TransactionTimelineDialogProps {
   open: boolean;
@@ -116,7 +116,7 @@ export default function TransactionTimelineDialog({
   // Transactions already sorted by server (earliest first, latest last)
 
   // Build deposits/withdrawals table data
-  const getTableData = (txns: InvestmentTransactionData[], currency: InvestmentCurrency) => {
+  const getTableData = (txns: Array<InvestmentTransactionData>, currency: InvestmentCurrency) => {
     return txns.map((tx) => {
       const colors = getTypeColor(tx.type);
       const isWithdrawal = tx.type === 'withdrawal';

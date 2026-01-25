@@ -1,10 +1,10 @@
-import { Coins, Users, Wallet, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Coins, Users, Wallet } from 'lucide-react';
+import type { UserOverviewCardsData } from '@/types/UserTypes';
+import type { QueryError } from '@/types/ResponseTypes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { UserOverviewCardsData } from '@/types/UserTypes';
-import type { QueryError } from '@/types/ResponseTypes';
 
 type UserOverviewCardsResponse = {
   success: boolean;

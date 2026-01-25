@@ -1,6 +1,6 @@
-// User management types
-
 import type { NullableType } from '@/types/GenericTypes';
+
+import type { PaginationType } from '@/types/ResponseTypes';
 
 export type UserData = {
   id: string;
@@ -183,11 +183,9 @@ export type TransactionCharge = {
 
 export type TransactionDetails = TransactionHistoryItem & {
   rate?: string;
-  entries: TransactionEntry[];
-  charges: TransactionCharge[];
+  entries: Array<TransactionEntry>;
+  charges: Array<TransactionCharge>;
 };
-
-import type { PaginationType } from '@/types/ResponseTypes';
 
 export type TransactionHistoryResponse = {
   success: boolean;
@@ -200,4 +198,49 @@ export type TransactionHistoryResponse = {
 export type SingleTransactionResponse = {
   success: boolean;
   data: TransactionDetails;
+};
+
+// --- Security & Verification Types ---
+
+export type VerificationItem = {
+  id: string;
+  title: string;
+  status: 'verified' | 'enabled' | 'pending' | 'not_verified';
+  statusLabel: string;
+  description: string;
+  icon: 'kyc' | 'email' | '2fa';
+  tierBadge?: string;
+  date?: string;
+};
+
+export interface SecurityEvent {
+  id: string;
+  event: string;
+  ipAddress: string;
+  dateTime: string;
+  status: 'success' | 'completed' | 'failed' | 'warning';
+}
+
+export type PermissionUpdateDto = {
+  can_withdraw?: boolean;
+  can_deposit?: boolean;
+  can_swap?: boolean;
+  can_purchase_investment?: boolean;
+  can_save?: boolean;
+  can_log_in?: boolean;
+};
+
+export type SecurityOverviewResponse = {
+  success: boolean;
+  data: {
+    verification_state: Array<VerificationItem>;
+    permissions: Record<string, boolean>;
+    kyc_notes: Array<AdminNote>;
+    is_account_locked: boolean;
+  };
+};
+
+export type SecurityEventsResponse = {
+  success: boolean;
+  data: Array<SecurityEvent>;
 };

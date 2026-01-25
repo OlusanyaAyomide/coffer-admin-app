@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import {
+  TransactionMobileAction,
   createTransactionColumns,
   getTransactionMobileFooter,
   getTransactionMobileTitle,
-  transactionMobileColumns,
-  TransactionMobileAction
+  transactionMobileColumns
 } from './transaction-columns';
 import TransactionHistoryFilter from './TransactionHistoryFilter';
 import TransactionDetailsDialog from './TransactionDetailsDialog';
 import useTransactionHistoryContext from './useTransactionHistoryContext';
+import type { TransactionHistoryItem, TransactionHistoryResponse } from '@/types/UserTypes';
+import type { PaginationType, QueryError } from '@/types/ResponseTypes';
 import MobileCards from '@/components/shared/MobileCards';
 import CustomizableTable from '@/components/shared/CustomizableTable';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { TransactionHistoryResponse, TransactionHistoryItem } from '@/types/UserTypes';
 import { convertDateToTimeRange } from '@/services/TimeServices';
-import type { PaginationType, QueryError } from '@/types/ResponseTypes';
 import { LONG_ITEMS_COUNT_PER_PAGE } from '@/constants/Constants';
 
 interface TransactionHistoryTabProps {
@@ -39,7 +39,7 @@ export default function TransactionHistoryTab({ userId }: TransactionHistoryTabP
   const dateRange = duration.length > 0 ? convertDateToTimeRange('duration', duration) : null;
 
   // Construct params object
-  const params: Record<string, string | number | boolean | string[] | number[]> = {
+  const params: Record<string, string | number | boolean | Array<string> | Array<number>> = {
     page,
     limit: LONG_ITEMS_COUNT_PER_PAGE,
   };

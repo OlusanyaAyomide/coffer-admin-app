@@ -3,7 +3,7 @@
  * Utility functions for wallet ledger calculations and conversions
  */
 
-import type { WalletLedgerData, CurrencyType } from '@/types/UserTypes';
+import type { CurrencyType, WalletLedgerData } from '@/types/UserTypes';
 
 export type { CurrencyType };
 

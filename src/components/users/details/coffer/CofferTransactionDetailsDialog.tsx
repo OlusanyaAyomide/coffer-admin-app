@@ -2,6 +2,7 @@
 
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
+import type { AllInvestmentTransactionsData, InvestmentCurrency } from '@/types/InvestmentTypes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -15,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { AllInvestmentTransactionsData, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 interface CofferTransactionDetailsDialogProps {
   open: boolean;

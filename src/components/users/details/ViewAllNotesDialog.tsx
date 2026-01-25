@@ -1,5 +1,6 @@
 'use client';
 
+import type { AdminNote } from '@/types/UserTypes';
 import {
   Dialog,
   DialogContent,
@@ -10,12 +11,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatRelativeDateTime } from '@/services/TimeServices';
 import handleOptionalData from '@/services/emptyDataServices';
-import type { AdminNote } from '@/types/UserTypes';
 
 interface ViewAllNotesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  notes: AdminNote[];
+  notes: Array<AdminNote>;
 }
 
 export default function ViewAllNotesDialog({

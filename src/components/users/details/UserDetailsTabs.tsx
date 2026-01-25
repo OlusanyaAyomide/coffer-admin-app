@@ -90,7 +90,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
         </TransactionHistoryContextProvider>
       </TabsContent>
       <TabsContent value="security" className="mt-6">
-        <SecurityVerificationTab />
+        <SecurityVerificationTab userId={userId} />
       </TabsContent>
       <TabsContent value="kyc" className="mt-6">
         <KycInformationTab />

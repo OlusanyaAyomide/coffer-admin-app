@@ -1,17 +1,7 @@
 import { CheckCircle2, Key, Mail, Shield } from 'lucide-react';
+import type { VerificationItem } from '@/types/UserTypes';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-
-export interface VerificationItem {
-  id: string;
-  title: string;
-  status: 'verified' | 'enabled' | 'pending' | 'not_verified';
-  statusLabel: string;
-  description: string;
-  icon: 'kyc' | 'email' | '2fa';
-  tierBadge?: string;
-  date?: string;
-}
 
 interface VerificationItemCardProps {
   item: VerificationItem;

@@ -1,17 +1,10 @@
 import { ChevronRight } from 'lucide-react';
-import type {ExtendedColumnDef} from '@/components/shared/BaseDataTable';
+import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
+import type { SecurityEvent } from '@/types/UserTypes';
 import { Button } from '@/components/ui/button';
 import BaseDataTable from '@/components/shared/BaseDataTable';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-
-export interface SecurityEvent {
-  id: string;
-  event: string;
-  ipAddress: string;
-  dateTime: string;
-  status: 'success' | 'completed' | 'failed' | 'warning';
-}
 
 interface SecurityEventsTableProps {
   events: Array<SecurityEvent>;

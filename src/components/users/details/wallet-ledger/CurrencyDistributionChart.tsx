@@ -1,9 +1,9 @@
 import { Cell, Pie, PieChart } from "recharts";
 import type { ChartConfig } from "@/components/ui/chart";
+import type { CurrencyType, WalletLedgerData } from '@/types/UserTypes';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getCurrencyDistribution, formatCurrency } from '@/services/WalletLedgerService';
-import type { WalletLedgerData, CurrencyType } from '@/types/UserTypes';
+import { formatCurrency, getCurrencyDistribution } from '@/services/WalletLedgerService';
 
 interface CurrencyDistributionChartProps {
   data: WalletLedgerData;

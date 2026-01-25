@@ -1,8 +1,8 @@
+import type { CurrencyType, WalletLedgerData } from '@/types/UserTypes';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatCurrency, getTotalPortfolio } from '@/services/WalletLedgerService';
-import type { WalletLedgerData, CurrencyType } from '@/types/UserTypes';
 
 interface TotalPortfolioCardProps {
   data: WalletLedgerData;

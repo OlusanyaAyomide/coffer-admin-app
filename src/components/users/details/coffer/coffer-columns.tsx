@@ -3,6 +3,7 @@
 import { MoreHorizontal } from 'lucide-react';
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
 import type { MobileRow } from '@/components/shared/MobileCards';
+import type { InvestmentCurrency, UserInvestmentData, UserInvestmentStatus } from '@/types/InvestmentTypes';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,7 +13,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { UserInvestmentData, UserInvestmentStatus, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 // Status color helper
 const getStatusColor = (status: UserInvestmentStatus) => {

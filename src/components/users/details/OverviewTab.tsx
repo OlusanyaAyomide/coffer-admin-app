@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Calendar, CheckCircle2, Circle, Clock, Mail, Send, Share2, MessageSquare } from 'lucide-react';
+import { Calendar, CheckCircle2, Circle, Clock, Mail, MessageSquare, Send, Share2 } from 'lucide-react';
+import AddAdminNoteDialog from './AddAdminNoteDialog';
+import ViewAllNotesDialog from './ViewAllNotesDialog';
+import type { AccountOverviewData } from '@/types/UserTypes';
+import type { QueryError } from '@/types/ResponseTypes';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -8,12 +12,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import useGetRequest from '@/hooks/useGetRequests';
 import usePostRequest from '@/hooks/usePostRequests';
-import type { AccountOverviewData } from '@/types/UserTypes';
-import type { QueryError } from '@/types/ResponseTypes';
 import { formatDateToReadableShort, formatRelativeDateTime } from '@/services/TimeServices';
 import handleOptionalData from '@/services/emptyDataServices';
-import AddAdminNoteDialog from './AddAdminNoteDialog';
-import ViewAllNotesDialog from './ViewAllNotesDialog';
 
 type AccountOverviewResponse = {
   success: boolean;

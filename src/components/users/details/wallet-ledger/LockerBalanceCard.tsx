@@ -1,8 +1,8 @@
+import type { CurrencyType, WalletLedgerData } from '@/types/UserTypes';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { formatCurrency, getLockerBalance } from '@/services/WalletLedgerService';
-import type { WalletLedgerData, CurrencyType } from '@/types/UserTypes';
 
 interface LockerBalanceCardProps {
   data: WalletLedgerData;

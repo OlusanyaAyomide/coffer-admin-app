@@ -1,6 +1,7 @@
 'use client';
 
 import { Calendar, Clock, Coins, Layers, TrendingUp } from 'lucide-react';
+import type { InvestmentCurrency, SingleInvestmentResponse, UserInvestmentStatus } from '@/types/InvestmentTypes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,7 +18,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { SingleInvestmentResponse, UserInvestmentStatus, InvestmentCurrency } from '@/types/InvestmentTypes';
 
 interface InvestmentDetailsDialogProps {
   open: boolean;

@@ -1,12 +1,12 @@
 import { CheckCircle2, Mail, MapPin } from 'lucide-react';
+import type { AccountOverviewData } from '@/types/UserTypes';
+import type { QueryError } from '@/types/ResponseTypes';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { AccountOverviewData } from '@/types/UserTypes';
-import type { QueryError } from '@/types/ResponseTypes';
 import { formatRelativeDateTime } from '@/services/TimeServices';
 import handleOptionalData from '@/services/emptyDataServices';
 

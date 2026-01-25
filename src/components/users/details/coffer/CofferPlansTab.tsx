@@ -13,12 +13,12 @@ import CofferFilter from './CofferFilter';
 import CofferTransactionsOverview from './CofferTransactionsOverview';
 import UpcomingDividendsSection from './UpcomingDividendsSection';
 import useCofferPlansContext from './useCofferPlansContext';
+import type { UserInvestmentData, UserInvestmentResponse } from '@/types/InvestmentTypes';
 import { Button } from '@/components/ui/button';
 import MobileCards from '@/components/shared/MobileCards';
 import CustomizableTable from '@/components/shared/CustomizableTable';
 import { convertDateToTimeRange } from '@/services/TimeServices';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { UserInvestmentResponse, UserInvestmentData } from '@/types/InvestmentTypes';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface CofferPlansTabProps {
@@ -39,7 +39,7 @@ export default function CofferPlansTab({ userId }: CofferPlansTabProps) {
 
   const dateRange = startDate.length > 0 ? convertDateToTimeRange('start_date', startDate) : null;
 
-  const params: Record<string, string | number | boolean | string[] | number[]> = { page, limit: 20 };
+  const params: Record<string, string | number | boolean | Array<string> | Array<number>> = { page, limit: 20 };
   if (investmentStatus.length > 0) params.status = investmentStatus;
   if (dateRange?.start_date_start) params.start_date_start = dateRange.start_date_start;
   if (dateRange?.start_date_end) params.start_date_end = dateRange.start_date_end;

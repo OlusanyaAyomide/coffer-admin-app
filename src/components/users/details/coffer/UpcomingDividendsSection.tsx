@@ -1,12 +1,12 @@
 'use client';
 
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
+import type { DividendScheduleData, RecentDividendsResponse } from '@/types/InvestmentTypes';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { RecentDividendsResponse, DividendScheduleData } from '@/types/InvestmentTypes';
 
 interface UpcomingDividendsSectionProps {
   userId: string;

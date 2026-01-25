@@ -1,8 +1,9 @@
 'use client';
 
-import { useForm, Resolver } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import type { Resolver } from 'react-hook-form';
 import {
   Dialog,
   DialogContent,

@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { titleCase } from 'title-case';
 import CofferTransactionDetailsDialog from './CofferTransactionDetailsDialog';
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
+import type { AllInvestmentTransactionsData, AllInvestmentTransactionsResponse, InvestmentCurrency } from '@/types/InvestmentTypes';
 import CustomizableTable from '@/components/shared/CustomizableTable';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import useGetRequest from '@/hooks/useGetRequests';
-import type { AllInvestmentTransactionsResponse, AllInvestmentTransactionsData, InvestmentCurrency } from '@/types/InvestmentTypes';
-import { titleCase } from 'title-case';
 import { titleCaseUnderscoreDash } from '@/services/TextServices';
 
 interface CofferTransactionsOverviewProps {

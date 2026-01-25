@@ -1,10 +1,10 @@
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
 import type { MobileRow } from '@/components/shared/MobileCards';
+import type { TransactionHistoryItem } from '@/types/UserTypes';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import handleOptionalData from '@/services/emptyDataServices';
 import { formatDateToReadableShort } from '@/services/TimeServices';
-import type { TransactionHistoryItem } from '@/types/UserTypes';
 
 // Status color helper
 const getStatusColor = (status: string) => {
