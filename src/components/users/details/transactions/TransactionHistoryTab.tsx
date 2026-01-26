@@ -16,6 +16,7 @@ import CustomizableTable from '@/components/shared/CustomizableTable';
 import useGetRequest from '@/hooks/useGetRequests';
 import { convertDateToTimeRange } from '@/services/TimeServices';
 import { LONG_ITEMS_COUNT_PER_PAGE } from '@/constants/Constants';
+import EmptyData from '@/components/shared/EmptyData';
 
 interface TransactionHistoryTabProps {
   userId: string;
@@ -115,7 +116,6 @@ export default function TransactionHistoryTab({ userId }: TransactionHistoryTabP
         setPage={setPage}
         testIdKey="id"
       />
-
       {/* Transaction Details Dialog */}
       <TransactionDetailsDialog
         open={isDetailsOpen}

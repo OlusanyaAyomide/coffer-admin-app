@@ -93,7 +93,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
         <SecurityVerificationTab userId={userId} />
       </TabsContent>
       <TabsContent value="kyc" className="mt-6">
-        <KycInformationTab />
+        <KycInformationTab userId={userId} />
       </TabsContent>
       <TabsContent value="logs" className="mt-6">
         <ActivityLogContextProvider>

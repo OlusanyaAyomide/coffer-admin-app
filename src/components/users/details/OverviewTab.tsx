@@ -124,7 +124,7 @@ export default function OverviewTab({ userId }: { userId: string }) {
 
   const adminNotes = accountData?.admin_notes || [];
   const kycTiers = accountData?.kyc_tiers || [];
-  const displayNotes = [...adminNotes].slice(0, 4).reverse();
+  const displayNotes = [...adminNotes].slice(0, 3).reverse();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

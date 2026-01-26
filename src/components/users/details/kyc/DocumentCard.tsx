@@ -2,12 +2,14 @@ import { AlertTriangle, Download, FileText, MapPin, Shield } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
 import { Button } from '@/components/ui/button';
+import TransitionLink from '@/components/layout/TransitionLink';
 
 export type DocumentStatus = 'verified' | 'pending' | 'rejected' | 'not_submitted';
 export type DocumentType = 'passport' | 'id_card' | 'drivers_license' | 'proof_of_address' | 'selfie';
 
 export interface KycDocument {
   id: string;
+  submissionId?: string;
   type: DocumentType;
   title: string;
   subtitle?: string;
@@ -200,15 +202,27 @@ export function DocumentPreview({ document, onView }: DocumentPreviewProps) {
         )}>
           {statusBadge.label}
         </span>
-        {onView && document.status !== 'not_submitted' && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-primary hover:text-primary hover:bg-primary/10"
-            onClick={onView}
-          >
-            View
-          </Button>
+        {document.submissionId ? (
+          <TransitionLink to={`/kyc/${document.submissionId}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:text-primary hover:bg-primary/10"
+            >
+              View
+            </Button>
+          </TransitionLink>
+        ) : (
+          onView && document.status !== 'not_submitted' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:text-primary hover:bg-primary/10"
+              onClick={onView}
+            >
+              View
+            </Button>
+          )
         )}
       </div>
     </div>

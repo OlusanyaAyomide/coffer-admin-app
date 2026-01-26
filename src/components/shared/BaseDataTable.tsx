@@ -84,7 +84,11 @@ export default function BaseDataTable<TData>({
   };
 
   if (!table.getRowModel().rows?.length) {
-    return null;
+    return (
+      <div className='h-24 flex justify-center items-center'>
+        <span className='font-medium text-muted-foreground'>Table is empty </span>
+      </div>
+    );
   }
 
   return (

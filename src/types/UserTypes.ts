@@ -248,3 +248,29 @@ export type SecurityEventsResponse = {
   success: boolean;
   data: Array<SecurityEvent>;
 };
+
+export type KycDocument = {
+  id: string;
+  submission_id: string;
+  type: string;
+  title: string;
+  subtitle?: string;
+  status: 'accepted' | 'pending' | 'rejected' | 'invalidated';
+  uploaded_date: string;
+  thumbnail_url: string;
+  mime_type?: string;
+  associated_tier: AccountTierType;
+  // mapped fields for UI if needed
+  documentId?: string;
+  issueDate?: string;
+  expiryDate?: string;
+};
+
+export type KycDocumentsResponse = {
+  success: boolean;
+  data: {
+    kyc_status: string;
+    current_documents: Array<KycDocument>;
+    history_documents: Array<KycDocument>;
+  };
+};

@@ -3,120 +3,66 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import DocumentCard, {
   DocumentPreview,
-  
-  
   KycStatusBanner
 } from './DocumentCard';
-import type {KycBand, KycDocument} from './DocumentCard';
+import type { KycDocument as UiKycDocument, DocumentStatus } from './DocumentCard';
+import useGetRequest from '@/hooks/useGetRequests';
+import { KycDocumentsResponse, KycDocument as ApiKycDocument } from '@/types/UserTypes';
+import { Skeleton } from '@/components/ui/skeleton';
+import { QueryError } from '@/types/ResponseTypes';
 
 // Helper to check if URL is an image
 const isImageUrl = (url?: string): boolean => {
   if (!url) return false;
+  // Remove query params for extension check if needed.
+  const baseUrl = url.split('?')[0].toLowerCase();
   const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
-  const lowerUrl = url.toLowerCase();
-  return imageExtensions.some(ext => lowerUrl.includes(ext));
+  return imageExtensions.some(ext => baseUrl.endsWith(ext));
 };
 
-// Mock data - Band A (All verified) with sample image URLs
-const mockDocumentsBandA: Array<KycDocument> = [
-  {
-    id: '1',
-    type: 'passport',
-    title: 'Passport',
-    documentId: 'GBR-88291012',
-    status: 'verified',
-    issueDate: '2020-01-15T00:00:00Z',
-    expiryDate: '2030-01-15T00:00:00Z',
-    thumbnailUrl: 'https://res.cloudinary.com/dsjmccsbe/image/upload/v1759999080/prly/sandbox/r2nfgruqqgperz4szabe.jpg',
-  },
-  {
-    id: '2',
-    type: 'proof_of_address',
-    title: 'Proof of Address',
-    subtitle: 'Utility Bill',
-    status: 'verified',
-    documentDate: '2023-09-01T00:00:00Z',
-    uploadedDate: '2023-10-12T00:00:00Z',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&h=300&fit=crop',
-  },
-];
-
-// Mock data - Band B (Partial)
-const mockDocumentsBandB: Array<KycDocument> = [
-  {
-    id: '1',
-    type: 'id_card',
-    title: 'National ID Card',
-    documentId: 'NGA-12345678',
-    status: 'verified',
-    issueDate: '2021-05-20T00:00:00Z',
-    expiryDate: '2026-05-20T00:00:00Z',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1578670812003-60745e2c2ea9?w=400&h=300&fit=crop',
-  },
-  {
-    id: '2',
-    type: 'proof_of_address',
-    title: 'Proof of Address',
-    subtitle: 'Required',
-    status: 'not_submitted',
-  },
-];
-
-// Mock data - Band C (No verification)
-const mockDocumentsBandC: Array<KycDocument> = [
-  {
-    id: '1',
-    type: 'passport',
-    title: 'Identity Document',
-    subtitle: 'Passport or ID Card',
-    status: 'not_submitted',
-  },
-  {
-    id: '2',
-    type: 'proof_of_address',
-    title: 'Proof of Address',
-    subtitle: 'Utility Bill or Bank Statement',
-    status: 'not_submitted',
-  },
-];
-
-// Mock rejected document for tracking
-const mockRejectedDocuments: Array<KycDocument> = [
-  {
-    id: '3',
-    type: 'drivers_license',
-    title: 'Driver\'s License',
-    documentId: 'DL-98765432',
-    status: 'rejected',
-    uploadedDate: '2023-09-20T00:00:00Z',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop',
-  },
-];
-
 interface KycInformationTabProps {
-  userBand?: KycBand;
+  userId: string;
 }
 
-export default function KycInformationTab({ userBand = 'band_a' }: KycInformationTabProps) {
+export default function KycInformationTab({ userId }: KycInformationTabProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Get documents based on band
-  const getDocuments = () => {
-    switch (userBand) {
-      case 'band_a':
-        return mockDocumentsBandA;
-      case 'band_b':
-        return mockDocumentsBandB;
-      case 'band_c':
-        return mockDocumentsBandC;
-    }
+  const { data, isLoading } = useGetRequest<KycDocumentsResponse, QueryError>({
+    URL: `/admin/customer/${userId}/kyc-documents`,
+    queryKey: ['user-kyc-documents', userId],
+    enabled: !!userId,
+  });
+
+  const kycData = data?.data;
+
+  // Map API document to UI document
+  const mapDocument = (doc: ApiKycDocument): UiKycDocument => {
+    let status: DocumentStatus = 'not_submitted';
+    if (doc.status === 'accepted') status = 'verified';
+    else if (doc.status === 'pending') status = 'pending';
+    else if (doc.status === 'rejected') status = 'rejected';
+    else if (doc.status === 'invalidated') status = 'rejected';
+
+    return {
+      id: doc.id,
+      submissionId: doc.submission_id,
+      type: doc.type as any, // Cast to UI type provided it matches or we are lenient
+      title: doc.title,
+      subtitle: doc.subtitle,
+      documentId: doc.documentId,
+      status: status,
+      issueDate: doc.issueDate,
+      expiryDate: doc.expiryDate,
+      uploadedDate: doc.uploaded_date,
+      thumbnailUrl: doc.thumbnail_url,
+    };
   };
 
-  const documents = getDocuments();
-  const expiryDate = userBand === 'band_a' ? '2025-10-15T00:00:00Z' : undefined;
+  const currentDocuments = kycData?.current_documents.map(mapDocument) || [];
+  const historyDocuments = kycData?.history_documents.map(mapDocument) || [];
 
-  const handleViewFull = (doc: KycDocument) => {
-    if (doc.thumbnailUrl && isImageUrl(doc.thumbnailUrl)) {
+  const handleViewFull = (doc: UiKycDocument) => {
+    if (doc.thumbnailUrl && (isImageUrl(doc.thumbnailUrl) || doc.thumbnailUrl.includes('mime_type=image'))) {
       // For images, open in PhotoView
       setSelectedImage(doc.thumbnailUrl);
     } else if (doc.thumbnailUrl) {
@@ -127,7 +73,7 @@ export default function KycInformationTab({ userBand = 'band_a' }: KycInformatio
     }
   };
 
-  const handleDownload = (doc: KycDocument) => {
+  const handleDownload = (doc: UiKycDocument) => {
     if (doc.thumbnailUrl) {
       // Create a download link
       const link = document.createElement('a');
@@ -140,9 +86,28 @@ export default function KycInformationTab({ userBand = 'band_a' }: KycInformatio
     }
   };
 
-  const handleViewDocument = (doc: KycDocument) => {
+  const handleViewDocument = (doc: UiKycDocument) => {
     handleViewFull(doc);
   };
+
+  // Determine KYC Band for Banner
+  let userBand: 'band_a' | 'band_b' | 'band_c' = 'band_c';
+  if (kycData?.kyc_status === 'verified') userBand = 'band_a';
+  else if (kycData?.kyc_status === 'pending') userBand = 'band_b';
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="rounded-lg border border-border bg-card p-5 space-y-4">
+          <Skeleton className="h-6 w-48" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton className="h-40 w-full rounded-lg" />
+            <Skeleton className="h-40 w-full rounded-lg" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <PhotoProvider>
@@ -165,33 +130,39 @@ export default function KycInformationTab({ userBand = 'band_a' }: KycInformatio
         <div className="rounded-lg border border-border bg-card p-5">
           <h3 className="text-base font-semibold mb-4">Identity Documents</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {documents.map((doc) => (
-              <PhotoProvider key={doc.id}>
-                {doc.thumbnailUrl && isImageUrl(doc.thumbnailUrl) ? (
-                  <PhotoView src={doc.thumbnailUrl}>
-                    <div>
-                      <DocumentCard
-                        document={doc}
-                        onViewFull={() => { }}
-                        onDownload={() => handleDownload(doc)}
-                      />
-                    </div>
-                  </PhotoView>
-                ) : (
-                  <DocumentCard
-                    document={doc}
-                    onViewFull={() => handleViewFull(doc)}
-                    onDownload={() => handleDownload(doc)}
-                  />
-                )}
-              </PhotoProvider>
-            ))}
-          </div>
+          {currentDocuments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {currentDocuments.map((doc) => (
+                <PhotoProvider key={doc.id}>
+                  {doc.thumbnailUrl && isImageUrl(doc.thumbnailUrl) ? (
+                    <PhotoView src={doc.thumbnailUrl}>
+                      <div>
+                        <DocumentCard
+                          document={doc}
+                          onViewFull={() => { }}
+                          onDownload={() => handleDownload(doc)}
+                        />
+                      </div>
+                    </PhotoView>
+                  ) : (
+                    <DocumentCard
+                      document={doc}
+                      onViewFull={() => handleViewFull(doc)}
+                      onDownload={() => handleDownload(doc)}
+                    />
+                  )}
+                </PhotoProvider>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground bg-muted/20 rounded-lg">
+              No active documents found.
+            </div>
+          )}
         </div>
 
         {/* Rejected/Previous Submissions - For admin tracking */}
-        {mockRejectedDocuments.length > 0 && (
+        {historyDocuments.length > 0 && (
           <div className="rounded-lg border border-border bg-card p-5">
             <h3 className="text-base font-semibold mb-4">Previous Submissions</h3>
             <p className="text-xs text-muted-foreground mb-4">
@@ -199,9 +170,9 @@ export default function KycInformationTab({ userBand = 'band_a' }: KycInformatio
             </p>
 
             <div className="space-y-3">
-              {mockRejectedDocuments.map((doc) => (
+              {historyDocuments.map((doc, index) => (
                 <DocumentPreview
-                  key={doc.id}
+                  key={(index + 1).toString()}
                   document={doc}
                   onView={() => handleViewDocument(doc)}
                 />
@@ -211,7 +182,7 @@ export default function KycInformationTab({ userBand = 'band_a' }: KycInformatio
         )}
 
         {/* KYC Status Banner */}
-        <KycStatusBanner band={userBand} expiryDate={expiryDate} />
+        <KycStatusBanner band={userBand} />
       </div>
     </PhotoProvider>
   );

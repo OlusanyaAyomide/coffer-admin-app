@@ -8,7 +8,7 @@ type RefreshTokenPayload = {
   refresh_token: string;
 };
 
-const CHECK_INTERVAL_MS = 3 * 60 * 1000; // 3 minutes
+const CHECK_INTERVAL_MS = 1 * 60 * 1000; // 1 minute
 const REFRESH_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_RETRY_ERRORS = 3;
 const MIN_RETRY_DELAY_MS = 20000; // Minimum 20 seconds between retries
@@ -104,6 +104,16 @@ export default function useTokenRefresh() {
     },
   });
 
+  // Store latest versions of functions in refs to avoid re-running effect
+  const refreshTokenRef = useRef(refreshToken);
+  const handleLogoutRef = useRef(handleLogout);
+
+  // Update refs when functions change
+  useEffect(() => {
+    refreshTokenRef.current = refreshToken;
+    handleLogoutRef.current = handleLogout;
+  }, [refreshToken, handleLogout]);
+
   useEffect(() => {
     const checkAndRefresh = () => {
       // Prevent duplicate calls if already refreshing
@@ -121,14 +131,24 @@ export default function useTokenRefresh() {
       const expiryTime = new Date(expiryTimeStr).getTime();
       const now = Date.now();
       const timeUntilExpiry = expiryTime - now;
-      console.log(timeUntilExpiry < REFRESH_THRESHOLD_MS)
+      const timeUntilRefreshTrigger = timeUntilExpiry - REFRESH_THRESHOLD_MS;
+
+      console.log('🔔 TIME UNTIL REFRESH TRIGGERS:', Math.max(0, timeUntilRefreshTrigger / 60000).toFixed(2), 'minutes');
+      console.log('⏱️  Time until cookie expires:', (timeUntilExpiry / 60000).toFixed(2), 'minutes');
+      console.log('📊 Refresh threshold (buffer):', (REFRESH_THRESHOLD_MS / 60000).toFixed(2), 'minutes');
 
       // If token expires in less than threshold, refresh it
-      if (timeUntilExpiry > 0 && timeUntilExpiry < REFRESH_THRESHOLD_MS) {
+      if (timeUntilExpiry < REFRESH_THRESHOLD_MS && timeUntilExpiry > 0) {
         isRefreshingRef.current = true;
-        setTimeout(() => {
-          refreshToken({ refresh_token: refreshTokenValue });
-        }, 1000)
+        console.log("🔄 REFRESH TRIGGERED! Token expires in", (timeUntilExpiry / 60000).toFixed(2), 'minutes');
+        refreshTokenRef.current({ refresh_token: refreshTokenValue });
+      } else if (timeUntilExpiry <= 0) {
+        // Token already expired
+        console.log("❌ Token already expired, logging out");
+        handleLogoutRef.current();
+      } else {
+        // Token is still valid and not in refresh window
+        console.log(`✅ Token valid. Refresh in ~${Math.max(0, timeUntilRefreshTrigger / 60000).toFixed(2)} minutes (when ${(REFRESH_THRESHOLD_MS / 60000).toFixed(2)} min remain)`);
       }
     };
 
@@ -147,5 +167,5 @@ export default function useTokenRefresh() {
       // Reset the initial check flag on unmount so it runs again if remounted
       hasInitialCheckRun.current = false;
     };
-  }, [refreshToken, clearAllTimers]);
+  }, []); // Empty dependency array - only runs once on mount
 }
