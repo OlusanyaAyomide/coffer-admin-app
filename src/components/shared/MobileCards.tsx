@@ -20,6 +20,7 @@ type MobileCardsProps<CardData> = {
   testIdKey?: keyof CardData;
   titleClassName?: string;
   footer?: ({ row }: { row: CardData }) => ReactNode;
+  isLoading?: boolean;
 };
 
 export default function MobileCards<CardData>({
@@ -32,7 +33,17 @@ export default function MobileCards<CardData>({
   testIdKey,
   titleClassName,
   footer,
+  isLoading,
 }: MobileCardsProps<CardData>) {
+  if (isLoading) {
+    return (
+      <div className="py-2 lg:hidden mb-10 space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg px-2 py-4 xs:px-3 bg-card border border-border h-40 animate-pulse" />
+        ))}
+      </div>
+    )
+  }
   return (
     <div className="py-2 lg:hidden mb-10">
       {data.map((row, index) => {

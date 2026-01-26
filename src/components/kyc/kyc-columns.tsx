@@ -3,34 +3,22 @@ import type { MobileRow } from '@/components/shared/MobileCards';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
+import type { KycSubmission } from '@/types/UserTypes';
 
 // KYC Submission types
-export type KycStatus = 'pending' | 'approved' | 'rejected' | 'under_review';
-export type KycBand = 'band_a' | 'band_b' | 'band_c';
-
-export interface KycSubmission {
-  id: string;
-  user_id: string;
-  user_name: string;
-  user_email: string;
-  user_avatar?: string;
-  kyc_band: KycBand;
-  status: KycStatus;
-  country: string;
-  document_type: string;
-  submitted_at: string;
-  reviewed_at?: string;
-  reviewer?: string;
-}
+export type KycStatus = 'pending' | 'approved' | 'rejected' | 'under_review' | 'invalidated' | 'accepted';
+export type KycBand = 'band_a' | 'band_b' | 'band_c' | 'NA';
 
 // Status color helper
 const getStatusColor = (status: KycStatus) => {
   switch (status) {
     case 'approved':
+    case 'accepted':
       return 'text-green-600 dark:text-green-400';
     case 'pending':
       return 'text-orange-600 dark:text-orange-400';
     case 'rejected':
+    case 'invalidated':
       return 'text-red-600 dark:text-red-400';
     case 'under_review':
       return 'text-blue-600 dark:text-blue-400';
@@ -44,7 +32,9 @@ const getStatusLabel = (status: KycStatus) => {
   const labels: Record<KycStatus, string> = {
     pending: 'Pending',
     approved: 'Approved',
+    accepted: 'Accepted',
     rejected: 'Rejected',
+    invalidated: 'Invalidated',
     under_review: 'Under Review',
   };
   return labels[status];
@@ -56,6 +46,7 @@ const getBandLabel = (band: KycBand) => {
     band_a: 'Band A',
     band_b: 'Band B',
     band_c: 'Band C',
+    NA: 'N/A'
   };
   return labels[band];
 };

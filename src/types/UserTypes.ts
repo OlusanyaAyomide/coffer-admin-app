@@ -274,3 +274,39 @@ export type KycDocumentsResponse = {
     history_documents: Array<KycDocument>;
   };
 };
+
+export interface KycStatsData {
+  total_kyc: number;
+  this_week: number;
+  pending_review: number;
+  processed_kyc: number;
+  approved: number;
+  rejected: number;
+}
+
+export interface KycStatsResponse {
+  success: boolean;
+  data: KycStatsData;
+}
+
+export interface KycSubmission {
+  id: string;
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  user_avatar?: string | null;
+  kyc_band: any; // AccountTier
+  status: any; // KycSubmissionStatus
+  country: string;
+  document_type: string;
+  submitted_at: string;
+  reviewed_at?: string | null;
+}
+
+export interface KycListResponse {
+  success: boolean;
+  data: {
+    data: KycSubmission[];
+    meta: PaginationType;
+  };
+}

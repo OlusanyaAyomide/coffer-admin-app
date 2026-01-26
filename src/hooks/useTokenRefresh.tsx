@@ -145,7 +145,7 @@ export default function useTokenRefresh() {
       } else if (timeUntilExpiry <= 0) {
         // Token already expired
         console.log("❌ Token already expired, logging out");
-        handleLogoutRef.current();
+        // handleLogoutRef.current();
       } else {
         // Token is still valid and not in refresh window
         console.log(`✅ Token valid. Refresh in ~${Math.max(0, timeUntilRefreshTrigger / 60000).toFixed(2)} minutes (when ${(REFRESH_THRESHOLD_MS / 60000).toFixed(2)} min remain)`);

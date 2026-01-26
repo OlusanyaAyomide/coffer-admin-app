@@ -31,6 +31,7 @@ export default function CustomizableTable<TData>({
   children,
   tableKey,
   defaultVisibleColumns,
+  isLoading,
 }: CustomizableTableProps<TData>) {
 
   // Initialize state from localStorage or defaults
@@ -194,6 +195,7 @@ export default function CustomizableTable<TData>({
           setPage={setPage}
           data={data}
           meta={meta}
+          isLoading={isLoading}
         />
       </div>
     </div>

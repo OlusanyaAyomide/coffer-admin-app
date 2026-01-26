@@ -48,6 +48,7 @@ export type DataTableProps<TData> = {
   isSecondary?: boolean
   showOnMobile?: boolean
   setPage?: Dispatch<SetStateAction<number>>;
+  isLoading?: boolean;
 };
 
 export default function BaseDataTable<TData>({
@@ -57,6 +58,7 @@ export default function BaseDataTable<TData>({
   meta,
   showOnMobile = false,
   setPage,
+  isLoading,
 }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
@@ -82,6 +84,29 @@ export default function BaseDataTable<TData>({
       return [...prev, rowId];
     });
   };
+
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          !showOnMobile && 'hidden',
+          'lg:block rounded-lg overflow-hidden mb-[56px] 2xl:max-w-[6412px]'
+        )}
+      >
+        <div className="border border-border rounded-lg bg-card overflow-auto">
+          <div className="p-4 space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex gap-4">
+                {Array.from({ length: columns.length }).map((_, j) => (
+                  <div key={j} className="h-4 bg-muted animate-pulse rounded flex-1" />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!table.getRowModel().rows?.length) {
     return (
