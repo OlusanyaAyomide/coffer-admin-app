@@ -5,12 +5,13 @@ import DateFilterButtons from '@/components/shared/DateFilter';
 import ComboBoxFilter from '@/components/shared/ComboBoxFilter';
 import { Button } from '@/components/ui/button';
 import useCountrySearch from '@/hooks/useCountrySearch';
+import useFilterSearchParam from '@/hooks/useFilterSearchParam';
 
 const kycStatusOptions = [
   { label: 'Pending', value: 'pending' },
   { label: 'Approved', value: 'approved' },
   { label: 'Rejected', value: 'rejected' },
-  { label: 'Under Review', value: 'under_review' },
+  { label: 'More Info Requested', value: 'more_info_requested' },
 ];
 
 const kycBandOptions = [
@@ -28,6 +29,8 @@ export default function KycFilter({ className }: { className?: string }) {
     duration, setDuration,
   } = useKycListContext();
 
+  const { resetParams } = useFilterSearchParam();
+
   const {
     countrySuggestions,
     setCountrySearchResult,
@@ -40,6 +43,7 @@ export default function KycFilter({ className }: { className?: string }) {
     setCountry([]);
     setDuration([]);
     setPage(1);
+    resetParams()
   };
 
   const totalFilters = [

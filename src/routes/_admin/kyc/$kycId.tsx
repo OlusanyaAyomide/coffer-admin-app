@@ -9,14 +9,12 @@ export const Route = createFileRoute('/_admin/kyc/$kycId')({
 });
 
 function KycViewRoute() {
-  const { kycId } = Route.useParams();
-
   return (
     <div className="space-y-6 pb-10">
       <HeaderNavButton>
         <span />
       </HeaderNavButton>
-      <KycViewPage kycId={kycId} />
+      <KycViewPage />
     </div>
   );
 }

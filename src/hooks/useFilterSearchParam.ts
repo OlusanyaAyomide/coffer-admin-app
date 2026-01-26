@@ -33,15 +33,14 @@ const useFilterSearchParam = (key?: string) => {
   );
 
   const resetParams = useCallback(() => {
+    // 1. Get a snapshot of the current search
+
+    // 3. Force the navigation with the new object
     navigate({
-      search: (prev: any): any => {
-        const newSearch = { ...prev };
-        delete newSearch[filterKey];
-        return newSearch;
-      },
+      search: {},
       replace: true,
     } as any);
-  }, [filterKey, navigate]);
+  }, [filterKey, navigate, search]);
 
   return { setParam, resetParams, currentParams: (search as any)?.[filterKey] };
 };

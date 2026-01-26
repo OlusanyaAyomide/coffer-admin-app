@@ -6,7 +6,7 @@ import { formatDateToReadableShort } from '@/services/TimeServices';
 import type { KycSubmission } from '@/types/UserTypes';
 
 // KYC Submission types
-export type KycStatus = 'pending' | 'approved' | 'rejected' | 'under_review' | 'invalidated' | 'accepted';
+export type KycStatus = 'pending' | 'approved' | 'rejected' | 'under_review' | 'invalidated' | 'accepted' | 'more_info_requested';
 export type KycBand = 'band_a' | 'band_b' | 'band_c' | 'NA';
 
 // Status color helper
@@ -21,6 +21,7 @@ const getStatusColor = (status: KycStatus) => {
     case 'invalidated':
       return 'text-red-600 dark:text-red-400';
     case 'under_review':
+    case 'more_info_requested':
       return 'text-blue-600 dark:text-blue-400';
     default:
       return 'text-muted-foreground';
@@ -36,6 +37,7 @@ const getStatusLabel = (status: KycStatus) => {
     rejected: 'Rejected',
     invalidated: 'Invalidated',
     under_review: 'Under Review',
+    more_info_requested: 'More Info Requested',
   };
   return labels[status];
 };
@@ -50,6 +52,7 @@ const getBandLabel = (band: KycBand) => {
   };
   return labels[band];
 };
+import TransitionLink from '@/components/layout/TransitionLink';
 
 // Table columns
 export const createKycColumns = (
@@ -66,7 +69,13 @@ export const createKycColumns = (
       accessorKey: 'user_email',
       header: 'Email',
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">{row.original.user_email}</span>
+        row.original.user_uuid ? (
+          <TransitionLink to={`/users/${row.original.user_uuid}`} className="hover:underline">
+            <span className="text-sm text-muted-foreground">{row.original.user_email}</span>
+          </TransitionLink>
+        ) : (
+          <span className="text-sm text-muted-foreground">{row.original.user_email}</span>
+        )
       ),
     },
     {

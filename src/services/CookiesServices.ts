@@ -96,3 +96,8 @@ export function setRegistrationToken(token: string, expiryDate?: string) {
 export function getRegistrationToken(): string | undefined {
   return Cookies.get('registration_token');
 }
+
+
+export function getCookie(name: string): string | undefined {
+  return Cookies.get(name);
+}

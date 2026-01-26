@@ -75,6 +75,7 @@ export type KycTier = {
   label: string;
   status: KycTierStatusType;
   completed_at: string | null;
+  order?: number; // Added optional to prevent strict errors if used
 };
 
 // Admin Note
@@ -291,7 +292,8 @@ export interface KycStatsResponse {
 
 export interface KycSubmission {
   id: string;
-  user_id: string;
+  user_id: string; // Coffer ID
+  user_uuid?: string; // DB UUID for navigation
   user_name: string;
   user_email: string;
   user_avatar?: string | null;
@@ -308,5 +310,91 @@ export interface KycListResponse {
   data: {
     data: KycSubmission[];
     meta: PaginationType;
+  };
+}
+
+export interface KycHistoryItem {
+  id: string;
+  status: string;
+  created_at: string;
+  processed_at?: string;
+  text_content?: string;
+  rejection_reason?: string;
+  additional_info_requested?: string;
+  proof_of_identity_document?: KycDocumentField;
+  proof_of_identity_back_view?: KycDocumentField;
+  face_image?: KycDocumentField;
+  proof_of_address_document?: KycDocumentField;
+  proof_of_income_document?: KycDocumentField;
+}
+
+export interface KycDocumentField {
+  id: string;
+  temporary_signed_url: string;
+  mime_type: string;
+}
+
+export interface KycSubmittedDataWithUrls {
+  id: string;
+  kyc_overview_id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  country: string;
+  proof_of_identity_type: string;
+  associated_with: string;
+
+  // Personal Info
+  first_name?: string;
+  last_name?: string;
+  middle_name?: string;
+  date_of_birth?: string;
+  phone_number?: string;
+
+  // Identity Info
+  proof_of_identity_number?: string;
+  expiry_date?: string;
+
+  // Address Info
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  street_address?: string;
+  second_city?: string;
+  second_state?: string;
+  second_postal_code?: string;
+  second_street_address?: string;
+  proof_of_address_type?: string;
+
+  // Income Info
+  income_source?: string;
+  income_range_start?: number;
+  income_range_end?: number;
+
+  additional_info_requested?: string;
+  text_content?: string;
+  proof_of_identity_document?: KycDocumentField;
+  proof_of_identity_back_view?: KycDocumentField;
+  face_image?: KycDocumentField;
+  proof_of_address_document?: KycDocumentField;
+  proof_of_income_document?: KycDocumentField;
+}
+
+export interface KycDetailsResponse {
+  data: {
+    kyc: KycSubmittedDataWithUrls;
+    history: KycHistoryItem[];
+    accepted_submissions: KycSubmittedDataWithUrls[];
+    notes: AdminNote[];
+    user: {
+      id: string;
+      coffer_id: string;
+      first_name: string;
+      last_name: string;
+      email: string;
+      avatar?: string;
+      country?: string;
+      account_tier?: AccountTierType;
+    };
   };
 }

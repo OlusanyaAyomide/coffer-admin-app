@@ -1,11 +1,13 @@
 'use client';
 
-import type { KycBand } from './KycViewPage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { formatDateToReadableShort } from '@/services/TimeServices';
+import { formatDateToReadableShort, formatRelativeDateTime } from '@/services/TimeServices';
+import useWindowProperties from '@/hooks/useWindowProperty';
+import TransitionLink from '@/components/layout/TransitionLink';
 
 interface UserInfo {
-  id: string;
+  id: string; // Coffer ID
+  userId?: string; // DB UUID for navigation
   name: string;
   email: string;
   avatar?: string;
@@ -14,11 +16,15 @@ interface UserInfo {
 interface KycUserInfoCardProps {
   user: UserInfo;
   appliedAt: string;
-  currentBand: KycBand;
-  requestingBand: KycBand;
+  currentBand: string;
+  requestingBand: string;
+  country?: string;
+  idType?: string;
+  dob?: string;
+  idExpiry?: string;
 }
 
-const getBandLabel = (band: KycBand): string => {
+const getBandLabel = (band: string): string => {
   switch (band) {
     case 'band_a':
       return 'Band A';
@@ -31,7 +37,7 @@ const getBandLabel = (band: KycBand): string => {
   }
 };
 
-const getBandColor = (band: KycBand): string => {
+const getBandColor = (band: string): string => {
   switch (band) {
     case 'band_a':
       return 'text-green-500';
@@ -46,15 +52,15 @@ const getBandColor = (band: KycBand): string => {
 
 interface InfoRowProps {
   label: string;
-  value: string;
+  value: React.ReactNode;
   valueClassName?: string;
 }
 
 function InfoRow({ label, value, valueClassName }: InfoRowProps) {
   return (
-    <div className="flex justify-between items-center py-1.5">
+    <div className="flex justify-between items-center py-1.5 border-b border-border/50 last:border-0">
       <span className="text-sm text-muted-foreground">{label}</span>
-      <span className={`text-sm font-medium ${valueClassName || ''}`}>{value}</span>
+      <span className={`text-sm font-medium ${valueClassName || ''} capitalize`}>{value}</span>
     </div>
   );
 }
@@ -64,34 +70,50 @@ export default function KycUserInfoCard({
   appliedAt,
   currentBand,
   requestingBand,
+  country,
+  idType,
+  dob,
+  idExpiry
 }: KycUserInfoCardProps) {
+  const { isMounted } = useWindowProperties({});
+
   const initials = user.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+    ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+    : '??';
 
   return (
-    <div className="rounded-lg border border-border bg-card p-5">
+    <div className="rounded-lg border border-border bg-card p-5 h-fit">
       {/* User Avatar & Name */}
-      <div className="flex items-center gap-3 mb-4">
-        <Avatar className="h-12 w-12">
+      <div className="flex items-center gap-3 mb-6">
+        <Avatar className="h-12 w-12 text-primary">
           <AvatarImage src={user.avatar} alt={user.name} />
-          <AvatarFallback className="bg-purple-500 text-white font-medium">
+          <AvatarFallback className="bg-primary/10 text-primary font-bold">
             {initials}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <h3 className="font-semibold">{user.name}</h3>
-          <p className="text-sm text-muted-foreground">{user.id}</p>
+        <div className="overflow-hidden">
+          {user.userId ? (
+            <TransitionLink to={`/users/${user.userId}`} className="hover:underline">
+              <h3 className="font-semibold truncate">{user.name}</h3>
+            </TransitionLink>
+          ) : (
+            <h3 className="font-semibold truncate">{user.name}</h3>
+          )}
+          <p className="text-sm text-muted-foreground truncate">{user.id}</p>
         </div>
       </div>
 
       {/* Info Rows */}
-      <div className="border-t border-border pt-3">
-        <InfoRow label="Email" value={user.email} />
-        <InfoRow label="Applied" value={formatDateToReadableShort(appliedAt)} />
+      <div className="space-y-1">
+        <InfoRow
+          label="Email"
+          value={user.userId ? (
+            <TransitionLink to={`/users/${user.userId}`} className="hover:underline">
+              {user.email}
+            </TransitionLink>
+          ) : user.email}
+        />
+        <InfoRow label="Applied" value={isMounted ? formatRelativeDateTime(appliedAt) : formatDateToReadableShort(appliedAt)} />
         <InfoRow
           label="Current Band"
           value={getBandLabel(currentBand)}
@@ -102,6 +124,10 @@ export default function KycUserInfoCard({
           value={getBandLabel(requestingBand)}
           valueClassName={getBandColor(requestingBand)}
         />
+        {country && <InfoRow label="Country" value={country} />}
+        {idType && <InfoRow label="ID Type" value={idType.replace(/_/g, ' ')} />}
+        {dob && <InfoRow label="Date of Birth" value={formatDateToReadableShort(dob)} />}
+        {idExpiry && <InfoRow label="ID Expiry" value={formatDateToReadableShort(idExpiry)} />}
       </div>
     </div>
   );

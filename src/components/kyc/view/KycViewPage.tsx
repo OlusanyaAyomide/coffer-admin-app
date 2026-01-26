@@ -1,241 +1,325 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useState } from 'react';
+import { ArrowLeft, CheckCircle2, XCircle, FileText, Eye, ExternalLink } from 'lucide-react';
+import { toast } from 'sonner';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import 'react-photo-view/dist/react-photo-view.css';
 
-import KycDocumentReview from './KycDocumentReview';
-import KycSubmittedInformation from './KycSubmittedInformation';
-import KycAdminNotes from './KycAdminNotes';
+import useGetRequest from '@/hooks/useGetRequests';
+import usePostRequest from '@/hooks/usePostRequests';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
 import KycUserInfoCard from './KycUserInfoCard';
-import KycVerificationChecklist from './KycVerificationChecklist';
+import AddAdminNoteDialog from '../../users/details/AddAdminNoteDialog';
+import KycActionDialog, { KycActionType } from './KycActionDialog';
+import KycHistoryList from './KycHistoryList';
+import KycSubmissionDetails from './KycSubmissionDetails';
+import AcceptedKycsList from './AcceptedKycsList';
 
-import RequestMoreInfoDialog from './dialogs/RequestMoreInfoDialog';
-import ApproveKycDialog from './dialogs/ApproveKycDialog';
-import RejectKycDialog from './dialogs/RejectKycDialog';
-import KycActionButtons from './KycActionButtons';
+import type { KycDetailsResponse } from '@/types/UserTypes';
+import { formatDateToReadableShort } from '@/services/TimeServices';
 
-// Types
-export type KycBand = 'band_a' | 'band_b' | 'band_c';
-export type DocumentTab = 'passport' | 'selfie' | 'address_proof';
+function SimpleDocumentCard({ title, url, type }: { title: string; url: string; type?: string }) {
+  const isImage = type?.includes('image') || url.match(/\.(jpeg|jpg|gif|png)(\?|$)/i) != null;
 
-export interface KycViewData {
-  id: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-  };
-  current_band: KycBand;
-  requesting_band: KycBand;
-  applied_at: string;
-  documents: {
-    passport?: {
-      url: string;
-      title: string;
-    };
-    selfie?: {
-      url: string;
-      title: string;
-    };
-    address_proof?: {
-      url: string;
-      title: string;
-    };
-  };
-  submitted_info: {
-    full_name: string;
-    date_of_birth: string;
-    document_number: string;
-    nationality: string;
-    issue_date: string;
-    expiry_date: string;
-  };
-  admin_notes: Array<{
-    id: string;
-    content: string;
-    created_at: string;
-    admin_name: string;
-  }>;
+  return (
+    <Card className="overflow-hidden">
+      <div className="p-3 border-b bg-muted/30 flex justify-between items-center">
+        <span className="font-medium text-sm">{title}</span>
+        <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => window.open(url, '_blank')}>
+          <ExternalLink className="h-3 w-3" />
+        </Button>
+      </div>
+      <div className="aspect-video bg-muted relative group">
+        {isImage ? (
+          <PhotoView src={url}>
+            <div className="w-full h-full cursor-pointer relative">
+              <img src={url} alt={title} className="w-full h-full object-contain" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Button variant="secondary" size="sm" className="pointer-events-none">
+                  <Eye className="w-4 h-4 mr-2" /> View Full
+                </Button>
+              </div>
+            </div>
+          </PhotoView>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+            <FileText className="h-8 w-8" />
+            <span className="ml-2 text-xs">Document File</span>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
 }
 
-// Mock data
-const mockKycData: KycViewData = {
-  id: 'KYC-001',
-  user: {
-    id: 'UID-5502',
-    name: 'Jessica Morgan',
-    email: 'jessica.m@example.com',
-  },
-  current_band: 'band_c',
-  requesting_band: 'band_a',
-  applied_at: '2023-11-05T00:00:00Z',
-  documents: {
-    passport: {
-      url: 'https://res.cloudinary.com/dsjmccsbe/image/upload/v1759999080/prly/sandbox/r2nfgruqqgperz4szabe.jpg',
-      title: 'Passport - Front Page',
-    },
-    selfie: {
-      url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop',
-      title: 'Selfie with Document',
-    },
-    address_proof: {
-      url: 'https://example.com/documents/address-proof.pdf',
-      title: 'Utility Bill',
-    },
-  },
-  submitted_info: {
-    full_name: 'Jessica Morgan',
-    date_of_birth: 'March 15, 1992',
-    document_number: 'P88291092',
-    nationality: 'United Kingdom',
-    issue_date: 'Jan 10, 2021',
-    expiry_date: 'Jan 10, 2031',
-  },
-  admin_notes: [
-    {
-      id: 'note-1',
-      content: 'Document verified against database. All information matches.',
-      created_at: '2023-11-06T10:30:00Z',
-      admin_name: 'Admin User',
-    },
-  ],
-};
+export default function KycViewPage() {
+  const { kycId } = useParams({ from: '/_admin/kyc/$kycId' });
+  const navigate = useNavigate();
 
-// Helper to check if URL is an image
-const isImageUrl = (url?: string): boolean => {
-  if (!url) return false;
-  const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
-  const lowerUrl = url.toLowerCase();
-  return imageExtensions.some((ext) => lowerUrl.includes(ext));
-};
+  const [actionDialogOpen, setActionDialogOpen] = useState(false);
+  const [actionType, setActionType] = useState<KycActionType>(null);
 
-interface KycViewPageProps {
-  kycId: string;
-}
-
-export default function KycViewPage({ kycId }: KycViewPageProps) {
-  // In real app, fetch data based on kycId
-  console.log('Viewing KYC:', kycId);
-  const data = mockKycData;
-
-  // State
-  const [activeTab, setActiveTab] = useState<DocumentTab>('passport');
-  const [checklist, setChecklist] = useState({
-    document_clear: true,
-    info_matches: true,
-    not_expired: true,
-    face_matches: false,
-    no_tampering: true,
+  // Fetch KYC Details
+  const { data: response, isLoading, refetch } = useGetRequest<KycDetailsResponse, any>({
+    URL: `/admin/kyc/${kycId}`,
+    queryKey: ['kyc-details', kycId],
   });
 
-  // Dialogs
-  const [requestInfoOpen, setRequestInfoOpen] = useState(false);
-  const [approveOpen, setApproveOpen] = useState(false);
-  const [rejectOpen, setRejectOpen] = useState(false);
-
-  // Get current document based on tab
-  const getCurrentDocument = () => {
-    switch (activeTab) {
-      case 'passport':
-        return data.documents.passport;
-      case 'selfie':
-        return data.documents.selfie;
-      case 'address_proof':
-        return data.documents.address_proof;
-      default:
-        return data.documents.passport;
+  // Process KYC Mutation
+  const { mutate: processKyc, isPending: isProcessing } = usePostRequest({
+    URL: `/admin/kyc/${kycId}/process`,
+    mutationKey: ['process-kyc', kycId],
+    showErrorToast: true,
+    onSuccess: () => {
+      toast.success(`KYC processed successfully`);
+      setActionDialogOpen(false);
+      refetch();
     }
-  };
+  });
 
-  const currentDoc = getCurrentDocument();
-
-  // Handle document view - only for non-images (images are handled by PhotoView in KycDocumentReview)
-  const handleViewDocument = () => {
-    if (currentDoc?.url && !isImageUrl(currentDoc.url)) {
-      window.open(currentDoc.url, '_blank', 'noopener,noreferrer');
+  // Add Note Mutation
+  const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
+  const { mutate: addNote, isPending: isAddingNote } = usePostRequest({
+    URL: `/admin/customer/${response?.data?.user?.id}/notes`,
+    mutationKey: ['add-kyc-note', kycId],
+    showErrorToast: true,
+    onSuccess: () => {
+      toast.success('Note added');
+      setIsNoteDialogOpen(false);
+      refetch();
     }
+  });
+
+  const handleSubmitNote = (data: { title?: string; content: string }) => {
+    if (!response?.data?.user?.id) return;
+    addNote({
+      content: data.content,
+      title: data.title || 'KYC Review Note',
+      kycId: kycId
+    });
   };
 
-  // Handle checklist toggle
-  const handleChecklistToggle = (key: keyof typeof checklist) => {
-    setChecklist((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const handleAction = (type: KycActionType) => {
+    setActionType(type);
+    setActionDialogOpen(true);
   };
 
-  // Action handlers
-  const handleApprove = () => {
-    console.log('Approving KYC:', kycId);
-    setApproveOpen(false);
-    // TODO: Call API
+  const onActionSubmit = ({ reason }: { reason?: string }) => {
+    if (!actionType) return;
+
+    let status = '';
+    if (actionType === 'approve') status = 'accepted';
+    if (actionType === 'reject') status = 'rejected';
+    if (actionType === 'more_info') status = 'more_info_requested';
+
+    processKyc({
+      status,
+      rejection_reason: actionType === 'reject' ? reason : undefined,
+      additional_info_requested: actionType === 'more_info' ? reason : undefined,
+    });
   };
 
-  const handleReject = (title: string, content: string) => {
-    console.log('Rejecting KYC:', kycId, 'Title:', title, 'Reason:', content);
-    setRejectOpen(false);
-    // TODO: Call API
-  };
 
-  const handleRequestMoreInfo = (title: string, content: string) => {
-    console.log('Requesting more info:', { title, content });
-    setRequestInfoOpen(false);
-    // TODO: Call API
+  if (isLoading) {
+    return <div className="p-8 space-y-6"><Skeleton className="h-40 w-full" /><Skeleton className="h-96 w-full" /></div>;
+  }
+
+  if (!response) return <div>Error loading KYC details</div>;
+
+  const { kyc, history, accepted_submissions, notes, user } = response.data;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'accepted': return 'bg-green-100 text-green-700';
+      case 'rejected': return 'bg-red-100 text-red-700';
+      case 'pending': return 'bg-orange-100 text-orange-700';
+      case 'more_info_requested': return 'bg-blue-100 text-blue-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
   };
 
   return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - 2/3 width on desktop */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Document Review */}
-          <KycDocumentReview
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            currentDocument={currentDoc}
-            onViewDocument={handleViewDocument}
-            isImageUrl={isImageUrl}
-          />
+    <div className="container mx-auto py-6 max-w-7xl animate-in fade-in duration-500">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-medium">KYC Submission for {user.first_name + ' ' + user.last_name}</h1>
+          <Badge variant="secondary" className={getStatusColor(kyc.status)}>
+            {kyc.status.replace(/_/g, ' ').toUpperCase()}
+          </Badge>
+        </div>
+        <p className="text-muted-foreground mt-1">Submission ID: {kycId}</p>
+      </div>
 
-          {/* Submitted Information */}
-          <KycSubmittedInformation info={data.submitted_info} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* Admin Notes - Moved to left column */}
-          <KycAdminNotes notes={data.admin_notes} />
+        {/* Left Column - Details, Documents, Notes, History */}
+        <div className="lg:col-span-2 space-y-8">
+
+          <KycSubmissionDetails kyc={kyc} />
+
+          {/* Documents */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold">Documents</h3>
+            <PhotoProvider>
+              <div className="space-y-6">
+                {kyc.proof_of_identity_document && (
+                  <SimpleDocumentCard
+                    title="Identity Document (Front)"
+                    url={kyc.proof_of_identity_document.temporary_signed_url}
+                    type={kyc.proof_of_identity_document.mime_type}
+                  />
+                )}
+                {kyc.proof_of_identity_back_view && (
+                  <SimpleDocumentCard
+                    title="Identity Document (Back)"
+                    url={kyc.proof_of_identity_back_view.temporary_signed_url}
+                    type={kyc.proof_of_identity_back_view.mime_type}
+                  />
+                )}
+                {kyc.face_image && (
+                  <SimpleDocumentCard
+                    title="Selfie / Face Image"
+                    url={kyc.face_image.temporary_signed_url}
+                    type={kyc.face_image.mime_type}
+                  />
+                )}
+                {kyc.proof_of_address_document && (
+                  <SimpleDocumentCard
+                    title="Proof of Address"
+                    url={kyc.proof_of_address_document.temporary_signed_url}
+                    type={kyc.proof_of_address_document.mime_type}
+                  />
+                )}
+                {kyc.proof_of_income_document && (
+                  <SimpleDocumentCard
+                    title="Proof of Income"
+                    url={kyc.proof_of_income_document.temporary_signed_url}
+                    type={kyc.proof_of_income_document.mime_type}
+                  />
+                )}
+              </div>
+            </PhotoProvider>
+          </div>
+
+          {/* Notes (Moved to Main Column) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin Notes</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="max-h-[300px] overflow-y-auto space-y-4 pr-2">
+                {notes.length === 0 && <p className="text-sm text-muted-foreground text-center">No notes yet.</p>}
+                {notes.map(note => (
+                  <div key={note.id} className="bg-muted p-3 rounded-lg text-sm">
+                    <p className="font-medium text-xs mb-1 flex justify-between">
+                      <span>{note.author_name}</span>
+                      <span className="text-muted-foreground">{formatDateToReadableShort(note.created_at)}</span>
+                    </p>
+                    <p>{note.content}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2 pt-2 border-t">
+                <Input
+                  placeholder="Add a note..."
+                  onFocus={() => setIsNoteDialogOpen(true)}
+                  className="cursor-pointer"
+                  readOnly
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* History */}
+          <KycHistoryList history={history} />
+
+          {/* Accepted Submissions */}
+          <AcceptedKycsList submissions={accepted_submissions} />
         </div>
 
-        {/* Right Column - 1/3 width on desktop */}
-        <div className="space-y-6">
+        {/* Right Column - User Info, Checklist, Actions */}
+        <div className="space-y-8">
+
           {/* User Info Card */}
-          <KycUserInfoCard user={data.user} appliedAt={data.applied_at} currentBand={data.current_band} requestingBand={data.requesting_band} />
+          <KycUserInfoCard
+            user={{
+              id: user.coffer_id,
+              userId: user.id,
+              name: `${user.first_name} ${user.last_name}`,
+              email: user.email,
+              avatar: user.avatar
+            }}
+            appliedAt={kyc.created_at}
+            currentBand={user.account_tier || 'band_a'}
+            requestingBand={kyc.associated_with}
+            country={kyc.country || user.country}
+            idType={kyc.proof_of_identity_type}
+            dob={kyc.date_of_birth}
+            idExpiry={kyc.expiry_date}
+          />
 
           {/* Verification Checklist */}
-          <KycVerificationChecklist checklist={checklist} onToggle={handleChecklistToggle} />
+          <Card>
+            <CardHeader><CardTitle>Review Checklist</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {['Document is clear & readable', 'Information matches profile', 'Document is not expired', 'Face matches selfie'].map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <input type="checkbox" className="h-4 w-4 rounded border-gray-300" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
 
-          {/* Action Buttons */}
-          <KycActionButtons
-            onApprove={() => setApproveOpen(true)}
-            onReject={() => setRejectOpen(true)}
-            onRequestInfo={() => setRequestInfoOpen(true)}
-          />
+          {/* Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              {kyc.status === 'pending' || kyc.status === 'under_review' || kyc.status === 'more_info_requested' ? (
+                <>
+                  <Button onClick={() => handleAction('approve')} disabled={kyc.status !== 'pending'} className="w-full bg-green-600 hover:bg-green-700">
+                    <CheckCircle2 className="w-4 h-4 mr-2" /> Approve KYC
+                  </Button>
+                  <Button onClick={() => handleAction('reject')} disabled={kyc.status !== 'pending'} variant="destructive" className="w-full">
+                    <XCircle className="w-4 h-4 mr-2" /> Reject KYC
+                  </Button>
+                  <Button onClick={() => handleAction('more_info')} disabled={kyc.status !== 'pending'} variant="outline" className="w-full">
+                    <FileText className="w-4 h-4 mr-2" /> Request More Info
+                  </Button>
+                </>
+              ) : (
+                <div className="text-center p-4 bg-muted rounded-lg">
+                  <p className="text-muted-foreground">This submission has been processed.</p>
+                  <p className="font-medium capitalize mt-1 text-foreground">{kyc.status.replace(/_/g, ' ')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
         </div>
       </div>
 
-      {/* Dialogs */}
-      <RequestMoreInfoDialog open={requestInfoOpen} onOpenChange={setRequestInfoOpen} onSubmit={handleRequestMoreInfo} />
-
-      <ApproveKycDialog
-        open={approveOpen}
-        onOpenChange={setApproveOpen}
-        onConfirm={handleApprove}
-        userName={data.user.name}
-        requestingBand={data.requesting_band}
+      <KycActionDialog
+        open={actionDialogOpen}
+        onOpenChange={setActionDialogOpen}
+        actionType={actionType}
+        onSubmit={onActionSubmit}
+        isSubmitting={isProcessing}
       />
 
-      <RejectKycDialog
-        open={rejectOpen}
-        onOpenChange={setRejectOpen}
-        onSubmit={handleReject}
-        userName={data.user.name}
+      <AddAdminNoteDialog
+        open={isNoteDialogOpen}
+        onOpenChange={setIsNoteDialogOpen}
+        onSubmit={handleSubmitNote}
+        isSubmitting={isAddingNote}
       />
-    </>
+    </div>
   );
 }
