@@ -97,7 +97,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
       </TabsContent>
       <TabsContent value="logs" className="mt-6">
         <ActivityLogContextProvider>
-          <UserActivityLogTab />
+          <UserActivityLogTab userId={userId} />
         </ActivityLogContextProvider>
       </TabsContent>
     </Tabs>

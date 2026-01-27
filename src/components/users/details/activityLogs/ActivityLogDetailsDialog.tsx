@@ -1,5 +1,6 @@
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
+import { getActivityTypeLabel } from './activity-log-columns';
 import type { ActivityLog } from './activity-log-columns';
 import {
   AlertDialog,
@@ -27,24 +28,6 @@ export default function ActivityLogDetailsDialog({
     navigator.clipboard.writeText(value);
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 2000);
-  };
-
-  const getActivityTypeLabel = (type: string): string => {
-    const labels: Record<string, string> = {
-      login: 'Login',
-      logout: 'Logout',
-      password_change: 'Password Change',
-      profile_update: 'Profile Update',
-      kyc_submission: 'KYC Submission',
-      transaction: 'Transaction',
-      '2fa_enabled': '2FA Enabled',
-      '2fa_disabled': '2FA Disabled',
-      device_added: 'Device Added',
-      device_removed: 'Device Removed',
-      withdrawal_request: 'Withdrawal Request',
-      api_key_created: 'API Key Created',
-    };
-    return labels[type] || type;
   };
 
   const getStatusColor = (status: string) => {
@@ -121,14 +104,14 @@ export default function ActivityLogDetailsDialog({
           <DetailRow label="Date & Time" value={formatDateToReadableShort(log.created_at)} />
         </div>
 
-        {log.metadata && Object.keys(log.metadata).length > 0 && (
+        {log.metadata && typeof log.metadata === 'object' && Object.keys(log.metadata).length > 0 && (
           <div className="mt-4">
             <h4 className="text-sm font-semibold mb-2">Additional Details</h4>
             <div className="rounded-lg border border-border p-3 bg-muted/30">
               {Object.entries(log.metadata).map(([key, value]) => (
                 <div key={key} className="flex justify-between py-1.5 text-sm">
                   <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</span>
-                  <span className="font-medium">{value}</span>
+                  <span className="font-medium">{String(value)}</span>
                 </div>
               ))}
             </div>

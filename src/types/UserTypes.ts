@@ -398,3 +398,25 @@ export interface KycDetailsResponse {
     };
   };
 }
+
+// Activity Logs
+export interface UserActivityLog {
+  id: string;
+  type: string;
+  description: string;
+  ip_address: string;
+  device: string;
+  location: string;
+  status: string;
+  severity: 'low' | 'moderate' | 'high' | 'emergency';
+  created_at: string;
+  metadata?: any;
+}
+
+export type UserActivityLogResponse = {
+  success: boolean;
+  data: {
+    logs: UserActivityLog[];
+    paginate: PaginationType;
+  };
+};

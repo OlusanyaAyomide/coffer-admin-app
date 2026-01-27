@@ -189,18 +189,37 @@ type RefreshTokenPayload = {
 };
 
 const REFRESH_INTERVAL_MS = 7 * 60 * 1000; // Always refresh every 7 minutes
+const RETRY_INTERVAL_MS = 1 * 60 * 1000; // Retry every 1 minute on error
 const LAST_REFRESH_COOKIE = 'last_token_refresh';
 
 export default function useTokenRefresh() {
   const navigate = useNavigate();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isRefreshingRef = useRef(false);
+
+  const clearAllTimers = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+  };
 
   const { mutate: refreshToken } = usePostRequest<RefreshTokenResponse, RefreshTokenPayload>({
     URL: '/admin/user/refresh-token',
     showErrorToast: false,
     onSuccess: (response) => {
       isRefreshingRef.current = false;
+
+      // Clear any pending retry
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
 
       // Update tokens
       setSplitAuthToken(
@@ -217,31 +236,49 @@ export default function useTokenRefresh() {
       // Track when we last refreshed
       setCookie(LAST_REFRESH_COOKIE, Date.now().toString());
 
-      console.log('✅ Token refreshed successfully');
+      console.log('Token refreshed successfully');
     },
     onError: () => {
       isRefreshingRef.current = false;
-      console.log('❌ Token refresh failed, logging out');
-      clearAuthCookies();
-      navigate({ to: '/login' });
+      console.log('Token refresh failed, retrying in 1 minute...');
+
+      // Schedule a retry in 1 minute
+      retryTimeoutRef.current = setTimeout(() => {
+        const refreshTokenValue = getRefreshToken();
+        if (refreshTokenValue) {
+          if (!isRefreshingRef.current) {
+            isRefreshingRef.current = true;
+            console.log('Retrying token refresh...');
+            refreshToken({ refresh_token: refreshTokenValue });
+          }
+        } else {
+          console.log('No refresh token found during retry, logging out');
+          clearAllTimers();
+          clearAuthCookies();
+          navigate({ to: '/login' });
+        }
+      }, RETRY_INTERVAL_MS);
     },
   });
 
   useEffect(() => {
     const performRefresh = () => {
       if (isRefreshingRef.current) {
-        console.log('⏭️  Refresh already in progress, skipping');
+        console.log('Refresh already in progress, skipping');
         return;
       }
 
       const refreshTokenValue = getRefreshToken();
       if (!refreshTokenValue) {
-        console.log('❌ No refresh token found');
+        console.log('No refresh token found, logging out');
+        clearAllTimers();
+        clearAuthCookies();
+        navigate({ to: '/login' });
         return;
       }
 
       isRefreshingRef.current = true;
-      console.log('🔄 Refreshing token...');
+      console.log('Refreshing token...');
       refreshToken({ refresh_token: refreshTokenValue });
     };
 
@@ -254,17 +291,17 @@ export default function useTokenRefresh() {
         const timeSinceLastRefresh = now - lastRefresh;
         const timeUntilNextRefresh = REFRESH_INTERVAL_MS - timeSinceLastRefresh;
 
-        console.log(`⏱️  Time since last refresh: ${(timeSinceLastRefresh / 60000).toFixed(2)} minutes`);
-        console.log(`🔔 Next refresh in: ${(timeUntilNextRefresh / 60000).toFixed(2)} minutes`);
+        console.log(`Time since last refresh: ${(timeSinceLastRefresh / 60000).toFixed(2)} minutes`);
+        console.log(`Next refresh in: ${(timeUntilNextRefresh / 60000).toFixed(2)} minutes`);
 
-        // If it's been more than 5 minutes, refresh immediately
+        // If it's been more than 7 minutes, refresh immediately
         if (timeSinceLastRefresh >= REFRESH_INTERVAL_MS) {
-          console.log('⚡ Refresh needed immediately');
+          console.log('Refresh needed immediately');
           performRefresh();
         }
       } else {
         // No previous refresh recorded, do it now
-        console.log('🆕 First refresh - executing now');
+        console.log('First refresh - executing now');
         performRefresh();
       }
     };
@@ -272,15 +309,12 @@ export default function useTokenRefresh() {
     // Check immediately on mount
     checkAndScheduleRefresh();
 
-    // Set up interval to refresh every 5 minutes
+    // Set up interval to refresh every 7 minutes
     intervalRef.current = setInterval(performRefresh, REFRESH_INTERVAL_MS);
 
     // Cleanup on unmount
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      clearAllTimers();
     };
   }, []); // Empty deps - only runs once on mount
 }

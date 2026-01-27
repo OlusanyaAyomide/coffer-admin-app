@@ -5,18 +5,26 @@ import DateFilterButtons from '@/components/shared/DateFilter';
 import { Button } from '@/components/ui/button';
 
 const activityTypeOptions = [
-  { label: 'Login', value: 'login' },
-  { label: 'Logout', value: 'logout' },
-  { label: 'Password Change', value: 'password_change' },
+  { label: 'Login', value: 'log_in' },
+  { label: 'Logout', value: 'log_out' },
+  { label: 'Transfer', value: 'transfer' },
+  { label: 'Swap', value: 'swap' },
+  { label: 'Deposit', value: 'deposit' },
+  { label: 'Withdrawal', value: 'withdrawal' },
+  { label: 'Reset Password', value: 'reset_password' },
+  { label: 'New Device Sign In', value: 'new_device_sign_in' },
+  { label: '2FA Sign In', value: 'two_fa_sign_in' },
+  { label: 'Audit Log', value: 'audit_log' },
+  { label: 'Sign Up', value: 'sign_up' },
+  { label: 'Email Verified', value: 'email_verified' },
   { label: 'Profile Update', value: 'profile_update' },
-  { label: 'KYC Submission', value: 'kyc_submission' },
-  { label: 'Transaction', value: 'transaction' },
-  { label: '2FA Enabled', value: '2fa_enabled' },
-  { label: '2FA Disabled', value: '2fa_disabled' },
-  { label: 'Device Added', value: 'device_added' },
-  { label: 'Device Removed', value: 'device_removed' },
-  { label: 'Withdrawal Request', value: 'withdrawal_request' },
-  { label: 'API Key Created', value: 'api_key_created' },
+  { label: 'Biometric Login', value: 'biometric_login' },
+  { label: 'Deposit Complete', value: 'deposit_complete' },
+  { label: 'Withdrawal Complete', value: 'withdrawal_complete' },
+  { label: 'Swap Complete', value: 'swap_complete' },
+  { label: '2FA Setup', value: 'two_fa_setup' },
+  { label: 'Investment Purchase', value: 'investment_purchase' },
+  { label: 'Investment Withdrawal', value: 'investment_withdrawal' },
 ];
 
 export default function ActivityLogFilter({ className }: { className?: string }) {

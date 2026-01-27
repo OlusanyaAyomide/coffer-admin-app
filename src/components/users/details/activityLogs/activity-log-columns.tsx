@@ -3,33 +3,9 @@ import type { MobileRow } from '@/components/shared/MobileCards';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatDateToReadableShort } from '@/services/TimeServices';
+import { UserActivityLog } from '@/types/UserTypes';
 
-// Activity Log types
-export type ActivityType =
-  | 'login'
-  | 'logout'
-  | 'password_change'
-  | 'profile_update'
-  | 'kyc_submission'
-  | 'transaction'
-  | '2fa_enabled'
-  | '2fa_disabled'
-  | 'device_added'
-  | 'device_removed'
-  | 'withdrawal_request'
-  | 'api_key_created';
-
-export interface ActivityLog {
-  id: string;
-  type: ActivityType;
-  description: string;
-  ip_address: string;
-  device: string;
-  location?: string;
-  status: 'success' | 'failed' | 'warning';
-  created_at: string;
-  metadata?: Record<string, string>;
-}
+export type ActivityLog = UserActivityLog;
 
 // Status color helper
 const getStatusColor = (status: string) => {
@@ -46,22 +22,30 @@ const getStatusColor = (status: string) => {
 };
 
 // Activity type display helper
-const getActivityTypeLabel = (type: ActivityType): string => {
-  const labels: Record<ActivityType, string> = {
-    login: 'Login',
-    logout: 'Logout',
-    password_change: 'Password Change',
+export const getActivityTypeLabel = (type: string): string => {
+  const labels: Record<string, string> = {
+    log_in: 'Login',
+    log_out: 'Logout',
+    transfer: 'Transfer',
+    swap: 'Swap',
+    deposit: 'Deposit',
+    withdrawal: 'Withdrawal',
+    reset_password: 'Reset Password',
+    new_device_sign_in: 'New Device Sign In',
+    two_fa_sign_in: '2FA Sign In',
+    audit_log: 'Audit Log',
+    sign_up: 'Sign Up',
+    email_verified: 'Email Verified',
     profile_update: 'Profile Update',
-    kyc_submission: 'KYC Submission',
-    transaction: 'Transaction',
-    '2fa_enabled': '2FA Enabled',
-    '2fa_disabled': '2FA Disabled',
-    device_added: 'Device Added',
-    device_removed: 'Device Removed',
-    withdrawal_request: 'Withdrawal Request',
-    api_key_created: 'API Key Created',
+    biometric_login: 'Biometric Login',
+    deposit_complete: 'Deposit Complete',
+    withdrawal_complete: 'Withdrawal Complete',
+    swap_complete: 'Swap Complete',
+    two_fa_setup: '2FA Setup',
+    investment_purchase: 'Investment Purchase',
+    investment_withdrawal: 'Investment Withdrawal',
   };
-  return labels[type] || type;
+  return labels[type] || titleCase(type.replace(/_/g, ' '));
 };
 
 // Title case helper
