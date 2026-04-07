@@ -35,3 +35,7 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.not-exist {
+  color: oklch(1 0.00011 271.152)
+}
