@@ -378,6 +378,14 @@ export interface KycSubmittedDataWithUrls {
   face_image?: KycDocumentField;
   proof_of_address_document?: KycDocumentField;
   proof_of_income_document?: KycDocumentField;
+  additional_documents?: KycAdditionalDocumentItem[];
+}
+
+export interface KycAdditionalDocumentItem {
+  id: string;
+  label?: string | null;
+  created_at: string;
+  document: KycDocumentField;
 }
 
 export interface KycDetailsResponse {

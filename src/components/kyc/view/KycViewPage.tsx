@@ -206,6 +206,25 @@ export default function KycViewPage() {
             </PhotoProvider>
           </div>
 
+          {/* Additional Documents (uploaded in response to a more-info request) */}
+          {kyc.additional_documents && kyc.additional_documents.length > 0 && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold">Additional Documents</h3>
+              <PhotoProvider>
+                <div className="space-y-6">
+                  {kyc.additional_documents.map((ad) => (
+                    <SimpleDocumentCard
+                      key={ad.id}
+                      title={ad.label || 'Additional Document'}
+                      url={ad.document.temporary_signed_url}
+                      type={ad.document.mime_type}
+                    />
+                  ))}
+                </div>
+              </PhotoProvider>
+            </div>
+          )}
+
           {/* Notes (Moved to Main Column) */}
           <Card>
             <CardHeader>
