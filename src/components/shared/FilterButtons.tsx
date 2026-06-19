@@ -120,7 +120,7 @@ function FilterContent({
               checked={selectedOptions.includes(item.value)}
               onCheckedChange={() => toggleFilter(item)}
               className={cn(
-                'h-[18px] w-[18px] rounded-3xl',
+                'h-[18px] w-[18px] rounded-[5px]',
                 'data-[state=checked]:bg-primary',
                 'data-[state=checked]:border-primary'
               )}

@@ -1,42 +1,51 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Coffer Admin design system.
+ * Brand navy (#0D1332) anchors the sidebar; content sits on a soft off-white so
+ * white cards read cleanly. Body copy is slate (#475862), headings near-black.
+ * Geometry is intentionally squarish — see --radius. Typeface is Outfit.
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
+  --background: oklch(0.985 0.002 270);
+  --foreground: oklch(0.21 0.02 264);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
+  --card-foreground: oklch(0.21 0.02 264);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
+  --popover-foreground: oklch(0.21 0.02 264);
   --primary: oklch(38.887% 0.14383 271.13);
   --primary-foreground: oklch(0.97 0.014 254.604);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.97 0.014 254.604);
+  --muted: oklch(0.97 0.003 270);
+  --muted-foreground: #475862;
+  --accent: oklch(0.96 0.012 271);
+  --accent-foreground: oklch(38.887% 0.14383 271.13);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
+  --border: oklch(0.91 0.005 270);
+  --input: oklch(0.91 0.005 270);
   --ring: oklch(0.705 0.015 286.067);
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.488 0.243 264.376);
-  --sidebar-accent-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-border: oklch(0.92 0.004 286.32);
+  /* Squarish geometry — small base radius, components opt up to lg/xl. */
+  --radius: 0.5rem;
+  /* Brand navy — sidebar / dark surfaces. */
+  --brand: #0D1332;
+  --sidebar: #0D1332;
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.985 0 0);
+  --sidebar-primary-foreground: oklch(38.887% 0.14383 271.13);
+  --sidebar-accent: oklch(1 0 0 / 8%);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
@@ -75,7 +84,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-sans: 'Outfit', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-brand: var(--brand);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -134,7 +144,7 @@
   background: var(--popover);
   /* border: 1px solid green; */
   color: var(--popover-foreground);
-  border-radius: 48px;
+  border-radius: 12px;
   box-shadow: var(--shadow);
 }
 

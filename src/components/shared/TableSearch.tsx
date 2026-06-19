@@ -34,8 +34,8 @@ export function TableSearch({ placeholder = 'Search...', className, onSearchChan
   }, [inputValue, searchTerm, onSearchChange]);
 
   return (
-    <div className={cn("relative w-full max-w-sm py-1 pl-[2px] overflow-visible", className)}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
+    <div className={cn("relative w-full max-w-md py-1 overflow-visible", className)}>
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
       <Input
         placeholder={placeholder}
         value={inputValue}
@@ -43,17 +43,10 @@ export function TableSearch({ placeholder = 'Search...', className, onSearchChan
         onChange={(e) => setInputValue(e.target.value)}
         className={cn(
           `
-          h-10 sm:h-12 w-full pl-10 pr-4 py-1
-          font-light text-foreground
-          border border-border
-          bg-background
-          transition-colors
-          focus-visible:outline-none
-          focus-visible:ring-primary
-          focus-visible:ring-1
-          focus:border-primary
-          disabled:cursor-not-allowed
-          disabled:opacity-50
+          h-11 w-full pl-10 pr-4
+          text-foreground
+          rounded-lg border border-border
+          bg-card
           `
         )}
       />

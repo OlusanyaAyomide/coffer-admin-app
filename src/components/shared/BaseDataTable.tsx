@@ -126,7 +126,7 @@ export default function BaseDataTable<TData>({
       <div className="border border-border rounded-lg bg-card overflow-auto">
         <Table className="min-w-[800px]">
           {/* HEADER */}
-          <TableHeader className="bg-muted text-muted-foreground">
+          <TableHeader className="bg-brand text-white [&_tr]:border-b-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
@@ -136,7 +136,7 @@ export default function BaseDataTable<TData>({
                 <TableHead
                   className={cn(
                     'truncate rounded-tl-lg max-w-[15vw]',
-                    'bg-secondary text-secondary-foreground',
+                    'bg-brand text-white',
                     !addCheckBox && 'border-r-0 border-border'
                   )}
                 >
@@ -153,7 +153,7 @@ export default function BaseDataTable<TData>({
                       key={header.id}
                       className={cn(
                         'truncate min-w-[120px]',
-                        'bg-secondary text-secondary-foreground',
+                        'bg-brand text-white',
                         'border-r-0 border-border last:border-r-0',
                         !customClassName && 'max-w-[10vw]',
                         customClassName

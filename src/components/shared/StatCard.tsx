@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 export interface StatCardProps {
@@ -7,22 +6,52 @@ export interface StatCardProps {
   subValue?: string;
   icon: React.ElementType;
   iconColor?: string;
+  /** Color of the thin accent strip on top of the card. */
+  accentClassName?: string;
+  /** Optional class for the sub-value text (e.g. green for positive growth). */
+  subValueClassName?: string;
   className?: string;
 }
 
-export function StatCard({ title, value, subValue, icon: Icon, iconColor, className }: StatCardProps) {
+export function StatCard({
+  title,
+  value,
+  subValue,
+  icon: Icon,
+  iconColor,
+  accentClassName = 'bg-primary',
+  subValueClassName,
+  className,
+}: StatCardProps) {
   return (
-    <Card className={cn("hover:scale-[103%] transition-all duration-300", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <Icon className={cn("h-4 w-4", iconColor)} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl md:text-3xl font-semibold text-popover-foreground">{value}</div>
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-xl border border-border bg-card shadow-[0px_1px_2px_0px_rgba(13,19,50,0.05)]',
+        className,
+      )}
+    >
+      {/* top accent strip */}
+      <div className={cn('absolute inset-x-0 top-0 h-1', accentClassName)} />
+
+      <div className="p-5 pt-6">
+        <div className="flex items-start justify-between">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {title}
+          </p>
+          <span className="flex size-8 items-center justify-center rounded-lg bg-muted">
+            <Icon className={cn('h-4 w-4 text-muted-foreground', iconColor)} />
+          </span>
+        </div>
+
+        <div className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
+          {value}
+        </div>
         {subValue && (
-          <p className="text-xs text-muted-foreground mt-1">{subValue}</p>
+          <p className={cn('mt-1 text-xs text-muted-foreground', subValueClassName)}>
+            {subValue}
+          </p>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -36,7 +36,7 @@ export default function TablePaginator({
       <Button
         variant={page === 1 ? 'default' : 'ghost'}
         size="sm"
-        className="rounded-3xl p-4"
+        className="rounded-md p-4"
         onClick={() => setPage?.(1)}
       >
         1
@@ -47,7 +47,7 @@ export default function TablePaginator({
         <Button
           variant={page === 2 ? 'default' : 'ghost'}
           size="sm"
-          className={`rounded-3xl p-4 ${total_page > 2 ? 'visible' : 'hidden'}`}
+          className={`rounded-md p-4 ${total_page > 2 ? 'visible' : 'hidden'}`}
           onClick={() => setPage?.(2)}
         >
           2
@@ -67,7 +67,7 @@ export default function TablePaginator({
 
       {/* Current page (middle range) */}
       {page >= 3 && page <= total_page - 2 && (
-        <Button variant="default" size="sm" className="rounded-3xl p-4">
+        <Button variant="default" size="sm" className="rounded-md p-4">
           {page}
         </Button>
       )}
@@ -88,7 +88,7 @@ export default function TablePaginator({
         <Button
           variant={page === total_page - 1 ? 'default' : 'ghost'}
           size="sm"
-          className={`rounded-3xl p-4 ${total_page > 3 ? 'visible' : 'hidden'}`}
+          className={`rounded-md p-4 ${total_page > 3 ? 'visible' : 'hidden'}`}
           onClick={() => setPage?.(total_page - 1)}
         >
           {total_page - 1}
@@ -100,7 +100,7 @@ export default function TablePaginator({
         <Button
           variant={page === total_page ? 'default' : 'ghost'}
           size="sm"
-          className="rounded-3xl p-4"
+          className="rounded-md p-4"
           onClick={() => setPage?.(total_page)}
         >
           {total_page}

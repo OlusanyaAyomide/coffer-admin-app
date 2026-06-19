@@ -82,7 +82,7 @@ export default function AdminSidebar() {
             variant="ghost"
             className={cn(
               "w-full justify-center h-11 px-0 text-white/70 hover:bg-white/10 hover:text-white relative transition-all duration-200 ease-in-out",
-              isActive && "bg-background text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary"
+              isActive && "bg-white text-primary rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary"
             )}
           >
             {item.icon && <item.icon className="size-5 shrink-0" />}
@@ -118,7 +118,7 @@ export default function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-primary border-r transition-all duration-200 ease-linear sticky top-0",
+        "flex flex-col h-screen bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-200 ease-linear sticky top-0",
         isCollapsed ? "w-16" : "w-64"
       )}
     >
@@ -126,7 +126,7 @@ export default function AdminSidebar() {
       <div className="flex items-center justify-between p-3 border-b border-sidebar-border">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <CofferLogo size={32} />
+            <CofferLogo white size={26} />
           </div>
         )}
         <Button
@@ -169,9 +169,10 @@ export default function AdminSidebar() {
                   <li>
                     <CollapsibleTrigger asChild disabled={isActive}>
                       <Button
-                        // variant="ghost"
+                        variant="ghost"
                         className={cn(
                           "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5 hover:text-white relative disabled:opacity-100",
+                          "aria-expanded:bg-transparent aria-expanded:text-white",
                           "data-[state=open]:text-white data-[state=open]:font-semibold",
                           isActive && "text-white font-semibold bg-white/5",
                           isActive && "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-7 before:w-1 before:bg-white before:rounded-r-full"
@@ -190,10 +191,10 @@ export default function AdminSidebar() {
                             <li key={subItem.title}>
                               <TransitionLink to={subItem.url}>
                                 <Button
-                                  // variant="ghost"
+                                  variant="ghost"
                                   className={cn(
                                     "w-full justify-start h-8 px-3 text-white/70 hover:bg-white/5 hover:text-white relative font-medium transition-all duration-200 ease-in-out",
-                                    isSubActive && "bg-white text-primary! rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7"
+                                    isSubActive && "bg-white text-primary! rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7"
                                   )}
                                 >
                                   <span className="text-sm">{subItem.title}</span>
@@ -230,7 +231,7 @@ export default function AdminSidebar() {
                       className={cn(
                         "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5! hover:text-white relative transition-all duration-200 ease-in-out",
                         isCollapsed && "justify-center px-0",
-                        isItemActive && "bg-white text-primary rounded-l-full rounded-r-none font-bold shadow-sm hover:bg-white! hover:text-primary pl-2"
+                        isItemActive && "bg-white text-primary rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white! hover:text-primary pl-2"
                       )}
                     >
                       {item.icon && <item.icon className="size-5 shrink-0" />}

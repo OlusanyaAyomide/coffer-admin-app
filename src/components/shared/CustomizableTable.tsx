@@ -3,13 +3,14 @@ import type { ReactNode } from 'react';
 
 import type { DataTableProps } from '@/components/shared/BaseDataTable';
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import BaseDataTable from '@/components/shared/BaseDataTable';
@@ -114,78 +115,86 @@ export default function CustomizableTable<TData>({
       {/* Filters row with column selector inline */}
       <div className="mb-5 section-scroll overflow-y-hidden flex items-center justify-between gap-4">
         <div className="flex-1">{children}</div>
-        <Dialog>
-          <DialogTrigger asChild>
+        <Sheet>
+          <SheetTrigger asChild>
             <Button
               variant="outline"
               size="sm"
-              className="shrink-0 rounded-full h-10 px-3 gap-1.5 text-sm font-medium"
+              className="shrink-0 rounded-md h-10 px-3 gap-1.5 text-sm font-medium"
             >
               <img src="/TableTogge.svg" alt="TableToggle" width={14} height={14} />
               Select Columns
             </Button>
-          </DialogTrigger>
-          <DialogContent className="w-full rounded-3xl max-md:hidden max-w-[572px] overflow-x-hidden overflow-auto max-h-[90vh] p-6 bg-card border-border">
-            <div className="flex mt-4 items-center justify-between mb-2">
-              <DialogTitle className="font-semibold text-xl text-popover-foreground">
-                Select Columns
-              </DialogTitle>
-              <Button
-                onClick={handleSelectAll}
-                variant="ghost"
-                size={"sm"}
-                className="px-3 h-8 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10"
-              >
-                {!excludedFields.length ? 'Unselect all' : 'Select all'}
-              </Button>
-              <DialogDescription className="sr-only">
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-md">
+            <SheetHeader className="border-b border-border">
+              <div className="flex items-center justify-between gap-2 pr-8">
+                <SheetTitle className="text-base font-semibold text-foreground">
+                  Select Columns
+                </SheetTitle>
+                <Button
+                  onClick={handleSelectAll}
+                  variant="ghost"
+                  size="sm"
+                  className="px-3 h-8 text-sm font-medium text-primary hover:text-primary hover:bg-primary/10"
+                >
+                  {!excludedFields.length ? 'Unselect all' : 'Select all'}
+                </Button>
+              </div>
+              <SheetDescription className="sr-only">
                 Choose which columns to display in the table
-              </DialogDescription>
-            </div>
-            {/* Reset to Default button */}
-            {!isDefaultState() && (
-              <Button
-                onClick={handleResetToDefault}
-                variant="ghost"
-                size="sm"
-                className="mb-4 px-0 h-auto text-sm -mt-4 w-fit mr-auto font-medium text-muted-foreground hover:text-foreground hover:bg-transparent"
-              >
-                Reset to Default
-              </Button>
-            )}
-            <div className="flex flex-col gap-4 mb-6 -mt-3">
-              {columns.map((column, index) => {
-                const accessorKey = column.accessorKey;
+              </SheetDescription>
+            </SheetHeader>
 
-                // Skip columns without accessorKey
-                if (!accessorKey) return null;
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              {/* Reset to Default button */}
+              {!isDefaultState() && (
+                <Button
+                  onClick={handleResetToDefault}
+                  variant="ghost"
+                  size="sm"
+                  className="mb-2 px-0 h-auto text-sm w-fit mr-auto font-medium text-muted-foreground hover:text-foreground hover:bg-transparent"
+                >
+                  Reset to Default
+                </Button>
+              )}
+              <div className="flex flex-col gap-1.5">
+                {columns.map((column, index) => {
+                  const accessorKey = column.accessorKey;
 
-                return (
-                  <div
-                    key={accessorKey || index.toString()}
-                    className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer"
-                    onClick={() => handleFilterChange(accessorKey)}
-                  >
-                    <Checkbox
-                      className="h-[18px] w-[18px] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                      checked={!excludedFields.includes(accessorKey)}
-                      onCheckedChange={() => handleFilterChange(accessorKey)}
+                  // Skip columns without accessorKey
+                  if (!accessorKey) return null;
+
+                  return (
+                    <div
+                      key={accessorKey || index.toString()}
+                      className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer"
                       onClick={() => handleFilterChange(accessorKey)}
-                    />
-                    <span className="text-sm font-medium text-foreground select-none">
-                      {titleCaseUnderscoreDash(column.accessorKey)}
-                    </span>
-                  </div>
-                );
-              })}
+                    >
+                      <Checkbox
+                        className="h-[18px] w-[18px] rounded-[5px] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                        checked={!excludedFields.includes(accessorKey)}
+                        onCheckedChange={() => handleFilterChange(accessorKey)}
+                        onClick={() => handleFilterChange(accessorKey)}
+                      />
+                      <span className="text-sm font-medium text-foreground select-none">
+                        {titleCaseUnderscoreDash(column.accessorKey)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <DialogClose asChild>
-              <Button className="rounded-full ml-auto px-6 h-10 bg-primary hover:bg-primary/90 text-primary-foreground">
-                <span className="font-medium text-sm w-[80px]">Done</span>
-              </Button>
-            </DialogClose>
-          </DialogContent>
-        </Dialog>
+
+            <div className="border-t border-border p-6">
+              <SheetClose asChild>
+                <Button className="ml-auto w-full">
+                  <span className="font-medium text-sm">Done</span>
+                </Button>
+              </SheetClose>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Table */}
