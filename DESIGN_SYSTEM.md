@@ -122,8 +122,11 @@ Anatomy:
   (`flex-1 overflow-y-auto px-6 py-5 space-y-5`), `SheetFooter` (`border-t`,
   right-aligned actions).
 
-**Width — panels are wide.** Default sheet is `sm:max-w-md`; **forms use
-`sm:max-w-3xl`/`4xl`**, detail drawers `sm:max-w-4xl`. Never ship a cramped panel.
+**Width — panels are wide.** The shared `SheetContent` default is `sm:max-w-2xl`
+(set globally in [ui/sheet.tsx](src/components/ui/sheet.tsx) so no sheet is cramped);
+**forms use `sm:max-w-3xl`/`4xl`**, detail drawers `sm:max-w-4xl`. Pass a plain
+`sm:max-w-*` on `SheetContent` to override — it now merges cleanly over the default.
+Use a narrower `sm:max-w-md` only for deliberately compact panels (e.g. Select Columns).
 
 ```tsx
 <Sheet open={open} onOpenChange={setOpen}>

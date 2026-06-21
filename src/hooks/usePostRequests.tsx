@@ -18,6 +18,7 @@ type CustomError = {
 
 type PostRequestType<T> = {
   isDelete?: boolean;
+  isPatch?: boolean;
   isPut?: boolean;
   onError?: (error: QueryError) => void;
   onSuccess?: (data: T) => void;
@@ -35,6 +36,7 @@ type PostRequestType<T> = {
  */
 export default function usePostRequest<T, G>({
   isDelete = false,
+  isPatch = false,
   isPut = false,
   onError,
   onSuccess,
@@ -54,6 +56,8 @@ export default function usePostRequest<T, G>({
       let response;
       if (isPut) {
         response = await API.put(requestUrl, body);
+      } else if (isPatch) {
+        response = await API.patch(requestUrl, body);
       } else if (isDelete) {
         // Axios delete often takes data in a 'data' config property if needed
         response = await API.delete(requestUrl, { data: body });

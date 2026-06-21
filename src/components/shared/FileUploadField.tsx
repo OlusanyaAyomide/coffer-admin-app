@@ -12,7 +12,12 @@ import type {
 } from 'react-hook-form';
 
 import type { AxiosResponse } from 'axios';
-import type { DocumentMetaData, FileMimeType, NullableType } from '@/types/GenericTypes';
+import type {
+  DocumentMetaData,
+  FileMimeType,
+  NullableType,
+  SlashStringType,
+} from '@/types/GenericTypes';
 import {
   exceedsUploadSizeLimit,
   formatFileSize,
@@ -43,6 +48,15 @@ type FileUploadFieldProp<T extends FieldValues, K extends Path<T> = Path<T>> = {
   replaceText?: string;
   prefix: string;
   showBorderOnMobile?: boolean;
+  uploadUrl?: SlashStringType;
+  additionalFormData?: Record<string, string>;
+  accept?: string;
+  mapUploadResponse?: (
+    data: unknown,
+    file: File,
+  ) => DocumentMetaData;
+  onUploadSuccess?: (metadata: DocumentMetaData) => void;
+  onFileDelete?: VoidFunction;
 };
 
 type FileType = {
@@ -66,6 +80,12 @@ export default function FileUploadField<T extends FieldValues>({
   replaceText = 'Replace',
   prefix,
   showBorderOnMobile,
+  uploadUrl,
+  additionalFormData,
+  accept,
+  mapUploadResponse,
+  onUploadSuccess,
+  onFileDelete,
 }: FileUploadFieldProp<T>) {
   const initialFile = useMemo(() => {
     const verifiedValue = returnDataOrNull(value);
@@ -83,6 +103,7 @@ export default function FileUploadField<T extends FieldValues>({
   const [isReuploading, setIsReUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
+  const pendingFileRef = useRef<File | null>(null);
 
   const {
     mutate: uploadFile,
@@ -90,20 +111,28 @@ export default function FileUploadField<T extends FieldValues>({
     uploadInfo,
     cancelUpload,
   } = useUploadRequest<AxiosResponse<DocumentMetaData>>({
+    requestUrl: uploadUrl,
     onError: () => {
       setUploadedFile(null);
+      pendingFileRef.current = null;
       setValue(fieldName, '' as PathValue<T, Path<T>>);
     },
     onSuccess: (data) => {
-      const metadata: DocumentMetaData = {
-        key: data.data.key,
-        name: data.data.name,
-        size: data.data.size,
-        url: data.data.url,
-        id: data.data.id,
-      };
+      const file = pendingFileRef.current ?? uploadedFile?.file ?? new File([], 'Uploaded file');
+      const metadata = mapUploadResponse
+        ? mapUploadResponse(data, file)
+        : {
+          key: data.data.key,
+          name: data.data.name,
+          size: data.data.size,
+          url: data.data.url,
+          id: data.data.id,
+        };
       setValue(fieldName, metadata as PathValue<T, Path<T>>);
+      setUploadedFile({ file, metadata });
+      pendingFileRef.current = null;
       setIsReUploading(false);
+      onUploadSuccess?.(metadata);
     },
   });
 
@@ -123,7 +152,9 @@ export default function FileUploadField<T extends FieldValues>({
     if (isPending) {
       cancelUpload();
     }
+    pendingFileRef.current = null;
     setValue(fieldName, null as PathValue<T, Path<T>>);
+    onFileDelete?.();
   };
 
   const { UploadPreview, DocumentUpload } = SvgIcons;
@@ -146,6 +177,7 @@ export default function FileUploadField<T extends FieldValues>({
     }
 
     setUploadedFile({ file });
+    pendingFileRef.current = file;
     if (isReupload) {
       setIsReUploading(true);
     }
@@ -154,6 +186,9 @@ export default function FileUploadField<T extends FieldValues>({
     formData.append('file', file);
     formData.append('prefix', prefix);
     formData.append('name', generateFileName(prefix, file));
+    Object.entries(additionalFormData ?? {}).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
 
     uploadFile(formData);
   };
@@ -239,7 +274,7 @@ export default function FileUploadField<T extends FieldValues>({
               {replaceText}
             </label>
             <input
-              accept={mediaType === 'all' ? 'image/*, application/*' : `${mediaType}/*`}
+              accept={accept ?? (mediaType === 'all' ? 'image/*, application/*' : `${mediaType}/*`)}
               onChange={(e) => {
                 handleUpload(e, true);
               }}
@@ -308,7 +343,7 @@ export default function FileUploadField<T extends FieldValues>({
           </p>
         ) : null}
         <input
-          accept={mediaType === 'all' ? 'image/*, application/*' : `${mediaType}/*`}
+          accept={accept ?? (mediaType === 'all' ? 'image/*, application/*' : `${mediaType}/*`)}
           onChange={handleUpload}
           data-testid="input-file"
           id={fieldName}

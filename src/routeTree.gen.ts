@@ -25,6 +25,7 @@ import { Route as AdminSettingsConfigRouteImport } from './routes/_admin/setting
 import { Route as AdminSettingsAccessRouteImport } from './routes/_admin/settings/access'
 import { Route as AdminLockerRulesRouteImport } from './routes/_admin/locker/rules'
 import { Route as AdminLockerRatesRouteImport } from './routes/_admin/locker/rates'
+import { Route as AdminLockerCategoriesRouteImport } from './routes/_admin/locker/categories'
 import { Route as AdminLockerAnalyticsRouteImport } from './routes/_admin/locker/analytics'
 import { Route as AdminKycKycIdRouteImport } from './routes/_admin/kyc/$kycId'
 import { Route as AdminFinancialsWithdrawalsRouteImport } from './routes/_admin/financials/withdrawals'
@@ -38,6 +39,8 @@ import { Route as AdminCofferPerformanceRouteImport } from './routes/_admin/coff
 import { Route as AdminCofferMarketplaceRouteImport } from './routes/_admin/coffer/marketplace'
 import { Route as AdminCofferDividendsRouteImport } from './routes/_admin/coffer/dividends'
 import { Route as AdminCofferActiveRouteImport } from './routes/_admin/coffer/active'
+import { Route as AdminLockerCabalsIndexRouteImport } from './routes/_admin/locker/cabals/index'
+import { Route as AdminLockerCabalsCabalIdRouteImport } from './routes/_admin/locker/cabals/$cabalId'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/_admin',
@@ -117,6 +120,11 @@ const AdminLockerRatesRoute = AdminLockerRatesRouteImport.update({
   path: '/locker/rates',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLockerCategoriesRoute = AdminLockerCategoriesRouteImport.update({
+  id: '/locker/categories',
+  path: '/locker/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLockerAnalyticsRoute = AdminLockerAnalyticsRouteImport.update({
   id: '/locker/analytics',
   path: '/locker/analytics',
@@ -186,6 +194,17 @@ const AdminCofferActiveRoute = AdminCofferActiveRouteImport.update({
   path: '/coffer/active',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLockerCabalsIndexRoute = AdminLockerCabalsIndexRouteImport.update({
+  id: '/locker/cabals/',
+  path: '/locker/cabals/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLockerCabalsCabalIdRoute =
+  AdminLockerCabalsCabalIdRouteImport.update({
+    id: '/locker/cabals/$cabalId',
+    path: '/locker/cabals/$cabalId',
+    getParentRoute: () => AdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -205,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
   '/kyc/$kycId': typeof AdminKycKycIdRoute
   '/locker/analytics': typeof AdminLockerAnalyticsRoute
+  '/locker/categories': typeof AdminLockerCategoriesRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
   '/settings/access': typeof AdminSettingsAccessRoute
@@ -215,6 +235,8 @@ export interface FileRoutesByFullPath {
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
   '/kyc': typeof AdminKycIndexRoute
+  '/locker/cabals/$cabalId': typeof AdminLockerCabalsCabalIdRoute
+  '/locker/cabals': typeof AdminLockerCabalsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -234,6 +256,7 @@ export interface FileRoutesByTo {
   '/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
   '/kyc/$kycId': typeof AdminKycKycIdRoute
   '/locker/analytics': typeof AdminLockerAnalyticsRoute
+  '/locker/categories': typeof AdminLockerCategoriesRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
   '/settings/access': typeof AdminSettingsAccessRoute
@@ -244,6 +267,8 @@ export interface FileRoutesByTo {
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
   '/kyc': typeof AdminKycIndexRoute
+  '/locker/cabals/$cabalId': typeof AdminLockerCabalsCabalIdRoute
+  '/locker/cabals': typeof AdminLockerCabalsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -266,6 +291,7 @@ export interface FileRoutesById {
   '/_admin/financials/withdrawals': typeof AdminFinancialsWithdrawalsRoute
   '/_admin/kyc/$kycId': typeof AdminKycKycIdRoute
   '/_admin/locker/analytics': typeof AdminLockerAnalyticsRoute
+  '/_admin/locker/categories': typeof AdminLockerCategoriesRoute
   '/_admin/locker/rates': typeof AdminLockerRatesRoute
   '/_admin/locker/rules': typeof AdminLockerRulesRoute
   '/_admin/settings/access': typeof AdminSettingsAccessRoute
@@ -276,6 +302,8 @@ export interface FileRoutesById {
   '/_admin/users/all': typeof AdminUsersAllRoute
   '/_admin/users/referral-tree': typeof AdminUsersReferralTreeRoute
   '/_admin/kyc/': typeof AdminKycIndexRoute
+  '/_admin/locker/cabals/$cabalId': typeof AdminLockerCabalsCabalIdRoute
+  '/_admin/locker/cabals/': typeof AdminLockerCabalsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -297,6 +325,7 @@ export interface FileRouteTypes {
     | '/financials/withdrawals'
     | '/kyc/$kycId'
     | '/locker/analytics'
+    | '/locker/categories'
     | '/locker/rates'
     | '/locker/rules'
     | '/settings/access'
@@ -307,6 +336,8 @@ export interface FileRouteTypes {
     | '/users/all'
     | '/users/referral-tree'
     | '/kyc'
+    | '/locker/cabals/$cabalId'
+    | '/locker/cabals'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -326,6 +357,7 @@ export interface FileRouteTypes {
     | '/financials/withdrawals'
     | '/kyc/$kycId'
     | '/locker/analytics'
+    | '/locker/categories'
     | '/locker/rates'
     | '/locker/rules'
     | '/settings/access'
@@ -336,6 +368,8 @@ export interface FileRouteTypes {
     | '/users/all'
     | '/users/referral-tree'
     | '/kyc'
+    | '/locker/cabals/$cabalId'
+    | '/locker/cabals'
   id:
     | '__root__'
     | '/'
@@ -357,6 +391,7 @@ export interface FileRouteTypes {
     | '/_admin/financials/withdrawals'
     | '/_admin/kyc/$kycId'
     | '/_admin/locker/analytics'
+    | '/_admin/locker/categories'
     | '/_admin/locker/rates'
     | '/_admin/locker/rules'
     | '/_admin/settings/access'
@@ -367,6 +402,8 @@ export interface FileRouteTypes {
     | '/_admin/users/all'
     | '/_admin/users/referral-tree'
     | '/_admin/kyc/'
+    | '/_admin/locker/cabals/$cabalId'
+    | '/_admin/locker/cabals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -489,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLockerRatesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/locker/categories': {
+      id: '/_admin/locker/categories'
+      path: '/locker/categories'
+      fullPath: '/locker/categories'
+      preLoaderRoute: typeof AdminLockerCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/locker/analytics': {
       id: '/_admin/locker/analytics'
       path: '/locker/analytics'
@@ -580,6 +624,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCofferActiveRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/locker/cabals/': {
+      id: '/_admin/locker/cabals/'
+      path: '/locker/cabals'
+      fullPath: '/locker/cabals'
+      preLoaderRoute: typeof AdminLockerCabalsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/cabals/$cabalId': {
+      id: '/_admin/locker/cabals/$cabalId'
+      path: '/locker/cabals/$cabalId'
+      fullPath: '/locker/cabals/$cabalId'
+      preLoaderRoute: typeof AdminLockerCabalsCabalIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -612,6 +670,7 @@ interface AdminRouteChildren {
   AdminFinancialsWithdrawalsRoute: typeof AdminFinancialsWithdrawalsRoute
   AdminKycKycIdRoute: typeof AdminKycKycIdRoute
   AdminLockerAnalyticsRoute: typeof AdminLockerAnalyticsRoute
+  AdminLockerCategoriesRoute: typeof AdminLockerCategoriesRoute
   AdminLockerRatesRoute: typeof AdminLockerRatesRoute
   AdminLockerRulesRoute: typeof AdminLockerRulesRoute
   AdminSettingsAccessRoute: typeof AdminSettingsAccessRoute
@@ -622,6 +681,8 @@ interface AdminRouteChildren {
   AdminUsersAllRoute: typeof AdminUsersAllRoute
   AdminUsersReferralTreeRoute: typeof AdminUsersReferralTreeRoute
   AdminKycIndexRoute: typeof AdminKycIndexRoute
+  AdminLockerCabalsCabalIdRoute: typeof AdminLockerCabalsCabalIdRoute
+  AdminLockerCabalsIndexRoute: typeof AdminLockerCabalsIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -639,6 +700,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFinancialsWithdrawalsRoute: AdminFinancialsWithdrawalsRoute,
   AdminKycKycIdRoute: AdminKycKycIdRoute,
   AdminLockerAnalyticsRoute: AdminLockerAnalyticsRoute,
+  AdminLockerCategoriesRoute: AdminLockerCategoriesRoute,
   AdminLockerRatesRoute: AdminLockerRatesRoute,
   AdminLockerRulesRoute: AdminLockerRulesRoute,
   AdminSettingsAccessRoute: AdminSettingsAccessRoute,
@@ -649,6 +711,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersAllRoute: AdminUsersAllRoute,
   AdminUsersReferralTreeRoute: AdminUsersReferralTreeRoute,
   AdminKycIndexRoute: AdminKycIndexRoute,
+  AdminLockerCabalsCabalIdRoute: AdminLockerCabalsCabalIdRoute,
+  AdminLockerCabalsIndexRoute: AdminLockerCabalsIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

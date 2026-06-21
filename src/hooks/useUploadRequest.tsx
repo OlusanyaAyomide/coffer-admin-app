@@ -7,6 +7,7 @@ import type { QueryError } from '@/types/ResponseTypes';
 import { normalizeApiErrors } from '@/services/errorServices';
 import API from '@/services/api';
 import CloseToast from '@/components/shared/CloseToast';
+import type { SlashStringType } from '@/types/GenericTypes';
 
 type UploadRequestType<T> = {
   onError?: (error: QueryError) => void;
@@ -14,6 +15,7 @@ type UploadRequestType<T> = {
   showErrorToast?: boolean;
   successText?: string;
   mutationKey?: Array<string>;
+  requestUrl?: SlashStringType;
 };
 
 type UploadProgress = {
@@ -28,14 +30,13 @@ export default function useUploadRequest<T>({
   showErrorToast = true,
   successText,
   mutationKey,
+  requestUrl = '/upload/public',
 }: UploadRequestType<T>) {
   const [uploadInfo, setUploadInfo] = useState<UploadProgress | null>(null);
   const abortController = useRef<AbortController | null>(null);
 
   const mutation = useMutation<T, QueryError, FormData>({
     mutationFn: async (formData) => {
-      const requestUrl = `/upload/public`;
-
       // Create new abort controller for this upload
       abortController.current = new AbortController();
 

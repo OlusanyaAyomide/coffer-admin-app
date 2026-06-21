@@ -77,6 +77,14 @@ export const adminNavData = {
           url: '/locker/rates',
         },
         {
+          title: 'Categories',
+          url: '/locker/categories',
+        },
+        {
+          title: 'Cabals',
+          url: '/locker/cabals',
+        },
+        {
           title: 'Auto-Save Rules',
           url: '/locker/rules',
         },
