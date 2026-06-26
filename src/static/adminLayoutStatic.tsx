@@ -69,8 +69,8 @@ export const adminNavData = {
       icon: Lock,
       items: [
         {
-          title: 'Analytics',
-          url: '/locker/analytics',
+          title: 'Overview',
+          url: '/locker/overview',
         },
         {
           title: 'Configuration',

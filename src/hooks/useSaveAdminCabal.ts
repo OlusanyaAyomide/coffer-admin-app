@@ -26,7 +26,6 @@ export type SaveAdminCabalBody = {
   is_featured?: boolean;
   importance?: number;
   promotional_bonus?: number;
-  is_company_group?: boolean;
 };
 
 type SaveAdminCabalResponse = {

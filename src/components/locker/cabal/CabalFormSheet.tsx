@@ -36,6 +36,7 @@ import useLockerCategories from '@/hooks/useLockerCategories';
 
 const CURRENCIES: Array<EntryCurrency> = ['NGN', 'USDT'];
 const FREQUENCIES: Array<ContributionFrequency> = ['daily', 'weekly', 'monthly'];
+const FEATURED_PRIORITIES = Array.from({ length: 10 }, (_, index) => index + 1);
 
 type CabalFormSheetProps = {
   /** Provide to edit; omit to create. */
@@ -85,7 +86,6 @@ export default function CabalFormSheet({
     sort_by: 'sort_order',
     order: 'asc',
   });
-
   useEffect(() => {
     if (!open) return;
     setName(cabal?.name ?? '');
@@ -105,7 +105,11 @@ export default function CabalFormSheet({
     setIconUrl(cabal?.icon_url ?? '');
     setImageUrl(cabal?.image_url ?? '');
     setIsFeatured(cabal?.is_featured ?? false);
-    setImportance(cabal?.importance != null ? String(cabal.importance) : '');
+    setImportance(
+      cabal?.importance != null && cabal.importance >= 1 && cabal.importance <= 10
+        ? String(cabal.importance)
+        : '',
+    );
     setPromotionalBonus(cabal?.promotional_bonus ?? '');
   }, [open, cabal]);
 
@@ -124,6 +128,7 @@ export default function CabalFormSheet({
     contributionAmount.trim() !== '' &&
     frequency !== '' &&
     endDate !== '' &&
+    (!isFeatured || importance !== '') &&
     !isSavingCabal;
 
   const toNumber = (value: string): number | undefined => {
@@ -152,11 +157,16 @@ export default function CabalFormSheet({
       icon_url: iconUrl.trim() || undefined,
       image_url: imageUrl.trim() || undefined,
       is_featured: isFeatured,
-      importance: toNumber(importance),
+      importance: isFeatured ? toNumber(importance) : undefined,
       promotional_bonus: toNumber(promotionalBonus),
-      // Admin-created cabals are public company/system groups in this pass.
-      is_company_group: true,
     });
+  };
+
+  const handleFeaturedChange = (checked: boolean) => {
+    setIsFeatured(checked);
+    if (checked && !importance) {
+      setImportance('10');
+    }
   };
 
   return (
@@ -422,28 +432,31 @@ export default function CabalFormSheet({
                   Featured cabals surface on the discovery rail.
                 </p>
               </div>
-              <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />
+              <Switch checked={isFeatured} onCheckedChange={handleFeaturedChange} />
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="cabal-importance">
-                  Importance{' '}
-                  <span className="font-normal text-muted-foreground">
-                    (optional)
-                  </span>
-                </Label>
-                <Input
-                  id="cabal-importance"
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  placeholder="0"
+                <Label htmlFor="cabal-importance">Featured priority</Label>
+                <Select
                   value={importance}
-                  onChange={(e) => setImportance(e.target.value)}
-                />
+                  onValueChange={setImportance}
+                  disabled={!isFeatured}
+                >
+                  <SelectTrigger id="cabal-importance" className="w-full">
+                    <SelectValue placeholder="Choose priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {FEATURED_PRIORITIES.map((priority) => (
+                      <SelectItem key={priority} value={String(priority)}>
+                        {priority}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-xs text-muted-foreground">
-                  Higher importance ranks above other featured cabals.
+                  Select 1-10 only. 1 is the highest priority and 10 is the
+                  lowest.
                 </p>
               </div>
 

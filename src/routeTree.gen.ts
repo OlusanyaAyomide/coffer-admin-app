@@ -26,6 +26,7 @@ import { Route as AdminSettingsConfigRouteImport } from './routes/_admin/setting
 import { Route as AdminSettingsAccessRouteImport } from './routes/_admin/settings/access'
 import { Route as AdminLockerRulesRouteImport } from './routes/_admin/locker/rules'
 import { Route as AdminLockerRatesRouteImport } from './routes/_admin/locker/rates'
+import { Route as AdminLockerOverviewRouteImport } from './routes/_admin/locker/overview'
 import { Route as AdminLockerMaturityPenaltyRouteImport } from './routes/_admin/locker/maturity-penalty'
 import { Route as AdminLockerConfigRouteImport } from './routes/_admin/locker/config'
 import { Route as AdminLockerCategoriesRouteImport } from './routes/_admin/locker/categories'
@@ -127,6 +128,11 @@ const AdminLockerRulesRoute = AdminLockerRulesRouteImport.update({
 const AdminLockerRatesRoute = AdminLockerRatesRouteImport.update({
   id: '/locker/rates',
   path: '/locker/rates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLockerOverviewRoute = AdminLockerOverviewRouteImport.update({
+  id: '/locker/overview',
+  path: '/locker/overview',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLockerMaturityPenaltyRoute =
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/locker/categories': typeof AdminLockerCategoriesRoute
   '/locker/config': typeof AdminLockerConfigRoute
   '/locker/maturity-penalty': typeof AdminLockerMaturityPenaltyRoute
+  '/locker/overview': typeof AdminLockerOverviewRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
   '/settings/access': typeof AdminSettingsAccessRoute
@@ -283,6 +290,7 @@ export interface FileRoutesByTo {
   '/locker/categories': typeof AdminLockerCategoriesRoute
   '/locker/config': typeof AdminLockerConfigRoute
   '/locker/maturity-penalty': typeof AdminLockerMaturityPenaltyRoute
+  '/locker/overview': typeof AdminLockerOverviewRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
   '/settings/access': typeof AdminSettingsAccessRoute
@@ -321,6 +329,7 @@ export interface FileRoutesById {
   '/_admin/locker/categories': typeof AdminLockerCategoriesRoute
   '/_admin/locker/config': typeof AdminLockerConfigRoute
   '/_admin/locker/maturity-penalty': typeof AdminLockerMaturityPenaltyRoute
+  '/_admin/locker/overview': typeof AdminLockerOverviewRoute
   '/_admin/locker/rates': typeof AdminLockerRatesRoute
   '/_admin/locker/rules': typeof AdminLockerRulesRoute
   '/_admin/settings/access': typeof AdminSettingsAccessRoute
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/locker/categories'
     | '/locker/config'
     | '/locker/maturity-penalty'
+    | '/locker/overview'
     | '/locker/rates'
     | '/locker/rules'
     | '/settings/access'
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/locker/categories'
     | '/locker/config'
     | '/locker/maturity-penalty'
+    | '/locker/overview'
     | '/locker/rates'
     | '/locker/rules'
     | '/settings/access'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/_admin/locker/categories'
     | '/_admin/locker/config'
     | '/_admin/locker/maturity-penalty'
+    | '/_admin/locker/overview'
     | '/_admin/locker/rates'
     | '/_admin/locker/rules'
     | '/_admin/settings/access'
@@ -569,6 +581,13 @@ declare module '@tanstack/react-router' {
       path: '/locker/rates'
       fullPath: '/locker/rates'
       preLoaderRoute: typeof AdminLockerRatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/overview': {
+      id: '/_admin/locker/overview'
+      path: '/locker/overview'
+      fullPath: '/locker/overview'
+      preLoaderRoute: typeof AdminLockerOverviewRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/locker/maturity-penalty': {
@@ -734,6 +753,7 @@ interface AdminRouteChildren {
   AdminLockerCategoriesRoute: typeof AdminLockerCategoriesRoute
   AdminLockerConfigRoute: typeof AdminLockerConfigRoute
   AdminLockerMaturityPenaltyRoute: typeof AdminLockerMaturityPenaltyRoute
+  AdminLockerOverviewRoute: typeof AdminLockerOverviewRoute
   AdminLockerRatesRoute: typeof AdminLockerRatesRoute
   AdminLockerRulesRoute: typeof AdminLockerRulesRoute
   AdminSettingsAccessRoute: typeof AdminSettingsAccessRoute
@@ -766,6 +786,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLockerCategoriesRoute: AdminLockerCategoriesRoute,
   AdminLockerConfigRoute: AdminLockerConfigRoute,
   AdminLockerMaturityPenaltyRoute: AdminLockerMaturityPenaltyRoute,
+  AdminLockerOverviewRoute: AdminLockerOverviewRoute,
   AdminLockerRatesRoute: AdminLockerRatesRoute,
   AdminLockerRulesRoute: AdminLockerRulesRoute,
   AdminSettingsAccessRoute: AdminSettingsAccessRoute,

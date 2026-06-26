@@ -179,6 +179,7 @@ export type CabalSummary = {
   max_members: number | null;
   is_featured: boolean;
   importance: number;
+  importance_set_at: string | null;
   is_company_group: boolean;
   groupType: CabalGroupType;
   promotional_bonus: string | null;
