@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 
-import type { CabalDetailResponseData, CabalMember } from '@/types/LockerTypes';
+import type {
+  CabalActivity,
+  CabalDetailResponseData,
+  CabalMember,
+} from '@/types/LockerTypes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,6 +23,18 @@ import CabalMemberSheet from '@/components/locker/cabal/CabalMemberSheet';
 
 const TAB_TRIGGER_CLASS =
   'rounded-none border-b-2 border-transparent px-2 py-3 font-medium text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent shadow-none transition-colors hover:text-foreground';
+
+function activityAmountPrefix(direction: CabalActivity['amount_direction']) {
+  if (direction === 'credit') return '+';
+  if (direction === 'debit') return '-';
+  return '';
+}
+
+function activityAmountClassName(direction: CabalActivity['amount_direction']) {
+  if (direction === 'credit') return 'text-emerald-600';
+  if (direction === 'debit') return 'text-foreground';
+  return 'text-foreground';
+}
 
 function Field({
   label,
@@ -293,10 +309,17 @@ export default function CabalDetailTabs({
                     )}
                   </div>
                   <div className="shrink-0 text-right">
-                    {log.interest_amount && (
-                      <p className="text-sm font-medium text-emerald-600">
-                        +{formatCabalMoney(log.interest_amount, currency)}
+                    {log.amount && log.amount_currency ? (
+                      <p
+                        className={`text-sm font-medium ${activityAmountClassName(
+                          log.amount_direction,
+                        )}`}
+                      >
+                        {activityAmountPrefix(log.amount_direction)}
+                        {formatCabalMoney(log.amount, log.amount_currency)}
                       </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">-</p>
                     )}
                     <p className="text-xs text-muted-foreground">
                       {formatCabalDateTime(log.created_at)}

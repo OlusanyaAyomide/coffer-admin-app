@@ -14,6 +14,7 @@ import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthVerifyDeviceRouteImport } from './routes/_auth/verify-device'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthAcceptAdminInvitationRouteImport } from './routes/_auth/accept-admin-invitation'
 import { Route as AdminOverviewRouteImport } from './routes/_admin/overview'
 import { Route as AdminKycIndexRouteImport } from './routes/_admin/kyc/index'
 import { Route as AdminUsersReferralTreeRouteImport } from './routes/_admin/users/referral-tree'
@@ -25,6 +26,8 @@ import { Route as AdminSettingsConfigRouteImport } from './routes/_admin/setting
 import { Route as AdminSettingsAccessRouteImport } from './routes/_admin/settings/access'
 import { Route as AdminLockerRulesRouteImport } from './routes/_admin/locker/rules'
 import { Route as AdminLockerRatesRouteImport } from './routes/_admin/locker/rates'
+import { Route as AdminLockerMaturityPenaltyRouteImport } from './routes/_admin/locker/maturity-penalty'
+import { Route as AdminLockerConfigRouteImport } from './routes/_admin/locker/config'
 import { Route as AdminLockerCategoriesRouteImport } from './routes/_admin/locker/categories'
 import { Route as AdminLockerAnalyticsRouteImport } from './routes/_admin/locker/analytics'
 import { Route as AdminKycKycIdRouteImport } from './routes/_admin/kyc/$kycId'
@@ -65,6 +68,12 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthAcceptAdminInvitationRoute =
+  AuthAcceptAdminInvitationRouteImport.update({
+    id: '/accept-admin-invitation',
+    path: '/accept-admin-invitation',
+    getParentRoute: () => AuthRouteRoute,
+  } as any)
 const AdminOverviewRoute = AdminOverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
@@ -118,6 +127,17 @@ const AdminLockerRulesRoute = AdminLockerRulesRouteImport.update({
 const AdminLockerRatesRoute = AdminLockerRatesRouteImport.update({
   id: '/locker/rates',
   path: '/locker/rates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLockerMaturityPenaltyRoute =
+  AdminLockerMaturityPenaltyRouteImport.update({
+    id: '/locker/maturity-penalty',
+    path: '/locker/maturity-penalty',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminLockerConfigRoute = AdminLockerConfigRouteImport.update({
+  id: '/locker/config',
+  path: '/locker/config',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLockerCategoriesRoute = AdminLockerCategoriesRouteImport.update({
@@ -209,6 +229,7 @@ const AdminLockerCabalsCabalIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/overview': typeof AdminOverviewRoute
+  '/accept-admin-invitation': typeof AuthAcceptAdminInvitationRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
   '/coffer/active': typeof AdminCofferActiveRoute
@@ -225,6 +246,8 @@ export interface FileRoutesByFullPath {
   '/kyc/$kycId': typeof AdminKycKycIdRoute
   '/locker/analytics': typeof AdminLockerAnalyticsRoute
   '/locker/categories': typeof AdminLockerCategoriesRoute
+  '/locker/config': typeof AdminLockerConfigRoute
+  '/locker/maturity-penalty': typeof AdminLockerMaturityPenaltyRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
   '/settings/access': typeof AdminSettingsAccessRoute
@@ -241,6 +264,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/overview': typeof AdminOverviewRoute
+  '/accept-admin-invitation': typeof AuthAcceptAdminInvitationRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
   '/coffer/active': typeof AdminCofferActiveRoute
@@ -257,6 +281,8 @@ export interface FileRoutesByTo {
   '/kyc/$kycId': typeof AdminKycKycIdRoute
   '/locker/analytics': typeof AdminLockerAnalyticsRoute
   '/locker/categories': typeof AdminLockerCategoriesRoute
+  '/locker/config': typeof AdminLockerConfigRoute
+  '/locker/maturity-penalty': typeof AdminLockerMaturityPenaltyRoute
   '/locker/rates': typeof AdminLockerRatesRoute
   '/locker/rules': typeof AdminLockerRulesRoute
   '/settings/access': typeof AdminSettingsAccessRoute
@@ -276,6 +302,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_admin': typeof AdminRouteWithChildren
   '/_admin/overview': typeof AdminOverviewRoute
+  '/_auth/accept-admin-invitation': typeof AuthAcceptAdminInvitationRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/verify-device': typeof AuthVerifyDeviceRoute
   '/_admin/coffer/active': typeof AdminCofferActiveRoute
@@ -292,6 +319,8 @@ export interface FileRoutesById {
   '/_admin/kyc/$kycId': typeof AdminKycKycIdRoute
   '/_admin/locker/analytics': typeof AdminLockerAnalyticsRoute
   '/_admin/locker/categories': typeof AdminLockerCategoriesRoute
+  '/_admin/locker/config': typeof AdminLockerConfigRoute
+  '/_admin/locker/maturity-penalty': typeof AdminLockerMaturityPenaltyRoute
   '/_admin/locker/rates': typeof AdminLockerRatesRoute
   '/_admin/locker/rules': typeof AdminLockerRulesRoute
   '/_admin/settings/access': typeof AdminSettingsAccessRoute
@@ -310,6 +339,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/overview'
+    | '/accept-admin-invitation'
     | '/login'
     | '/verify-device'
     | '/coffer/active'
@@ -326,6 +356,8 @@ export interface FileRouteTypes {
     | '/kyc/$kycId'
     | '/locker/analytics'
     | '/locker/categories'
+    | '/locker/config'
+    | '/locker/maturity-penalty'
     | '/locker/rates'
     | '/locker/rules'
     | '/settings/access'
@@ -342,6 +374,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/overview'
+    | '/accept-admin-invitation'
     | '/login'
     | '/verify-device'
     | '/coffer/active'
@@ -358,6 +391,8 @@ export interface FileRouteTypes {
     | '/kyc/$kycId'
     | '/locker/analytics'
     | '/locker/categories'
+    | '/locker/config'
+    | '/locker/maturity-penalty'
     | '/locker/rates'
     | '/locker/rules'
     | '/settings/access'
@@ -376,6 +411,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_admin'
     | '/_admin/overview'
+    | '/_auth/accept-admin-invitation'
     | '/_auth/login'
     | '/_auth/verify-device'
     | '/_admin/coffer/active'
@@ -392,6 +428,8 @@ export interface FileRouteTypes {
     | '/_admin/kyc/$kycId'
     | '/_admin/locker/analytics'
     | '/_admin/locker/categories'
+    | '/_admin/locker/config'
+    | '/_admin/locker/maturity-penalty'
     | '/_admin/locker/rates'
     | '/_admin/locker/rules'
     | '/_admin/settings/access'
@@ -447,6 +485,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/accept-admin-invitation': {
+      id: '/_auth/accept-admin-invitation'
+      path: '/accept-admin-invitation'
+      fullPath: '/accept-admin-invitation'
+      preLoaderRoute: typeof AuthAcceptAdminInvitationRouteImport
       parentRoute: typeof AuthRouteRoute
     }
     '/_admin/overview': {
@@ -524,6 +569,20 @@ declare module '@tanstack/react-router' {
       path: '/locker/rates'
       fullPath: '/locker/rates'
       preLoaderRoute: typeof AdminLockerRatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/maturity-penalty': {
+      id: '/_admin/locker/maturity-penalty'
+      path: '/locker/maturity-penalty'
+      fullPath: '/locker/maturity-penalty'
+      preLoaderRoute: typeof AdminLockerMaturityPenaltyRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/locker/config': {
+      id: '/_admin/locker/config'
+      path: '/locker/config'
+      fullPath: '/locker/config'
+      preLoaderRoute: typeof AdminLockerConfigRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/locker/categories': {
@@ -642,11 +701,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteRouteChildren {
+  AuthAcceptAdminInvitationRoute: typeof AuthAcceptAdminInvitationRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthVerifyDeviceRoute: typeof AuthVerifyDeviceRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAcceptAdminInvitationRoute: AuthAcceptAdminInvitationRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthVerifyDeviceRoute: AuthVerifyDeviceRoute,
 }
@@ -671,6 +732,8 @@ interface AdminRouteChildren {
   AdminKycKycIdRoute: typeof AdminKycKycIdRoute
   AdminLockerAnalyticsRoute: typeof AdminLockerAnalyticsRoute
   AdminLockerCategoriesRoute: typeof AdminLockerCategoriesRoute
+  AdminLockerConfigRoute: typeof AdminLockerConfigRoute
+  AdminLockerMaturityPenaltyRoute: typeof AdminLockerMaturityPenaltyRoute
   AdminLockerRatesRoute: typeof AdminLockerRatesRoute
   AdminLockerRulesRoute: typeof AdminLockerRulesRoute
   AdminSettingsAccessRoute: typeof AdminSettingsAccessRoute
@@ -701,6 +764,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminKycKycIdRoute: AdminKycKycIdRoute,
   AdminLockerAnalyticsRoute: AdminLockerAnalyticsRoute,
   AdminLockerCategoriesRoute: AdminLockerCategoriesRoute,
+  AdminLockerConfigRoute: AdminLockerConfigRoute,
+  AdminLockerMaturityPenaltyRoute: AdminLockerMaturityPenaltyRoute,
   AdminLockerRatesRoute: AdminLockerRatesRoute,
   AdminLockerRulesRoute: AdminLockerRulesRoute,
   AdminSettingsAccessRoute: AdminSettingsAccessRoute,

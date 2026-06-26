@@ -44,3 +44,14 @@ export type UserOTPFormData = {
 export const otpSchema: yup.ObjectSchema<UserOTPFormData> = yup.object({
   otp: validateRequiredString('OTP'),
 });
+
+export type AcceptAdminInvitationFormData = {
+  password: string;
+  password_confirmation: string;
+}
+
+export const acceptAdminInvitationSchema: yup.ObjectSchema<AcceptAdminInvitationFormData> = yup.object({
+  password: validateRequiredPassword('Password')
+    .matches(/[\W_]/, 'Password should contain at least one special character'),
+  password_confirmation: validateRequiredPasswordConfirmation('Confirm Password', 'password'),
+});

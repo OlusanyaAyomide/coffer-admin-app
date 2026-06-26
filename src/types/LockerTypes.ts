@@ -21,6 +21,35 @@ export type ActiveRateEntry = {
   previous: Array<SavingsRate>;
 };
 
+export type LockerPreLiquidationPenaltyRange = {
+  id: string;
+  start_percentage: string;
+  end_percentage: string;
+  penalty_rate: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LockerPreLiquidationPolicy = {
+  id: string;
+  type: LockerType;
+  minimum_active_months: number;
+  is_active: boolean;
+  effective_from: string;
+  effective_to: string | null;
+  note: string | null;
+  created_by: { id: string; name: string } | null;
+  ranges: Array<LockerPreLiquidationPenaltyRange>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ActivePreLiquidationPolicyEntry = {
+  type: LockerType;
+  default_minimum_active_months: number;
+  policy: LockerPreLiquidationPolicy | null;
+};
+
 export const LOCKER_TYPE_LABELS: Record<LockerType, string> = {
   self_lock: 'Self-Lock',
   goal_lock: 'Goal-Lock',
@@ -98,6 +127,7 @@ export type GroupMemberStatus =
   | 'suspended';
 export type CabalMemberRole = 'admin' | 'member';
 export type GroupInvitationType = 'link' | 'code';
+export type SavingStatus = 'active' | 'matured' | 'closed' | 'suspended';
 
 export type CabalCategory = {
   id: string;
@@ -222,6 +252,9 @@ export type CabalActivity = {
   interest_amount: string | null;
   is_compounded: boolean | null;
   currency: EntryCurrency | null;
+  amount: string | null;
+  amount_currency: EntryCurrency | null;
+  amount_direction: 'credit' | 'debit' | 'neutral';
   meta_data: unknown;
   created_at: string;
   member: {
@@ -242,4 +275,117 @@ export type CabalDetailResponseData = {
   members: Array<CabalMember>;
   invitations: Array<CabalInvitation>;
   recent_activity: Array<CabalActivity>;
+};
+
+export type UserLockerOverview = {
+  NGN: { capital: string; interest_accrued: string; total: string };
+  USDT: { capital: string; interest_accrued: string; total: string };
+  converted_total: { NGN: string; USDT: string; rate: string };
+  counts: { self_lock: number; goal_lock: number; cabal: number };
+};
+
+export type UserLockerCategory = {
+  id: string;
+  name: string;
+  icon_url: string | null;
+  image_url: string | null;
+} | null;
+
+export type UserSelfLock = {
+  id: string;
+  title: string;
+  currency: EntryCurrency;
+  locked_amount: string;
+  total_deposited: string;
+  interest_earned: string;
+  maturity_date: string;
+  status: SavingStatus;
+  closed_at: string | null;
+  closure_reason: string | null;
+  created_at: string;
+  updated_at: string;
+  category: UserLockerCategory;
+};
+
+export type UserGoalLock = UserSelfLock & {
+  target_amount: string | null;
+  contribution_frequency: ContributionFrequency | null;
+  contribution_amount: string | null;
+  contribution_day: number | null;
+  contribution_time: string | null;
+  next_debit_date: string | null;
+  re_attempt_date_at: string | null;
+  auto_debit_enabled: boolean;
+  failed_debit_count: number;
+  last_failed_debit_at: string | null;
+};
+
+export type UserCabalMembership = {
+  id: string;
+  role: CabalMemberRole;
+  status: GroupMemberStatus;
+  contribution_amount: string | null;
+  contribution_day: number | null;
+  contribution_time: string | null;
+  next_debit_date: string | null;
+  re_attempt_date_at: string | null;
+  total_contributed: string;
+  interest_earned: string;
+  auto_debit_enabled: boolean;
+  failed_debit_count: number;
+  last_failed_debit_at: string | null;
+  on_time_payments: number;
+  missed_payments: number;
+  consistency_score: string;
+  joined_at: string | null;
+  left_at: string | null;
+  created_at: string;
+  updated_at: string;
+  cabal: {
+    id: string;
+    name: string;
+    description: string | null;
+    image_url: string | null;
+    icon_url: string | null;
+    visibility: CabalVisibility;
+    goal_name: string | null;
+    target_amount: string | null;
+    currency: EntryCurrency;
+    contribution_frequency: ContributionFrequency;
+    contribution_amount: string | null;
+    max_members: number | null;
+    is_featured: boolean;
+    groupType: CabalGroupType;
+    status: GroupSavingStatus;
+    start_date: string | null;
+    end_date: string | null;
+    category: UserLockerCategory;
+  };
+};
+
+export type UserLockerActivity = {
+  id: string;
+  event: string;
+  description: string | null;
+  daily_rate: string | null;
+  principal_at_time: string | null;
+  interest_amount: string | null;
+  is_compounded: boolean | null;
+  currency: EntryCurrency | null;
+  amount: string | null;
+  amount_currency: EntryCurrency | null;
+  amount_direction: 'credit' | 'debit' | 'neutral';
+  meta_data: unknown;
+  created_at: string;
+  source: LockerType;
+  self_lock_id: string | null;
+  goal_lock_id: string | null;
+  group_saving_member_id: string | null;
+};
+
+export type UserLockerData = {
+  overview: UserLockerOverview;
+  self_locks: Array<UserSelfLock>;
+  goal_locks: Array<UserGoalLock>;
+  cabals: Array<UserCabalMembership>;
 };

@@ -11,10 +11,10 @@ type AdminCabalsParams = {
   page?: number;
   limit?: number;
   search?: string;
-  status?: GroupSavingStatus;
-  currency?: EntryCurrency;
+  status?: Array<GroupSavingStatus>;
+  currency?: Array<EntryCurrency>;
   category_id?: string;
-  contribution_frequency?: ContributionFrequency;
+  contribution_frequency?: Array<ContributionFrequency>;
   is_featured?: boolean;
   is_company_group?: boolean;
   sort_by?: 'created_at' | 'importance' | 'member_count' | 'total_contributed';
@@ -42,17 +42,19 @@ export default function useAdminCabals({
   sort_by = 'created_at',
   order = 'desc',
 }: AdminCabalsParams = {}) {
-  const params: Record<string, string | number | boolean> = {
+  const params: Record<string, string | number | boolean | Array<string>> = {
     page,
     limit,
     sort_by,
     order,
   };
   if (search) params.search = search;
-  if (status) params.status = status;
-  if (currency) params.currency = currency;
+  if (status?.length) params.status = status;
+  if (currency?.length) params.currency = currency;
   if (category_id) params.category_id = category_id;
-  if (contribution_frequency) params.contribution_frequency = contribution_frequency;
+  if (contribution_frequency?.length) {
+    params.contribution_frequency = contribution_frequency;
+  }
   if (is_featured !== undefined) params.is_featured = is_featured;
   if (is_company_group !== undefined) params.is_company_group = is_company_group;
 
@@ -66,10 +68,10 @@ export default function useAdminCabals({
       String(page),
       String(limit),
       search ?? '',
-      status ?? '',
-      currency ?? '',
+      status?.join(',') ?? '',
+      currency?.join(',') ?? '',
       category_id ?? '',
-      contribution_frequency ?? '',
+      contribution_frequency?.join(',') ?? '',
       String(is_featured ?? ''),
       String(is_company_group ?? ''),
       sort_by,

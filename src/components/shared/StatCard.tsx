@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils';
 
 export interface StatCardProps {
   title: string;
-  value: string;
-  subValue?: string;
+  value: React.ReactNode;
+  subValue?: React.ReactNode;
   icon: React.ElementType;
   iconColor?: string;
   /** Color of the thin accent strip on top of the card. */

@@ -73,8 +73,8 @@ export const adminNavData = {
           url: '/locker/analytics',
         },
         {
-          title: 'Rate Manager',
-          url: '/locker/rates',
+          title: 'Configuration',
+          url: '/locker/config',
         },
         {
           title: 'Categories',

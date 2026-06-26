@@ -8,6 +8,7 @@ import SecurityVerificationTab from './security/SecurityVerificationTab';
 import KycInformationTab from './kyc/KycInformationTab';
 import UserActivityLogTab from './activityLogs/UserActivityLogTab';
 import ActivityLogContextProvider from './activityLogs/ActivityLogContextProvider';
+import LockerTab from './locker/LockerTab';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function UserDetailsTabs({ userId }: { userId: string }) {
@@ -80,9 +81,7 @@ export default function UserDetailsTabs({ userId }: { userId: string }) {
         </CofferPlansContextProvider>
       </TabsContent>
       <TabsContent value="locker" className="mt-6">
-        <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed border-border">
-          <p className="text-muted-foreground">Locker (MMF) Content</p>
-        </div>
+        <LockerTab userId={userId} />
       </TabsContent>
       <TabsContent value="transactions" className="mt-6">
         <TransactionHistoryContextProvider>

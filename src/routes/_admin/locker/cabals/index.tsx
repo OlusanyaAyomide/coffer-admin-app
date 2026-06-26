@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { ImageIcon, Plus } from 'lucide-react';
 
 import type {
@@ -31,20 +32,19 @@ import {
 import useAdminCabals from '@/hooks/useAdminCabals';
 import CabalFormSheet from '@/components/locker/cabal/CabalFormSheet';
 import CabalPreviewSheet from '@/components/locker/cabal/CabalPreviewSheet';
+import FilterButtons from '@/components/shared/FilterButtons';
 
 export const Route = createFileRoute('/_admin/locker/cabals/')({
   component: CabalsPage,
 });
 
-type StatusFilter = 'all' | GroupSavingStatus;
-type CurrencyFilter = 'all' | EntryCurrency;
-type FrequencyFilter = 'all' | ContributionFrequency;
-type FeaturedFilter = 'all' | 'featured' | 'standard';
 type CabalSortBy =
   | 'created_at'
   | 'importance'
   | 'member_count'
   | 'total_contributed';
+type FeaturedFilterValue = 'featured' | 'standard';
+type CreatedByFilterValue = 'admin_created';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -56,30 +56,95 @@ const STATUSES: Array<GroupSavingStatus> = [
   'closed',
 ];
 
+const STATUS_FILTER_OPTIONS = STATUSES.map((status) => ({
+  label: CABAL_STATUS_LABELS[status],
+  value: status,
+}));
+
+const CURRENCY_FILTER_OPTIONS: Array<{ label: string; value: EntryCurrency }> = [
+  { label: 'NGN', value: 'NGN' },
+  { label: 'USDT', value: 'USDT' },
+];
+
+const FREQUENCY_FILTER_OPTIONS: Array<{
+  label: string;
+  value: ContributionFrequency;
+}> = [
+  { label: 'Daily', value: 'daily' },
+  { label: 'Weekly', value: 'weekly' },
+  { label: 'Monthly', value: 'monthly' },
+];
+
+const FEATURED_FILTER_OPTIONS: Array<{
+  label: string;
+  value: FeaturedFilterValue;
+}> = [
+  { label: 'Featured', value: 'featured' },
+  { label: 'Standard', value: 'standard' },
+];
+
+const CREATED_BY_FILTER_OPTIONS: Array<{
+  label: string;
+  value: CreatedByFilterValue;
+}> = [{ label: 'Admin-created', value: 'admin_created' }];
+
+const resetPageOnFilterChange =
+  (setPage: Dispatch<SetStateAction<number>>) =>
+  (setter: Dispatch<SetStateAction<Array<string>>>) =>
+  (value: SetStateAction<Array<string>>) => {
+    setPage(1);
+    setter(value);
+  };
+
 function CabalsPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [currencyFilter, setCurrencyFilter] = useState<CurrencyFilter>('all');
-  const [frequencyFilter, setFrequencyFilter] =
-    useState<FrequencyFilter>('all');
-  const [featuredFilter, setFeaturedFilter] = useState<FeaturedFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<Array<string>>([]);
+  const [currencyFilter, setCurrencyFilter] = useState<Array<string>>([]);
+  const [frequencyFilter, setFrequencyFilter] = useState<Array<string>>([]);
+  const [featuredFilter, setFeaturedFilter] = useState<Array<string>>([]);
+  const [createdByFilter, setCreatedByFilter] = useState<Array<string>>([]);
   const [sortBy, setSortBy] = useState<CabalSortBy>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const setFilterAndResetPage = resetPageOnFilterChange(setPage);
+
+  const activeFilterCount =
+    statusFilter.length +
+    currencyFilter.length +
+    frequencyFilter.length +
+    featuredFilter.length +
+    createdByFilter.length;
+
+  const resetFilters = () => {
+    setPage(1);
+    setStatusFilter([]);
+    setCurrencyFilter([]);
+    setFrequencyFilter([]);
+    setFeaturedFilter([]);
+    setCreatedByFilter([]);
+  };
+
+  const featuredValues = featuredFilter as Array<FeaturedFilterValue>;
+  const isFeaturedFilter =
+    featuredValues.length === 1
+      ? featuredValues.includes('featured')
+      : undefined;
 
   const { cabals, meta, isCabalsLoading } = useAdminCabals({
     page,
     limit: ITEMS_PER_PAGE,
     search: search || undefined,
-    status: statusFilter === 'all' ? undefined : statusFilter,
-    currency: currencyFilter === 'all' ? undefined : currencyFilter,
+    status: statusFilter as Array<GroupSavingStatus>,
+    currency: currencyFilter as Array<EntryCurrency>,
     contribution_frequency:
-      frequencyFilter === 'all' ? undefined : frequencyFilter,
-    is_featured:
-      featuredFilter === 'all' ? undefined : featuredFilter === 'featured',
+      frequencyFilter as Array<ContributionFrequency>,
+    is_featured: isFeaturedFilter,
+    is_company_group: createdByFilter.includes('admin_created')
+      ? true
+      : undefined,
     sort_by: sortBy,
     order: sortOrder,
   });
@@ -241,91 +306,70 @@ function CabalsPage() {
         />
       </div>
 
-      {/* Toolbar */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <TableSearch
-          placeholder="Search cabals by name…"
-          searchTerm={search}
-          onSearchChange={(value) => {
-            setPage(1);
-            setSearch(value);
-          }}
-          className="lg:max-w-md"
-        />
+      {/* Search */}
+      <TableSearch
+        placeholder="Search cabals by name..."
+        searchTerm={search}
+        onSearchChange={(value) => {
+          setPage(1);
+          setSearch(value);
+        }}
+      />
 
-        <div className="flex flex-wrap items-center gap-2">
-          <Select
-            value={statusFilter}
-            onValueChange={(v) => {
-              setPage(1);
-              setStatusFilter(v as StatusFilter);
-            }}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              {STATUSES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {CABAL_STATUS_LABELS[s]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Filters */}
+      <div className="flex flex-col gap-3 py-2 pt-1">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span className="text-sm font-medium text-foreground">Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-primary text-xs text-white">
+              {activeFilterCount}
+            </span>
+          )}
+          <FilterButtons
+            title="status"
+            filterKey="cabal_status"
+            activeFilters={statusFilter}
+            setActiveFilters={setFilterAndResetPage(setStatusFilter)}
+            filterOptions={STATUS_FILTER_OPTIONS}
+          />
+          <FilterButtons
+            title="currency"
+            filterKey="cabal_currency"
+            activeFilters={currencyFilter}
+            setActiveFilters={setFilterAndResetPage(setCurrencyFilter)}
+            filterOptions={CURRENCY_FILTER_OPTIONS}
+          />
+          <FilterButtons
+            title="frequency"
+            filterKey="cabal_frequency"
+            activeFilters={frequencyFilter}
+            setActiveFilters={setFilterAndResetPage(setFrequencyFilter)}
+            filterOptions={FREQUENCY_FILTER_OPTIONS}
+          />
+          <FilterButtons
+            title="featured"
+            filterKey="cabal_featured"
+            activeFilters={featuredFilter}
+            setActiveFilters={setFilterAndResetPage(setFeaturedFilter)}
+            filterOptions={FEATURED_FILTER_OPTIONS}
+          />
+          <FilterButtons
+            title="created by"
+            filterKey="cabal_created_by"
+            activeFilters={createdByFilter}
+            setActiveFilters={setFilterAndResetPage(setCreatedByFilter)}
+            filterOptions={CREATED_BY_FILTER_OPTIONS}
+          />
 
-          <Select
-            value={currencyFilter}
-            onValueChange={(v) => {
-              setPage(1);
-              setCurrencyFilter(v as CurrencyFilter);
-            }}
-          >
-            <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Currency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All currencies</SelectItem>
-              <SelectItem value="NGN">NGN</SelectItem>
-              <SelectItem value="USDT">USDT</SelectItem>
-            </SelectContent>
-          </Select>
+          {activeFilterCount > 0 && (
+            <Button variant="ghost" size="sm" onClick={resetFilters}>
+              Reset Filters
+            </Button>
+          )}
+        </div>
 
-          <Select
-            value={frequencyFilter}
-            onValueChange={(v) => {
-              setPage(1);
-              setFrequencyFilter(v as FrequencyFilter);
-            }}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Frequency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All frequencies</SelectItem>
-              <SelectItem value="daily">Daily</SelectItem>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={featuredFilter}
-            onValueChange={(v) => {
-              setPage(1);
-              setFeaturedFilter(v as FeaturedFilter);
-            }}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Featured" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All cabals</SelectItem>
-              <SelectItem value="featured">Featured</SelectItem>
-              <SelectItem value="standard">Standard</SelectItem>
-            </SelectContent>
-          </Select>
-
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span className="text-sm font-medium text-foreground">Sort</span>
           <Select
             value={sortBy}
             onValueChange={(v) => {

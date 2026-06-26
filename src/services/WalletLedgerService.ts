@@ -52,16 +52,21 @@ export function getCofferBalance(params: {
 
 /**
  * Get Locker balance in selected currency
- * Returns 0 for now as feature is not implemented
+ * Shows ACTUAL user locker balance without conversion
  */
 export function getLockerBalance(params: {
   data: WalletLedgerData;
   currency: CurrencyType;
 }): { total: number; locked: number; available: number } {
-  const { currency } = params;
+  const { data, currency } = params;
 
-  // TODO: Update when locker feature is implemented
-  return { total: 0, locked: 0, available: 0 };
+  if (currency === 'USD') {
+    const total = parseFloat(data.locker_balance_usdt) || 0;
+    return { total, locked: total, available: 0 };
+  }
+
+  const total = parseFloat(data.locker_balance_ngn) || 0;
+  return { total, locked: total, available: 0 };
 }
 
 /**
