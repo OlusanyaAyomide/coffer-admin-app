@@ -126,6 +126,7 @@ export default function CabalFormSheet({
     description.trim() !== '' &&
     goalName.trim() !== '' &&
     contributionAmount.trim() !== '' &&
+    targetAmount.trim() !== '' &&
     frequency !== '' &&
     endDate !== '' &&
     (!isFeatured || importance !== '') &&
@@ -344,12 +345,7 @@ export default function CabalFormSheet({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cabal-target">
-                  Target amount{' '}
-                  <span className="font-normal text-muted-foreground">
-                    (optional)
-                  </span>
-                </Label>
+                <Label htmlFor="cabal-target">Target amount</Label>
                 <Input
                   id="cabal-target"
                   type="number"
