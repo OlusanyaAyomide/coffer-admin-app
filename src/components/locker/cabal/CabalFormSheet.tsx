@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import DatePicker from '@/components/shared/DatePicker';
 import CategoryImageUploadField from '@/components/locker/CategoryImageUploadField';
 import LucideIconPicker from '@/components/locker/LucideIconPicker';
 import useSaveAdminCabal from '@/hooks/useSaveAdminCabal';
@@ -384,27 +385,31 @@ export default function CabalFormSheet({
             <h3 className="text-sm font-semibold text-foreground">Schedule</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="cabal-start">
+                <Label>
                   Start date{' '}
                   <span className="font-normal text-muted-foreground">
                     (optional)
                   </span>
                 </Label>
-                <Input
-                  id="cabal-start"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                <DatePicker
+                  placeHolderText="Pick a date"
+                  showPlaceholder
+                  showYear
+                  className="mb-0"
+                  selectedDate={startDate || undefined}
+                  onDateSelect={setStartDate}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cabal-end">End date</Label>
-                <Input
-                  id="cabal-end"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                <Label>End date</Label>
+                <DatePicker
+                  placeHolderText="Pick a date"
+                  showPlaceholder
+                  showYear
+                  className="mb-0"
+                  selectedDate={endDate || undefined}
+                  onDateSelect={setEndDate}
                 />
                 <p className="text-xs text-muted-foreground">
                   Must be at least 3 months out and after the start date.

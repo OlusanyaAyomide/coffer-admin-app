@@ -50,6 +50,10 @@ export const adminNavData = {
           url: '/coffer/marketplace',
         },
         {
+          title: 'Categories',
+          url: '/coffer/categories',
+        },
+        {
           title: 'Active Coffers',
           url: '/coffer/active',
         },

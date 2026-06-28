@@ -42,7 +42,9 @@ import { Route as AdminCommunicationEmailRouteImport } from './routes/_admin/com
 import { Route as AdminCofferPerformanceRouteImport } from './routes/_admin/coffer/performance'
 import { Route as AdminCofferMarketplaceRouteImport } from './routes/_admin/coffer/marketplace'
 import { Route as AdminCofferDividendsRouteImport } from './routes/_admin/coffer/dividends'
+import { Route as AdminCofferCategoriesRouteImport } from './routes/_admin/coffer/categories'
 import { Route as AdminCofferActiveRouteImport } from './routes/_admin/coffer/active'
+import { Route as AdminCofferInvestmentIdRouteImport } from './routes/_admin/coffer/$investmentId'
 import { Route as AdminLockerCabalsIndexRouteImport } from './routes/_admin/locker/cabals/index'
 import { Route as AdminLockerCabalsCabalIdRouteImport } from './routes/_admin/locker/cabals/$cabalId'
 
@@ -215,9 +217,19 @@ const AdminCofferDividendsRoute = AdminCofferDividendsRouteImport.update({
   path: '/coffer/dividends',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCofferCategoriesRoute = AdminCofferCategoriesRouteImport.update({
+  id: '/coffer/categories',
+  path: '/coffer/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCofferActiveRoute = AdminCofferActiveRouteImport.update({
   id: '/coffer/active',
   path: '/coffer/active',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCofferInvestmentIdRoute = AdminCofferInvestmentIdRouteImport.update({
+  id: '/coffer/$investmentId',
+  path: '/coffer/$investmentId',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLockerCabalsIndexRoute = AdminLockerCabalsIndexRouteImport.update({
@@ -238,7 +250,9 @@ export interface FileRoutesByFullPath {
   '/accept-admin-invitation': typeof AuthAcceptAdminInvitationRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
+  '/coffer/$investmentId': typeof AdminCofferInvestmentIdRoute
   '/coffer/active': typeof AdminCofferActiveRoute
+  '/coffer/categories': typeof AdminCofferCategoriesRoute
   '/coffer/dividends': typeof AdminCofferDividendsRoute
   '/coffer/marketplace': typeof AdminCofferMarketplaceRoute
   '/coffer/performance': typeof AdminCofferPerformanceRoute
@@ -274,7 +288,9 @@ export interface FileRoutesByTo {
   '/accept-admin-invitation': typeof AuthAcceptAdminInvitationRoute
   '/login': typeof AuthLoginRoute
   '/verify-device': typeof AuthVerifyDeviceRoute
+  '/coffer/$investmentId': typeof AdminCofferInvestmentIdRoute
   '/coffer/active': typeof AdminCofferActiveRoute
+  '/coffer/categories': typeof AdminCofferCategoriesRoute
   '/coffer/dividends': typeof AdminCofferDividendsRoute
   '/coffer/marketplace': typeof AdminCofferMarketplaceRoute
   '/coffer/performance': typeof AdminCofferPerformanceRoute
@@ -313,7 +329,9 @@ export interface FileRoutesById {
   '/_auth/accept-admin-invitation': typeof AuthAcceptAdminInvitationRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/verify-device': typeof AuthVerifyDeviceRoute
+  '/_admin/coffer/$investmentId': typeof AdminCofferInvestmentIdRoute
   '/_admin/coffer/active': typeof AdminCofferActiveRoute
+  '/_admin/coffer/categories': typeof AdminCofferCategoriesRoute
   '/_admin/coffer/dividends': typeof AdminCofferDividendsRoute
   '/_admin/coffer/marketplace': typeof AdminCofferMarketplaceRoute
   '/_admin/coffer/performance': typeof AdminCofferPerformanceRoute
@@ -351,7 +369,9 @@ export interface FileRouteTypes {
     | '/accept-admin-invitation'
     | '/login'
     | '/verify-device'
+    | '/coffer/$investmentId'
     | '/coffer/active'
+    | '/coffer/categories'
     | '/coffer/dividends'
     | '/coffer/marketplace'
     | '/coffer/performance'
@@ -387,7 +407,9 @@ export interface FileRouteTypes {
     | '/accept-admin-invitation'
     | '/login'
     | '/verify-device'
+    | '/coffer/$investmentId'
     | '/coffer/active'
+    | '/coffer/categories'
     | '/coffer/dividends'
     | '/coffer/marketplace'
     | '/coffer/performance'
@@ -425,7 +447,9 @@ export interface FileRouteTypes {
     | '/_auth/accept-admin-invitation'
     | '/_auth/login'
     | '/_auth/verify-device'
+    | '/_admin/coffer/$investmentId'
     | '/_admin/coffer/active'
+    | '/_admin/coffer/categories'
     | '/_admin/coffer/dividends'
     | '/_admin/coffer/marketplace'
     | '/_admin/coffer/performance'
@@ -695,11 +719,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCofferDividendsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/coffer/categories': {
+      id: '/_admin/coffer/categories'
+      path: '/coffer/categories'
+      fullPath: '/coffer/categories'
+      preLoaderRoute: typeof AdminCofferCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/coffer/active': {
       id: '/_admin/coffer/active'
       path: '/coffer/active'
       fullPath: '/coffer/active'
       preLoaderRoute: typeof AdminCofferActiveRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/coffer/$investmentId': {
+      id: '/_admin/coffer/$investmentId'
+      path: '/coffer/$investmentId'
+      fullPath: '/coffer/$investmentId'
+      preLoaderRoute: typeof AdminCofferInvestmentIdRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/locker/cabals/': {
@@ -737,7 +775,9 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface AdminRouteChildren {
   AdminOverviewRoute: typeof AdminOverviewRoute
+  AdminCofferInvestmentIdRoute: typeof AdminCofferInvestmentIdRoute
   AdminCofferActiveRoute: typeof AdminCofferActiveRoute
+  AdminCofferCategoriesRoute: typeof AdminCofferCategoriesRoute
   AdminCofferDividendsRoute: typeof AdminCofferDividendsRoute
   AdminCofferMarketplaceRoute: typeof AdminCofferMarketplaceRoute
   AdminCofferPerformanceRoute: typeof AdminCofferPerformanceRoute
@@ -770,7 +810,9 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminOverviewRoute: AdminOverviewRoute,
+  AdminCofferInvestmentIdRoute: AdminCofferInvestmentIdRoute,
   AdminCofferActiveRoute: AdminCofferActiveRoute,
+  AdminCofferCategoriesRoute: AdminCofferCategoriesRoute,
   AdminCofferDividendsRoute: AdminCofferDividendsRoute,
   AdminCofferMarketplaceRoute: AdminCofferMarketplaceRoute,
   AdminCofferPerformanceRoute: AdminCofferPerformanceRoute,
