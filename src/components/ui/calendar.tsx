@@ -28,7 +28,7 @@ function Calendar({
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"],
-  children: React.ReactNode
+  children?: React.ReactNode
 }) {
   const defaultClassNames = getDefaultClassNames()
 

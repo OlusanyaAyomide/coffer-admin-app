@@ -1,22 +1,29 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 
-import type { InvestorRow } from '@/types/InvestmentTypes';
-import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
-import BaseDataTable from '@/components/shared/BaseDataTable';
-import { Badge } from '@/components/ui/badge';
+import type { InvestorRow } from '@/types/InvestmentTypes'
+import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable'
+import BaseDataTable from '@/components/shared/BaseDataTable'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   formatDate,
   formatMoney,
   USER_INVESTMENT_STATUS_LABELS,
-} from '@/lib/cofferFormat';
-import useInvestmentInvestors from '@/hooks/useInvestmentInvestors';
+} from '@/lib/cofferFormat'
+import useInvestmentInvestors from '@/hooks/useInvestmentInvestors'
 
-export default function InvestorTable({ investmentId }: { investmentId: string }) {
-  const [page, setPage] = useState(1);
+export default function InvestorTable({
+  investmentId,
+}: {
+  investmentId: string
+}) {
+  const navigate = useNavigate()
+  const [page, setPage] = useState(1)
   const { investors, meta, isInvestorsLoading } = useInvestmentInvestors({
     investmentId,
     page,
-  });
+  })
 
   const columns = useMemo<Array<ExtendedColumnDef<InvestorRow>>>(
     () => [
@@ -80,9 +87,28 @@ export default function InvestorTable({ investmentId }: { investmentId: string }
           </span>
         ),
       },
+      {
+        accessorKey: 'actions',
+        header: '',
+        meta: { className: 'text-right' },
+        cell: ({ row }) => (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              navigate({
+                to: '/users/$userId',
+                params: { userId: row.original.user.id },
+              })
+            }
+          >
+            View
+          </Button>
+        ),
+      },
     ],
-    [],
-  );
+    [navigate],
+  )
 
   return (
     <BaseDataTable
@@ -93,5 +119,5 @@ export default function InvestorTable({ investmentId }: { investmentId: string }
       isLoading={isInvestorsLoading}
       showOnMobile
     />
-  );
+  )
 }

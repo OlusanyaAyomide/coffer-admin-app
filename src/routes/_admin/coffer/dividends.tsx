@@ -1,35 +1,34 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useMemo, useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router'
+import { useMemo, useState } from 'react'
 
-import type { AdminDividendRow } from '@/types/InvestmentTypes';
-import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
-import BaseDataTable from '@/components/shared/BaseDataTable';
-import { Badge } from '@/components/ui/badge';
+import type { AdminDividendRow } from '@/types/InvestmentTypes'
+import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable'
+import BaseDataTable from '@/components/shared/BaseDataTable'
+import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { DIVIDEND_TYPE_LABELS, formatDate } from '@/lib/cofferFormat';
-import useInvestmentDividends from '@/hooks/useInvestmentDividends';
+} from '@/components/ui/select'
+import { DIVIDEND_TYPE_LABELS, formatDate } from '@/lib/cofferFormat'
+import useInvestmentDividends from '@/hooks/useInvestmentDividends'
 
 export const Route = createFileRoute('/_admin/coffer/dividends')({
   component: DividendDeskPage,
-});
+})
 
-type ProcessedFilter = 'all' | 'processed' | 'pending';
+type ProcessedFilter = 'all' | 'processed' | 'pending'
 
 function DividendDeskPage() {
-  const [page, setPage] = useState(1);
-  const [processed, setProcessed] = useState<ProcessedFilter>('all');
+  const [page, setPage] = useState(1)
+  const [processed, setProcessed] = useState<ProcessedFilter>('all')
 
   const { dividends, meta, isDividendsLoading } = useInvestmentDividends({
     page,
-    is_processed:
-      processed === 'all' ? undefined : processed === 'processed',
-  });
+    is_processed: processed === 'all' ? undefined : processed === 'processed',
+  })
 
   const columns = useMemo<Array<ExtendedColumnDef<AdminDividendRow>>>(
     () => [
@@ -53,11 +52,11 @@ function DividendDeskPage() {
         ),
       },
       {
-        accessorKey: 'percentage_of_return',
-        header: 'Return %',
+        accessorKey: 'percentage_of_capital',
+        header: '% of capital',
         cell: ({ row }) => (
           <span className="text-foreground">
-            {row.original.percentage_of_return}%
+            {Number(row.original.percentage_of_capital.toFixed(2))}%
           </span>
         ),
       },
@@ -81,7 +80,7 @@ function DividendDeskPage() {
       },
     ],
     [],
-  );
+  )
 
   return (
     <div className="space-y-6">
@@ -98,8 +97,8 @@ function DividendDeskPage() {
         <Select
           value={processed}
           onValueChange={(v) => {
-            setPage(1);
-            setProcessed(v as ProcessedFilter);
+            setPage(1)
+            setProcessed(v as ProcessedFilter)
           }}
         >
           <SelectTrigger className="w-[160px]">
@@ -122,5 +121,5 @@ function DividendDeskPage() {
         showOnMobile
       />
     </div>
-  );
+  )
 }

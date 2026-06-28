@@ -1,49 +1,49 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { ImageIcon } from 'lucide-react';
+import { useMemo, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
+import { ImageIcon } from 'lucide-react'
 
 import type {
   AdminInvestmentStatus,
   AdminInvestmentSummary,
   InvestmentCurrency,
-} from '@/types/InvestmentTypes';
-import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable';
-import BaseDataTable from '@/components/shared/BaseDataTable';
-import { TableSearch } from '@/components/shared/TableSearch';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+} from '@/types/InvestmentTypes'
+import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable'
+import BaseDataTable from '@/components/shared/BaseDataTable'
+import { TableSearch } from '@/components/shared/TableSearch'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   formatMoney,
   INVESTMENT_STATUS_LABELS,
   investmentStatusBadgeVariant,
-} from '@/lib/cofferFormat';
-import useAdminInvestments from '@/hooks/useAdminInvestments';
+} from '@/lib/cofferFormat'
+import useAdminInvestments from '@/hooks/useAdminInvestments'
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 20
 
 type Props = {
   /** Fixed status filter (e.g. Active Coffers page). Omit for full marketplace. */
-  fixedStatus?: AdminInvestmentStatus;
+  fixedStatus?: AdminInvestmentStatus
   /** Right-aligned slot in the header (e.g. a "New investment" button). */
-  action?: React.ReactNode;
-  showSearch?: boolean;
-};
+  action?: React.ReactNode
+  showSearch?: boolean
+}
 
 export default function InvestmentsTable({
   fixedStatus,
   action,
   showSearch = true,
 }: Props) {
-  const navigate = useNavigate();
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const navigate = useNavigate()
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
 
   const { investments, meta, isInvestmentsLoading } = useAdminInvestments({
     page,
     limit: ITEMS_PER_PAGE,
     search: search || undefined,
     status: fixedStatus,
-  });
+  })
 
   const columns = useMemo<Array<ExtendedColumnDef<AdminInvestmentSummary>>>(
     () => [
@@ -52,7 +52,7 @@ export default function InvestmentsTable({
         header: 'Investment',
         meta: { className: 'max-w-[22vw]' },
         cell: ({ row }) => {
-          const inv = row.original;
+          const inv = row.original
           return (
             <div className="flex min-w-0 items-center gap-3">
               <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
@@ -77,7 +77,7 @@ export default function InvestmentsTable({
                 </p>
               </div>
             </div>
-          );
+          )
         },
       },
       {
@@ -112,9 +112,11 @@ export default function InvestmentsTable({
       },
       {
         accessorKey: 'roi_percentage',
-        header: 'ROI',
+        header: 'Total return',
         cell: ({ row }) => (
-          <span className="text-foreground">{row.original.roi_percentage}%</span>
+          <span className="text-foreground">
+            {row.original.roi_percentage}%
+          </span>
         ),
       },
       {
@@ -145,7 +147,7 @@ export default function InvestmentsTable({
       },
     ],
     [navigate],
-  );
+  )
 
   return (
     <div className="space-y-4">
@@ -156,8 +158,8 @@ export default function InvestmentsTable({
               placeholder="Search investments..."
               searchTerm={search}
               onSearchChange={(value) => {
-                setPage(1);
-                setSearch(value);
+                setPage(1)
+                setSearch(value)
               }}
               className="sm:max-w-sm"
             />
@@ -177,5 +179,5 @@ export default function InvestmentsTable({
         showOnMobile
       />
     </div>
-  );
+  )
 }

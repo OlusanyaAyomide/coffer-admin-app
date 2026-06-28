@@ -1,52 +1,57 @@
 'use client'
 
-import { useState } from 'react';
+import { useState } from 'react'
 
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
-import { Button } from '../ui/button';
+import { CalendarIcon } from 'lucide-react'
+import { Calendar } from '../ui/calendar'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/components/ui/popover'
 
-import { cn } from '@/lib/utils';
-import useWindowProperties from '@/hooks/useWindowProperty';
-import { formatDate, formatTimeToNoon } from '@/services/TimeServices';
-
-;
-
+import { cn } from '@/lib/utils'
+import useWindowProperties from '@/hooks/useWindowProperty'
+import { formatDate, formatTimeToNoon } from '@/services/TimeServices'
 
 type DatePickerType = {
-  placeHolderText: string;
-  onDateSelect: (date: string) => void;
+  placeHolderText: string
+  onDateSelect: (date: string) => void
 
-  selectedDate?: Date | string;
-  showYear?: boolean;
-  showPlaceholder?: boolean;
-  disabled?: boolean;
+  selectedDate?: Date | string
+  minDate?: Date | string
+  maxDate?: Date | string
+  showYear?: boolean
+  showPlaceholder?: boolean
+  disabled?: boolean
 
-  error?: string;
-  className?: string;
-  errorClassName?: string;
+  error?: string
+  className?: string
+  errorClassName?: string
 
-  datePickerSide?: 'left' | 'top' | 'right' | 'bottom';
-};
+  datePickerSide?: 'left' | 'top' | 'right' | 'bottom'
+}
 
 function ModifiedCaledar({
   selectedDate,
+  minDate,
+  maxDate,
   onDateSelect,
-  closePicker,
 }: {
-  selectedDate: Date | string | undefined;
-  onDateSelect: (date: string | undefined) => void;
-  closePicker: () => void;
+  selectedDate: Date | string | undefined
+  minDate: Date | string | undefined
+  maxDate: Date | string | undefined
+  onDateSelect: (date: string | undefined) => void
 }) {
-
   const [date, setDate] = useState<Date | undefined>(
-    new Date(typeof selectedDate === 'string' ? selectedDate : selectedDate || new Date())
+    new Date(
+      typeof selectedDate === 'string'
+        ? selectedDate
+        : selectedDate || new Date(),
+    ),
   )
+  const minimumDate = minDate ? new Date(minDate) : undefined
+  const maximumDate = maxDate ? new Date(maxDate) : undefined
 
   return (
     <div className="flex flex-col gap-4">
@@ -54,29 +59,22 @@ function ModifiedCaledar({
         mode="single"
         defaultMonth={date}
         selected={date}
-        onSelect={(date) => {
-          setDate(date)
+        disabled={[
+          ...(minimumDate && !Number.isNaN(minimumDate.getTime())
+            ? [{ before: minimumDate }]
+            : []),
+          ...(maximumDate && !Number.isNaN(maximumDate.getTime())
+            ? [{ after: maximumDate }]
+            : []),
+        ]}
+        onSelect={(picked) => {
+          setDate(picked)
+          // Commit immediately on pick — no separate confirm step.
+          if (picked) onDateSelect(picked.toISOString())
         }}
-        captionLayout={"dropdown"}
+        captionLayout={'dropdown'}
         className="rounded-lg border shadow-sm"
-      >
-        <div className='flex justify-end gap-4 pt-4'>
-          <Button
-            size={"sm"}
-            onClick={() => {
-              closePicker()
-            }}
-            className='w-fit px-4 h-7' variant={'outline'}>Cancel</Button>
-          <Button
-            size={"sm"}
-            onClick={() => {
-              if (date) {
-                onDateSelect(date.toISOString())
-              }
-            }}
-            className='w-fit px-4 h-7' >Select</Button>
-        </div>
-      </Calendar>
+      />
     </div>
   )
 }
@@ -85,6 +83,8 @@ export default function DatePicker({
   placeHolderText,
   onDateSelect,
   selectedDate,
+  minDate,
+  maxDate,
   showYear,
   showPlaceholder,
   disabled,
@@ -93,28 +93,27 @@ export default function DatePicker({
   errorClassName,
   datePickerSide,
 }: DatePickerType) {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false)
 
-  const { isTab, isDesktop } = useWindowProperties({});
-  const isLargeScreen = isTab || isDesktop;
-
+  const { isTab, isDesktop } = useWindowProperties({})
+  const isLargeScreen = isTab || isDesktop
 
   const triggerClasses = () => {
     if (isFocused) {
-      return 'ring-primary ring';
+      return 'ring-primary ring'
     }
     if (error) {
-      return 'border border-destructive';
+      return 'border border-destructive'
     }
-    return 'border border-border';
-  };
+    return 'border border-border'
+  }
 
   const labelClasses = () => {
     if (isFocused || selectedDate) {
-      return 'bg-background text-foreground -translate-y-[27px] text-sm font-normal';
+      return 'bg-background text-foreground -translate-y-[27px] text-sm font-normal'
     }
-    return 'text-muted-foreground';
-  };
+    return 'text-muted-foreground'
+  }
 
   return (
     <div className={cn('w-full mb-5 relative', className)}>
@@ -123,11 +122,11 @@ export default function DatePicker({
           disabled={disabled}
           className={cn(
             'relative flex items-center justify-between',
-            'w-full h-10 sm:h-12 px-4 py-1 rounded-3xl',
+            'w-full h-10 px-4 py-1 rounded-md',
             'bg-background text-foreground',
             'transition-colors',
             disabled && 'cursor-not-allowed opacity-50',
-            triggerClasses()
+            triggerClasses(),
           )}
         >
           {/* Floating label */}
@@ -135,7 +134,7 @@ export default function DatePicker({
             <span
               className={cn(
                 'px-1 font-light transition-all duration-300',
-                labelClasses()
+                labelClasses(),
               )}
             >
               {showPlaceholder ? ' ' : placeHolderText}
@@ -152,22 +151,21 @@ export default function DatePicker({
                   month: '2-digit',
                   day: '2-digit',
                 },
-                placeHolderText
+                placeHolderText,
               )}
             </h3>
           ) : (
             <span
               className={cn(
                 'font-light text-muted-foreground',
-                !showPlaceholder && 'hidden'
+                !showPlaceholder && 'hidden',
               )}
             >
               {placeHolderText}
             </span>
           )}
 
-          <CalendarIcon
-            className="mr-4 text-muted-foreground" />
+          <CalendarIcon className="mr-4 text-muted-foreground" />
         </PopoverTrigger>
 
         <PopoverContent
@@ -177,14 +175,13 @@ export default function DatePicker({
         >
           <ModifiedCaledar
             selectedDate={selectedDate}
-            // ={selectedDate}
-            closePicker={() => setIsFocused(false)}
+            minDate={minDate}
+            maxDate={maxDate}
             onDateSelect={(date) => {
-              console.log(date)
-              if (!date) return;
-              const formatted = formatTimeToNoon(new Date(date));
-              setIsFocused(false);
-              onDateSelect(formatted);
+              if (!date) return
+              const formatted = formatTimeToNoon(new Date(date))
+              setIsFocused(false)
+              onDateSelect(formatted)
             }}
           />
         </PopoverContent>
@@ -194,14 +191,12 @@ export default function DatePicker({
         <span
           className={cn(
             'text-destructive text-sm absolute -bottom-5 left-2',
-            errorClassName
+            errorClassName,
           )}
         >
           {error}
         </span>
       )}
     </div>
-  );
+  )
 }
-
-

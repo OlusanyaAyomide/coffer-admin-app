@@ -1,4 +1,4 @@
-import type { AdminInvestmentStatus } from '@/types/InvestmentTypes';
+import type { AdminInvestmentStatus } from '@/types/InvestmentTypes'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,16 +9,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { useUpdateInvestmentStatus } from '@/hooks/useInvestmentActions';
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { useUpdateInvestmentStatus } from '@/hooks/useInvestmentActions'
 
 type StatusAction = {
-  target: AdminInvestmentStatus;
-  label: string;
-  variant?: 'default' | 'outline' | 'destructive';
-  confirm?: { title: string; description: string };
-};
+  target: AdminInvestmentStatus
+  label: string
+  variant?: 'default' | 'outline' | 'destructive'
+  confirm?: { title: string; description: string }
+}
 
 // Manual transitions allowed from each status (mirrors the backend map).
 const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
@@ -69,25 +69,36 @@ const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
     },
   ],
   matured: [],
-  cancelled: [],
-};
+  cancelled: [
+    {
+      target: 'draft',
+      label: 'Restore',
+      variant: 'outline',
+      confirm: {
+        title: 'Restore investment?',
+        description:
+          'This moves the investment back to draft so it can be reviewed and published again.',
+      },
+    },
+  ],
+}
 
 export default function InvestmentStatusControls({
   investmentId,
   status,
   onChanged,
 }: {
-  investmentId: string;
-  status: AdminInvestmentStatus;
-  onChanged?: () => void;
+  investmentId: string
+  status: AdminInvestmentStatus
+  onChanged?: () => void
 }) {
   const { updateStatus, isUpdatingStatus } = useUpdateInvestmentStatus({
     investmentId,
     onSuccess: onChanged,
-  });
+  })
 
-  const actions = ACTIONS[status] ?? [];
-  if (!actions.length) return null;
+  const actions = ACTIONS[status] ?? []
+  if (!actions.length) return null
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -133,5 +144,5 @@ export default function InvestmentStatusControls({
         ),
       )}
     </div>
-  );
+  )
 }

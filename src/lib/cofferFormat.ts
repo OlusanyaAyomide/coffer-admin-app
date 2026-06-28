@@ -3,33 +3,34 @@ import type {
   DividendFrequency,
   DividendType,
   InvestmentCurrency,
+  ReturnPayoutStrategy,
   UserInvestmentStatus,
-} from '@/types/InvestmentTypes';
+} from '@/types/InvestmentTypes'
 
-type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
+type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 
 export function formatMoney(
   value: string | number | null | undefined,
   currency: InvestmentCurrency = 'NGN',
 ): string {
-  const amount = typeof value === 'string' ? Number(value) : value ?? 0;
-  if (Number.isNaN(amount)) return '—';
-  const symbol = currency === 'USDT' ? '$' : '₦';
+  const amount = typeof value === 'string' ? Number(value) : (value ?? 0)
+  if (Number.isNaN(amount)) return '—'
+  const symbol = currency === 'USDT' ? '$' : '₦'
   return `${symbol}${amount.toLocaleString(undefined, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  })}`;
+  })}`
 }
 
 export function formatDate(value: string | null | undefined): string {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '—'
   return date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  });
+  })
 }
 
 export const INVESTMENT_STATUS_LABELS: Record<AdminInvestmentStatus, string> = {
@@ -38,23 +39,23 @@ export const INVESTMENT_STATUS_LABELS: Record<AdminInvestmentStatus, string> = {
   active: 'Active',
   matured: 'Matured',
   cancelled: 'Cancelled',
-};
+}
 
 export function investmentStatusBadgeVariant(
   status: AdminInvestmentStatus,
 ): BadgeVariant {
   switch (status) {
     case 'active':
-      return 'default';
+      return 'default'
     case 'awaiting_start':
-      return 'secondary';
+      return 'secondary'
     case 'matured':
-      return 'outline';
+      return 'outline'
     case 'cancelled':
-      return 'destructive';
+      return 'destructive'
     case 'draft':
     default:
-      return 'outline';
+      return 'outline'
   }
 }
 
@@ -64,13 +65,23 @@ export const DIVIDEND_FREQUENCY_LABELS: Record<DividendFrequency, string> = {
   quarterly: 'Quarterly',
   semi_annually: 'Semi-annually',
   annually: 'Annually',
-};
+}
 
 export const DIVIDEND_TYPE_LABELS: Record<DividendType, string> = {
   interim_payout: 'Interim payout',
   final_payout: 'Final payout',
   capital_payout: 'Capital return',
-};
+}
+
+export const RETURN_PAYOUT_STRATEGY_LABELS: Record<
+  ReturnPayoutStrategy,
+  string
+> = {
+  at_maturity: 'At maturity',
+  upfront: 'One-time upfront',
+  recurring: 'Recurring',
+  upfront_and_recurring: 'Upfront + recurring',
+}
 
 export const USER_INVESTMENT_STATUS_LABELS: Record<
   UserInvestmentStatus,
@@ -81,4 +92,4 @@ export const USER_INVESTMENT_STATUS_LABELS: Record<
   withdrawn: 'Withdrawn',
   cancelled: 'Cancelled',
   not_started: 'Not started',
-};
+}

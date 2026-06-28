@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import {
   Coins,
   Download,
@@ -8,21 +9,24 @@ import {
   TrendingUp,
   Trash2,
   Users,
-} from 'lucide-react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
-import 'react-photo-view/dist/react-photo-view.css';
+} from 'lucide-react'
+import { PhotoProvider, PhotoView } from 'react-photo-view'
+import 'react-photo-view/dist/react-photo-view.css'
 
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,25 +37,31 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import HeaderNavButton from '@/components/shared/HeaderNavButton';
+} from '@/components/ui/alert-dialog'
+import HeaderNavButton from '@/components/shared/HeaderNavButton'
 import {
   DIVIDEND_FREQUENCY_LABELS,
   DIVIDEND_TYPE_LABELS,
+  RETURN_PAYOUT_STRATEGY_LABELS,
   formatDate,
   formatMoney,
   INVESTMENT_STATUS_LABELS,
   investmentStatusBadgeVariant,
-} from '@/lib/cofferFormat';
-import useAdminInvestmentDetail from '@/hooks/useAdminInvestmentDetail';
-import { useDeleteInvestment } from '@/hooks/useInvestmentActions';
-import InvestmentFormSheet from '@/components/coffer/InvestmentFormSheet';
-import InvestmentStatusControls from '@/components/coffer/InvestmentStatusControls';
-import InvestorTable from '@/components/coffer/InvestorTable';
+} from '@/lib/cofferFormat'
+import useAdminInvestmentDetail from '@/hooks/useAdminInvestmentDetail'
+import {
+  useDeleteInvestment,
+  useUpdateInvestmentScheduleDates,
+} from '@/hooks/useInvestmentActions'
+import InvestmentFormSheet from '@/components/coffer/InvestmentFormSheet'
+import InvestmentStatusControls from '@/components/coffer/InvestmentStatusControls'
+import InvestorTable from '@/components/coffer/InvestorTable'
+import DatePicker from '@/components/shared/DatePicker'
+import type { AdminDividendSchedule } from '@/types/InvestmentTypes'
 
 export const Route = createFileRoute('/_admin/coffer/$investmentId')({
   component: InvestmentDetailPage,
-});
+})
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -59,28 +69,165 @@ function DetailRow({ label, value }: { label: string; value: string }) {
       <span className="text-muted-foreground">{label}</span>
       <span className="text-right font-medium text-foreground">{value}</span>
     </div>
-  );
+  )
+}
+
+function toDateInput(value: string | null | undefined): string {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return date.toISOString().slice(0, 10)
+}
+
+function formatPercent(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return '—'
+  return `${Number(value.toFixed(2))}%`
+}
+
+function startOfDay(date: Date): Date {
+  const result = new Date(date)
+  result.setHours(0, 0, 0, 0)
+  return result
+}
+
+function toScheduleDate(value: string | null | undefined): Date | null {
+  if (!value) return null
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+  return startOfDay(date)
+}
+
+function findPreviousDistinctScheduleDate(
+  dates: Array<Date | null>,
+  index: number,
+): Date {
+  const current = dates[index] ?? startOfDay(new Date())
+  const currentTime = current.getTime()
+  for (let i = index - 1; i >= 0; i -= 1) {
+    const candidate = dates[i]
+    if (candidate && candidate.getTime() !== currentTime) return candidate
+  }
+  return current
+}
+
+function findNextDistinctScheduleDate(
+  dates: Array<Date | null>,
+  index: number,
+): Date {
+  const current = dates[index] ?? startOfDay(new Date())
+  const currentTime = current.getTime()
+  for (let i = index + 1; i < dates.length; i += 1) {
+    const candidate = dates[i]
+    if (candidate && candidate.getTime() !== currentTime) return candidate
+  }
+  return current
+}
+
+function getScheduleDateBounds(
+  schedules: Array<AdminDividendSchedule>,
+  scheduleId: string,
+): { minDate: Date; maxDate: Date } | null {
+  const index = schedules.findIndex((schedule) => schedule.id === scheduleId)
+  if (index < 0) return null
+
+  const dates = schedules.map((schedule) =>
+    toScheduleDate(schedule.payment_date),
+  )
+  return {
+    minDate: findPreviousDistinctScheduleDate(dates, index),
+    maxDate: findNextDistinctScheduleDate(dates, index),
+  }
 }
 
 function InvestmentDetailPage() {
-  const { investmentId } = Route.useParams();
-  const navigate = useNavigate();
+  const { investmentId } = Route.useParams()
+  const navigate = useNavigate()
   const { investment, isDetailLoading, isDetailError, refetchDetail } =
-    useAdminInvestmentDetail({ investmentId });
+    useAdminInvestmentDetail({ investmentId })
 
   const { deleteInvestment, isDeletingInvestment } = useDeleteInvestment({
     investmentId,
     onSuccess: () => navigate({ to: '/coffer/marketplace' }),
-  });
+  })
+  const [scheduleEditId, setScheduleEditId] = useState<string | null>(null)
+  const [scheduleEditDate, setScheduleEditDate] = useState('')
+  const [scheduleEditError, setScheduleEditError] = useState('')
+  const { updateScheduleDates, isUpdatingScheduleDates } =
+    useUpdateInvestmentScheduleDates({
+      investmentId,
+      onSuccess: () => {
+        closeScheduleDateEdit()
+        refetchDetail()
+      },
+    })
+
+  const activeSchedule =
+    investment?.dividend_schedules.find(
+      (schedule) => schedule.id === scheduleEditId,
+    ) ?? null
+  const activeScheduleBounds =
+    investment && activeSchedule
+      ? getScheduleDateBounds(investment.dividend_schedules, activeSchedule.id)
+      : null
+
+  function openScheduleDateEdit(schedule: AdminDividendSchedule) {
+    if (schedule.is_processed) return
+    setScheduleEditId(schedule.id)
+    setScheduleEditDate(toDateInput(schedule.payment_date))
+    setScheduleEditError('')
+  }
+
+  function closeScheduleDateEdit() {
+    setScheduleEditId(null)
+    setScheduleEditDate('')
+    setScheduleEditError('')
+  }
+
+  function isScheduleEditWithinBounds(value: string): boolean {
+    if (!activeScheduleBounds) return false
+    const selected = toScheduleDate(value)
+    if (!selected) return false
+
+    return (
+      selected.getTime() >=
+        startOfDay(activeScheduleBounds.minDate).getTime() &&
+      selected.getTime() <= startOfDay(activeScheduleBounds.maxDate).getTime()
+    )
+  }
+
+  function saveScheduleDateEdit() {
+    if (!activeSchedule || !activeScheduleBounds) return
+    if (!scheduleEditDate) {
+      setScheduleEditError('Choose a new payout date.')
+      return
+    }
+    if (!isScheduleEditWithinBounds(scheduleEditDate)) {
+      setScheduleEditError(
+        `Choose a date between ${formatDate(
+          activeScheduleBounds.minDate.toISOString(),
+        )} and ${formatDate(activeScheduleBounds.maxDate.toISOString())}.`,
+      )
+      return
+    }
+
+    updateScheduleDates({
+      schedules: [
+        {
+          id: activeSchedule.id,
+          payment_date: scheduleEditDate,
+        },
+      ],
+    })
+  }
 
   const canEdit =
     investment &&
     investment.status !== 'active' &&
-    investment.status !== 'matured';
+    investment.status !== 'matured'
   const canDelete =
     investment &&
     investment.units_sold === 0 &&
-    (investment.status === 'draft' || investment.status === 'cancelled');
+    (investment.status === 'draft' || investment.status === 'cancelled')
 
   const statCards = investment
     ? [
@@ -100,7 +247,7 @@ function InvestmentDetailPage() {
           iconColor: 'bg-green-500/10 text-green-500',
         },
         {
-          title: 'ROI',
+          title: 'TOTAL RETURN',
           value: `${investment.roi_percentage}%`,
           icon: TrendingUp,
           iconColor: 'bg-indigo-500/10 text-indigo-500',
@@ -112,12 +259,13 @@ function InvestmentDetailPage() {
           iconColor: 'bg-orange-500/10 text-orange-500',
         },
       ]
-    : [];
+    : []
 
   const cover =
-    investment?.images.find((i) => i.is_primary)?.document?.temporary_signed_url ??
+    investment?.images.find((i) => i.is_primary)?.document
+      ?.temporary_signed_url ??
     investment?.images[0]?.document?.temporary_signed_url ??
-    null;
+    null
 
   return (
     <div className="space-y-6 pb-10">
@@ -163,7 +311,9 @@ function InvestmentDetailPage() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Keep</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => deleteInvestment(undefined)}>
+                    <AlertDialogAction
+                      onClick={() => deleteInvestment(undefined)}
+                    >
                       Delete
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -215,7 +365,9 @@ function InvestmentDetailPage() {
                 <h1 className="text-2xl font-medium text-foreground">
                   {investment.title}
                 </h1>
-                <Badge variant={investmentStatusBadgeVariant(investment.status)}>
+                <Badge
+                  variant={investmentStatusBadgeVariant(investment.status)}
+                >
                   {INVESTMENT_STATUS_LABELS[investment.status]}
                 </Badge>
               </div>
@@ -241,7 +393,9 @@ function InvestmentDetailPage() {
                     <stat.icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs text-muted-foreground">{stat.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {stat.title}
+                    </p>
                     <p className="truncate font-medium text-foreground">
                       {stat.value}
                     </p>
@@ -286,7 +440,24 @@ function InvestmentDetailPage() {
                       }`}
                     />
                     <DetailRow
-                      label="Dividend frequency"
+                      label="Return payout"
+                      value={
+                        RETURN_PAYOUT_STRATEGY_LABELS[
+                          investment.return_payout_strategy
+                        ]
+                      }
+                    />
+                    {investment.return_payout_strategy ===
+                      'upfront_and_recurring' && (
+                      <DetailRow
+                        label="Upfront return"
+                        value={`${
+                          investment.upfront_return_percentage ?? '—'
+                        }% of capital`}
+                      />
+                    )}
+                    <DetailRow
+                      label="Frequency"
                       value={
                         investment.dividend_frequency
                           ? DIVIDEND_FREQUENCY_LABELS[
@@ -346,7 +517,9 @@ function InvestmentDetailPage() {
               {investment.faqs.length > 0 && (
                 <Card>
                   <CardContent className="space-y-4 p-5">
-                    <h3 className="text-sm font-semibold text-foreground">FAQs</h3>
+                    <h3 className="text-sm font-semibold text-foreground">
+                      FAQs
+                    </h3>
                     {investment.faqs.map((faq) => (
                       <div key={faq.id}>
                         <p className="text-sm font-medium text-foreground">
@@ -463,7 +636,7 @@ function InvestmentDetailPage() {
                   {investment.dividend_schedules.map((schedule) => (
                     <div
                       key={schedule.id}
-                      className="flex items-center justify-between gap-4 rounded-md border border-border bg-card p-3"
+                      className="flex flex-col gap-3 rounded-md border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground">
@@ -471,14 +644,30 @@ function InvestmentDetailPage() {
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {formatDate(schedule.payment_date)} ·{' '}
-                          {schedule.percentage_of_return}% of return
+                          {formatPercent(schedule.percentage_of_capital)} of
+                          capital
                         </p>
                       </div>
-                      <Badge
-                        variant={schedule.is_processed ? 'default' : 'outline'}
-                      >
-                        {schedule.is_processed ? 'Processed' : 'Pending'}
-                      </Badge>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {schedule.is_processed ? (
+                          <Badge variant="default">Processed</Badge>
+                        ) : (
+                          <>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="gap-1"
+                              disabled={isUpdatingScheduleDates}
+                              onClick={() => openScheduleDateEdit(schedule)}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              Edit
+                            </Button>
+                            <Badge variant="outline">Pending</Badge>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -491,6 +680,140 @@ function InvestmentDetailPage() {
           </Tabs>
         </>
       )}
+
+      <Sheet
+        open={Boolean(activeSchedule)}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) closeScheduleDateEdit()
+        }}
+      >
+        <SheetContent
+          side="right"
+          className="flex w-full flex-col p-0 sm:max-w-xl"
+        >
+          <SheetHeader className="border-b border-border">
+            <SheetTitle>Edit payout date</SheetTitle>
+            <SheetDescription>
+              Review the schedule impact before moving this payout.
+            </SheetDescription>
+          </SheetHeader>
+
+          {activeSchedule && activeScheduleBounds && (
+            <div className="flex-1 space-y-5 overflow-y-auto p-6">
+              <div className="rounded-md border border-border bg-card">
+                <div className="border-b border-border px-4 py-3">
+                  <p className="text-sm font-medium text-foreground">
+                    {DIVIDEND_TYPE_LABELS[activeSchedule.type]}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatPercent(activeSchedule.percentage_of_capital)} of
+                    capital
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-muted-foreground">
+                      Current date
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {formatDate(activeSchedule.payment_date)}
+                    </p>
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-muted-foreground">
+                      New schedule date
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {scheduleEditDate
+                        ? formatDate(new Date(scheduleEditDate).toISOString())
+                        : 'Not selected'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-md border border-border bg-card">
+                <div className="border-b border-border px-4 py-3">
+                  <p className="text-sm font-medium text-foreground">
+                    Edit boundary
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    The payout can move inside the neighboring schedule dates.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-muted-foreground">
+                      Earliest date
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {formatDate(activeScheduleBounds.minDate.toISOString())}
+                    </p>
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-muted-foreground">Latest date</p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {formatDate(activeScheduleBounds.maxDate.toISOString())}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-md bg-muted/60 px-4 py-3 text-xs text-muted-foreground">
+                Only the payout date changes. The payout type, processed status,
+                and percentage stay unchanged.
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">
+                  New payout date
+                </p>
+                <DatePicker
+                  placeHolderText="Pick a date"
+                  showPlaceholder
+                  showYear
+                  className="mb-0"
+                  selectedDate={scheduleEditDate || undefined}
+                  minDate={activeScheduleBounds.minDate}
+                  maxDate={activeScheduleBounds.maxDate}
+                  onDateSelect={(date) => {
+                    setScheduleEditDate(toDateInput(date))
+                    setScheduleEditError('')
+                  }}
+                />
+                {scheduleEditError && (
+                  <p className="text-xs text-destructive">
+                    {scheduleEditError}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <SheetFooter className="flex-row justify-end gap-2 border-t border-border">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeScheduleDateEdit}
+              disabled={isUpdatingScheduleDates}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={saveScheduleDateEdit}
+              disabled={
+                isUpdatingScheduleDates ||
+                !activeSchedule ||
+                !scheduleEditDate ||
+                scheduleEditDate === toDateInput(activeSchedule.payment_date)
+              }
+            >
+              {isUpdatingScheduleDates ? 'Saving…' : 'Save date'}
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
-  );
+  )
 }
