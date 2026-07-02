@@ -187,6 +187,8 @@ export type AdminInvestmentSummary = {
   maturity_date: string
   investment_duration_in_month: number
   investor_count: number
+  is_featured: boolean
+  sort_order: number
   tempoary_image_url: string | null
   created_at: string
 }
@@ -258,6 +260,8 @@ export type AdminInvestmentDetail = {
   start_date: string
   maturity_date: string
   investment_duration_in_month: number
+  is_featured: boolean
+  sort_order: number
   key_highlights: Record<string, unknown> | null
   terms_conditions: string | null
   published_at: string | null
@@ -361,6 +365,8 @@ export type CreateInvestmentBody = {
   terms_conditions?: string
   faqs?: Array<InvestmentFAQInput>
   schedule_date_overrides?: Array<InvestmentScheduleDateOverrideInput>
+  is_featured?: boolean
+  sort_order?: number
 }
 
 export type UpdateInvestmentBody = {
@@ -386,6 +392,8 @@ export type UpdateInvestmentBody = {
   document_ids_to_remove?: Array<string>
   document_ids_to_add?: Array<InvestmentDocumentInput>
   schedule_date_overrides?: Array<InvestmentScheduleDateOverrideInput>
+  is_featured?: boolean
+  sort_order?: number
 }
 
 export type UpdateDividendSchedulesBody = {

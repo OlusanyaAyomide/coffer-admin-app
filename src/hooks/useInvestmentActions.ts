@@ -38,6 +38,34 @@ export function useUpdateInvestmentStatus({
   return { updateStatus: mutate, isUpdatingStatus: isPending }
 }
 
+export function useSetInvestmentFeatured({
+  investmentId,
+  onSuccess,
+}: {
+  investmentId: string
+  onSuccess?: () => void
+}) {
+  const queryClient = useQueryClient()
+  const URL: SlashStringType = `/admin/investment/${investmentId}/featured`
+
+  const { mutate, isPending } = usePostRequest<
+    ItemResponse<AdminInvestmentDetail>,
+    { is_featured: boolean }
+  >({
+    URL,
+    isPatch: true,
+    mutationKey: ['investment-featured', investmentId],
+    successText: 'Featured status updated',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-investments'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-investment-detail'] })
+      onSuccess?.()
+    },
+  })
+
+  return { setFeatured: mutate, isSettingFeatured: isPending }
+}
+
 export function useDeleteInvestment({
   investmentId,
   onSuccess,

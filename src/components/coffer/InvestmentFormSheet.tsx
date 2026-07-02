@@ -37,6 +37,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import NumberInput from '@/components/coffer/NumberInput'
 import DatePicker from '@/components/shared/DatePicker'
 import { Textarea } from '@/components/ui/textarea'
@@ -203,6 +204,13 @@ export default function InvestmentFormSheet({
   onSaved,
 }: Props) {
   const isEdit = Boolean(investment)
+  // Once a plan's start date has passed it is fixed — lock only the start-date
+  // field so the admin can still edit everything else. The backend ignores an
+  // incoming start_date in this case too.
+  const startLocked =
+    isEdit && investment
+      ? new Date(investment.start_date) <= new Date()
+      : false
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(0)
 
@@ -213,6 +221,8 @@ export default function InvestmentFormSheet({
   const [categoryId, setCategoryId] = useState('')
   const [subCategoryId, setSubCategoryId] = useState('')
   const [currency, setCurrency] = useState<InvestmentCurrency>('NGN')
+  const [isFeatured, setIsFeatured] = useState(false)
+  const [sortOrder, setSortOrder] = useState('0')
 
   // Pricing & units
   const [pricePerUnit, setPricePerUnit] = useState('')
@@ -262,6 +272,10 @@ export default function InvestmentFormSheet({
     setCategoryId(investment?.category_id ?? '')
     setSubCategoryId(investment?.sub_category_id ?? '')
     setCurrency(investment?.currency ?? 'NGN')
+    setIsFeatured(investment?.is_featured ?? false)
+    setSortOrder(
+      investment?.sort_order != null ? String(investment.sort_order) : '0',
+    )
     setPricePerUnit(investment?.price_per_unit ?? '')
     setTotalUnits(
       investment?.total_units != null ? String(investment.total_units) : '',
@@ -613,7 +627,8 @@ export default function InvestmentFormSheet({
         maximum_units_purchasable: toNumber(maximumUnits),
         total_units: toNumber(totalUnits),
         roi_percentage: toNumber(roiPercentage),
-        start_date: startDate || undefined,
+        // A passed start date is fixed — don't resend it (backend ignores it too).
+        start_date: startLocked ? undefined : startDate || undefined,
         investment_duration_in_month: toNumber(durationMonths),
         return_payout_strategy: returnPayoutStrategy,
         dividend_frequency: usesFrequency ? dividendFrequency : undefined,
@@ -623,6 +638,8 @@ export default function InvestmentFormSheet({
         schedule_date_overrides: buildScheduleDateOverrides(),
         key_highlights: buildHighlights(),
         terms_conditions: terms.trim() || undefined,
+        is_featured: isFeatured,
+        sort_order: toNumber(sortOrder) ?? 0,
         image_ids_to_add: curImageIds.filter(
           (id) => !origImageIds.includes(id),
         ),
@@ -670,6 +687,8 @@ export default function InvestmentFormSheet({
       })),
       key_highlights: buildHighlights(),
       terms_conditions: terms.trim() || undefined,
+      is_featured: isFeatured,
+      sort_order: toNumber(sortOrder) ?? 0,
       faqs: faqs
         .filter((f) => f.question.trim() !== '' && f.answer.trim() !== '')
         .map((f) => ({ question: f.question.trim(), answer: f.answer.trim() })),
@@ -851,6 +870,35 @@ export default function InvestmentFormSheet({
                     </p>
                   )}
                 </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="flex items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="inv-featured">Featured</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Surface first in the app’s Trending row.
+                      </p>
+                    </div>
+                    <Switch
+                      id="inv-featured"
+                      checked={isFeatured}
+                      onCheckedChange={setIsFeatured}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="inv-sort-order">Sort order</Label>
+                    <Input
+                      id="inv-sort-order"
+                      type="number"
+                      min={0}
+                      placeholder="0"
+                      value={sortOrder}
+                      onChange={(e) => setSortOrder(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Lower shows first in the marketplace list.
+                    </p>
+                  </div>
+                </div>
               </section>
             )}
 
@@ -991,9 +1039,15 @@ export default function InvestmentFormSheet({
                       showPlaceholder
                       showYear
                       className="mb-0"
+                      disabled={startLocked}
                       selectedDate={startDate || undefined}
                       onDateSelect={setStartDate}
                     />
+                    {startLocked && (
+                      <p className="text-xs text-muted-foreground">
+                        The start date has passed and can’t be changed.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="inv-duration">Duration (months)</Label>

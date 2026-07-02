@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { ImageIcon } from 'lucide-react'
+import { ImageIcon, Star } from 'lucide-react'
 
 import type {
   AdminInvestmentStatus,
@@ -69,7 +69,13 @@ export default function InvestmentsTable({
                 )}
               </div>
               <div className="min-w-0">
-                <p className="truncate font-medium text-foreground">
+                <p className="flex items-center gap-1.5 truncate font-medium text-foreground">
+                  {inv.is_featured && (
+                    <Star
+                      className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400"
+                      aria-label="Featured"
+                    />
+                  )}
                   {inv.title}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">

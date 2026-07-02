@@ -6,6 +6,7 @@ import {
   FileText,
   ImageIcon,
   Pencil,
+  Star,
   TrendingUp,
   Trash2,
   Users,
@@ -51,6 +52,7 @@ import {
 import useAdminInvestmentDetail from '@/hooks/useAdminInvestmentDetail'
 import {
   useDeleteInvestment,
+  useSetInvestmentFeatured,
   useUpdateInvestmentScheduleDates,
 } from '@/hooks/useInvestmentActions'
 import InvestmentFormSheet from '@/components/coffer/InvestmentFormSheet'
@@ -148,6 +150,10 @@ function InvestmentDetailPage() {
   const { deleteInvestment, isDeletingInvestment } = useDeleteInvestment({
     investmentId,
     onSuccess: () => navigate({ to: '/coffer/marketplace' }),
+  })
+  const { setFeatured, isSettingFeatured } = useSetInvestmentFeatured({
+    investmentId,
+    onSuccess: refetchDetail,
   })
   const [scheduleEditId, setScheduleEditId] = useState<string | null>(null)
   const [scheduleEditDate, setScheduleEditDate] = useState('')
@@ -277,6 +283,17 @@ function InvestmentDetailPage() {
               status={investment.status}
               onChanged={refetchDetail}
             />
+            <Button
+              variant={investment.is_featured ? 'default' : 'outline'}
+              className="gap-2"
+              disabled={isSettingFeatured}
+              onClick={() => setFeatured({ is_featured: !investment.is_featured })}
+            >
+              <Star
+                className={`h-4 w-4 ${investment.is_featured ? 'fill-current' : ''}`}
+              />
+              {investment.is_featured ? 'Featured' : 'Feature'}
+            </Button>
             {canEdit && (
               <InvestmentFormSheet
                 investment={investment}
@@ -370,6 +387,12 @@ function InvestmentDetailPage() {
                 >
                   {INVESTMENT_STATUS_LABELS[investment.status]}
                 </Badge>
+                {investment.is_featured && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Star className="h-3 w-3 fill-current" />
+                    Featured
+                  </Badge>
+                )}
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
                 {investment.category?.name ?? 'Uncategorised'}
