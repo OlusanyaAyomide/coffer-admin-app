@@ -382,6 +382,7 @@ export type UpdateInvestmentBody = {
   roi_percentage?: number
   key_highlights?: Record<string, unknown>
   terms_conditions?: string
+  faqs?: Array<InvestmentFAQInput>
   start_date?: string
   investment_duration_in_month?: number
   dividend_frequency?: DividendFrequency
@@ -389,6 +390,7 @@ export type UpdateInvestmentBody = {
   upfront_return_percentage?: number
   image_ids_to_remove?: Array<string>
   image_ids_to_add?: Array<string>
+  image_ids_order?: Array<string>
   document_ids_to_remove?: Array<string>
   document_ids_to_add?: Array<InvestmentDocumentInput>
   schedule_date_overrides?: Array<InvestmentScheduleDateOverrideInput>

@@ -141,6 +141,16 @@ function startOfDay(date: Date): Date {
   return result
 }
 
+function uniqueBy<T>(items: Array<T>, getKey: (item: T) => string): Array<T> {
+  const seen = new Set<string>()
+  return items.filter((item) => {
+    const key = getKey(item)
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
 function findPreviousDistinctDate(dates: Array<Date>, index: number): Date {
   const current = startOfDay(dates[index]).getTime()
   for (let i = index - 1; i >= 0; i -= 1) {
@@ -204,13 +214,13 @@ export default function InvestmentFormSheet({
   onSaved,
 }: Props) {
   const isEdit = Boolean(investment)
+  const isActiveEdit = investment?.status === 'active'
   // Once a plan's start date has passed it is fixed — lock only the start-date
   // field so the admin can still edit everything else. The backend ignores an
   // incoming start_date in this case too.
   const startLocked =
-    isEdit && investment
-      ? new Date(investment.start_date) <= new Date()
-      : false
+    isEdit && investment ? new Date(investment.start_date) <= new Date() : false
+  const sensitiveFieldsLocked = isActiveEdit
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(0)
 
@@ -316,19 +326,30 @@ export default function InvestmentFormSheet({
         : '',
     )
     setImages(
-      investment?.images.map((img) => ({
-        document_id: img.document_id,
-        url: img.document?.temporary_signed_url ?? null,
-      })) ?? [],
+      uniqueBy(
+        investment?.images.map((img) => ({
+          document_id: img.document_id,
+          url: img.document?.temporary_signed_url ?? null,
+        })) ?? [],
+        (img) => img.document_id,
+      ),
     )
     setDocuments(
-      investment?.documents.map((doc) => ({
-        upload_id: doc.document_id,
-        name: doc.caption ?? doc.document?.name ?? 'Document',
-        url: doc.document?.temporary_signed_url ?? null,
+      uniqueBy(
+        investment?.documents.map((doc) => ({
+          upload_id: doc.document_id,
+          name: doc.caption ?? doc.document?.name ?? 'Document',
+          url: doc.document?.temporary_signed_url ?? null,
+        })) ?? [],
+        (doc) => doc.upload_id,
+      ),
+    )
+    setFaqs(
+      investment?.faqs.map((faq) => ({
+        question: faq.question,
+        answer: faq.answer,
       })) ?? [],
     )
-    setFaqs([])
     setHighlights(highlightsToRows(investment?.key_highlights))
     setTerms(investment?.terms_conditions ?? '')
   }, [open, investment])
@@ -615,6 +636,44 @@ export default function InvestmentFormSheet({
       const origImageIds = investment.images.map((i) => i.document_id)
       const curImageIds = images.map((i) => i.document_id)
       const origDocIds = investment.documents.map((d) => d.document_id)
+      const imageIdsToAdd = curImageIds.filter(
+        (id) => !origImageIds.includes(id),
+      )
+      const imageIdsToRemove = origImageIds.filter(
+        (id) => !curImageIds.includes(id),
+      )
+      const documentIdsToAdd = documents
+        .filter((d) => !origDocIds.includes(d.upload_id))
+        .map((d) => ({
+          upload_id: d.upload_id,
+          name: d.name.trim() || 'Document',
+        }))
+      const documentIdsToRemove = origDocIds.filter(
+        (id) => !documents.some((d) => d.upload_id === id),
+      )
+      const faqPayload = faqs
+        .filter((f) => f.question.trim() !== '' && f.answer.trim() !== '')
+        .map((f) => ({ question: f.question.trim(), answer: f.answer.trim() }))
+
+      if (isActiveEdit) {
+        const body: UpdateInvestmentBody = {
+          title: title.trim(),
+          description: description.trim(),
+          sub_description: subDescription.trim() || undefined,
+          key_highlights: buildHighlights(),
+          terms_conditions: terms.trim() || undefined,
+          is_featured: isFeatured,
+          sort_order: toNumber(sortOrder) ?? 0,
+          image_ids_to_add: imageIdsToAdd,
+          image_ids_to_remove: imageIdsToRemove,
+          image_ids_order: curImageIds,
+          document_ids_to_add: documentIdsToAdd,
+          document_ids_to_remove: documentIdsToRemove,
+          faqs: faqPayload,
+        }
+        saveInvestment(body)
+        return
+      }
 
       const body: UpdateInvestmentBody = {
         title: title.trim(),
@@ -640,21 +699,12 @@ export default function InvestmentFormSheet({
         terms_conditions: terms.trim() || undefined,
         is_featured: isFeatured,
         sort_order: toNumber(sortOrder) ?? 0,
-        image_ids_to_add: curImageIds.filter(
-          (id) => !origImageIds.includes(id),
-        ),
-        image_ids_to_remove: origImageIds.filter(
-          (id) => !curImageIds.includes(id),
-        ),
-        document_ids_to_add: documents
-          .filter((d) => !origDocIds.includes(d.upload_id))
-          .map((d) => ({
-            upload_id: d.upload_id,
-            name: d.name.trim() || 'Document',
-          })),
-        document_ids_to_remove: origDocIds.filter(
-          (id) => !documents.some((d) => d.upload_id === id),
-        ),
+        image_ids_to_add: imageIdsToAdd,
+        image_ids_to_remove: imageIdsToRemove,
+        image_ids_order: curImageIds,
+        document_ids_to_add: documentIdsToAdd,
+        document_ids_to_remove: documentIdsToRemove,
+        faqs: faqPayload,
       }
       saveInvestment(body)
       return
@@ -801,6 +851,7 @@ export default function InvestmentFormSheet({
                     <Label>Category</Label>
                     <Select
                       value={categoryId}
+                      disabled={sensitiveFieldsLocked}
                       onValueChange={(v) => {
                         setCategoryId(v)
                         setSubCategoryId('')
@@ -817,6 +868,11 @@ export default function InvestmentFormSheet({
                         ))}
                       </SelectContent>
                     </Select>
+                    {sensitiveFieldsLocked && (
+                      <p className="text-xs text-muted-foreground">
+                        Locked after investment starts.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>
@@ -830,7 +886,7 @@ export default function InvestmentFormSheet({
                       onValueChange={(v) =>
                         setSubCategoryId(v === 'none' ? '' : v)
                       }
-                      disabled={!categoryId}
+                      disabled={!categoryId || sensitiveFieldsLocked}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select sub-category" />
@@ -844,6 +900,11 @@ export default function InvestmentFormSheet({
                         ))}
                       </SelectContent>
                     </Select>
+                    {sensitiveFieldsLocked && (
+                      <p className="text-xs text-muted-foreground">
+                        Locked after investment starts.
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -903,53 +964,70 @@ export default function InvestmentFormSheet({
             )}
 
             {step === 1 && (
-              <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="inv-price">Price per unit</Label>
-                  <NumberInput
-                    id="inv-price"
-                    allowDecimal
-                    placeholder="0.00"
-                    value={pricePerUnit}
-                    onChange={setPricePerUnit}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="inv-total">Total units</Label>
-                  <NumberInput
-                    id="inv-total"
-                    placeholder="e.g. 100"
-                    value={totalUnits}
-                    onChange={setTotalUnits}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="inv-min">Minimum units / purchase</Label>
-                  <NumberInput
-                    id="inv-min"
-                    value={minimumUnits}
-                    onChange={setMinimumUnits}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="inv-max">
-                    Maximum units / user{' '}
-                    <span className="font-normal text-muted-foreground">
-                      (optional)
-                    </span>
-                  </Label>
-                  <NumberInput
-                    id="inv-max"
-                    placeholder="No limit"
-                    value={maximumUnits}
-                    onChange={setMaximumUnits}
-                  />
+              <section className="space-y-4">
+                {sensitiveFieldsLocked && (
+                  <p className="rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                    Pricing and unit limits are locked after investment starts.
+                  </p>
+                )}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="inv-price">Price per unit</Label>
+                    <NumberInput
+                      id="inv-price"
+                      allowDecimal
+                      placeholder="0.00"
+                      value={pricePerUnit}
+                      onChange={setPricePerUnit}
+                      disabled={sensitiveFieldsLocked}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="inv-total">Total units</Label>
+                    <NumberInput
+                      id="inv-total"
+                      placeholder="e.g. 100"
+                      value={totalUnits}
+                      onChange={setTotalUnits}
+                      disabled={sensitiveFieldsLocked}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="inv-min">Minimum units / purchase</Label>
+                    <NumberInput
+                      id="inv-min"
+                      value={minimumUnits}
+                      onChange={setMinimumUnits}
+                      disabled={sensitiveFieldsLocked}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="inv-max">
+                      Maximum units / user{' '}
+                      <span className="font-normal text-muted-foreground">
+                        (optional)
+                      </span>
+                    </Label>
+                    <NumberInput
+                      id="inv-max"
+                      placeholder="No limit"
+                      value={maximumUnits}
+                      onChange={setMaximumUnits}
+                      disabled={sensitiveFieldsLocked}
+                    />
+                  </div>
                 </div>
               </section>
             )}
 
             {step === 2 && (
               <section className="space-y-4">
+                {sensitiveFieldsLocked && (
+                  <p className="rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                    Return, date, duration, and payout schedule fields are
+                    locked after investment starts.
+                  </p>
+                )}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="inv-roi">
@@ -961,12 +1039,14 @@ export default function InvestmentFormSheet({
                       placeholder="e.g. 15"
                       value={roiPercentage}
                       onChange={setRoiPercentage}
+                      disabled={sensitiveFieldsLocked}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Return payout pattern</Label>
                     <Select
                       value={returnPayoutStrategy}
+                      disabled={sensitiveFieldsLocked}
                       onValueChange={(v) => {
                         const strategy = v as ReturnPayoutStrategy
                         setReturnPayoutStrategy(strategy)
@@ -996,6 +1076,7 @@ export default function InvestmentFormSheet({
                       <Label>Frequency</Label>
                       <Select
                         value={dividendFrequency}
+                        disabled={sensitiveFieldsLocked}
                         onValueChange={(v) =>
                           setDividendFrequency(v as DividendFrequency)
                         }
@@ -1024,6 +1105,7 @@ export default function InvestmentFormSheet({
                         placeholder="e.g. 5"
                         value={upfrontReturnPercentage}
                         onChange={setUpfrontReturnPercentage}
+                        disabled={sensitiveFieldsLocked}
                       />
                       {!upfrontValid && (
                         <p className="text-xs text-destructive">
@@ -1039,13 +1121,15 @@ export default function InvestmentFormSheet({
                       showPlaceholder
                       showYear
                       className="mb-0"
-                      disabled={startLocked}
+                      disabled={startLocked || sensitiveFieldsLocked}
                       selectedDate={startDate || undefined}
                       onDateSelect={setStartDate}
                     />
-                    {startLocked && (
+                    {(startLocked || sensitiveFieldsLocked) && (
                       <p className="text-xs text-muted-foreground">
-                        The start date has passed and can’t be changed.
+                        {sensitiveFieldsLocked
+                          ? 'Locked after investment starts.'
+                          : 'The start date has passed and can’t be changed.'}
                       </p>
                     )}
                   </div>
@@ -1056,6 +1140,7 @@ export default function InvestmentFormSheet({
                       placeholder="e.g. 24"
                       value={durationMonths}
                       onChange={setDurationMonths}
+                      disabled={sensitiveFieldsLocked}
                     />
                   </div>
                 </div>
@@ -1114,7 +1199,7 @@ export default function InvestmentFormSheet({
                               >
                                 {row.percentage}
                               </span>
-                              {row.editable && (
+                              {row.editable && !sensitiveFieldsLocked && (
                                 <Button
                                   type="button"
                                   variant="outline"
@@ -1215,74 +1300,66 @@ export default function InvestmentFormSheet({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <Label>FAQs</Label>
-                    {!isEdit && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          setFaqs([...faqs, { question: '', answer: '' }])
-                        }
-                      >
-                        <Plus className="mr-1 h-3.5 w-3.5" />
-                        Add
-                      </Button>
-                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setFaqs([...faqs, { question: '', answer: '' }])
+                      }
+                    >
+                      <Plus className="mr-1 h-3.5 w-3.5" />
+                      Add
+                    </Button>
                   </div>
-                  {isEdit ? (
-                    <p className="rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
-                      FAQs can only be set when creating an investment.
-                    </p>
-                  ) : (
-                    faqs.map((faq, index) => (
-                      <div
-                        key={index}
-                        className="space-y-2 rounded-md border border-border p-3"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Input
-                            placeholder="Question"
-                            value={faq.question}
-                            onChange={(e) =>
-                              setFaqs(
-                                faqs.map((f, i) =>
-                                  i === index
-                                    ? { ...f, question: e.target.value }
-                                    : f,
-                                ),
-                              )
-                            }
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            className="h-9 w-9 shrink-0"
-                            onClick={() =>
-                              setFaqs(faqs.filter((_, i) => i !== index))
-                            }
-                            aria-label="Remove FAQ"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                        <Textarea
-                          placeholder="Answer"
-                          rows={2}
-                          value={faq.answer}
+                  {faqs.map((faq, index) => (
+                    <div
+                      key={index}
+                      className="space-y-2 rounded-md border border-border p-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Input
+                          placeholder="Question"
+                          value={faq.question}
                           onChange={(e) =>
                             setFaqs(
                               faqs.map((f, i) =>
                                 i === index
-                                  ? { ...f, answer: e.target.value }
+                                  ? { ...f, question: e.target.value }
                                   : f,
                               ),
                             )
                           }
                         />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          className="h-9 w-9 shrink-0"
+                          onClick={() =>
+                            setFaqs(faqs.filter((_, i) => i !== index))
+                          }
+                          aria-label="Remove FAQ"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
                       </div>
-                    ))
-                  )}
+                      <Textarea
+                        placeholder="Answer"
+                        rows={2}
+                        value={faq.answer}
+                        onChange={(e) =>
+                          setFaqs(
+                            faqs.map((f, i) =>
+                              i === index
+                                ? { ...f, answer: e.target.value }
+                                : f,
+                            ),
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
                 </div>
 
                 <Separator />

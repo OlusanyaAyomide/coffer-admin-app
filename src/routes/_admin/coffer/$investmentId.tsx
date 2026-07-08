@@ -226,10 +226,7 @@ function InvestmentDetailPage() {
     })
   }
 
-  const canEdit =
-    investment &&
-    investment.status !== 'active' &&
-    investment.status !== 'matured'
+  const canEdit = investment && investment.status !== 'matured'
   const canDelete =
     investment &&
     investment.units_sold === 0 &&
@@ -287,7 +284,9 @@ function InvestmentDetailPage() {
               variant={investment.is_featured ? 'default' : 'outline'}
               className="gap-2"
               disabled={isSettingFeatured}
-              onClick={() => setFeatured({ is_featured: !investment.is_featured })}
+              onClick={() =>
+                setFeatured({ is_featured: !investment.is_featured })
+              }
             >
               <Star
                 className={`h-4 w-4 ${investment.is_featured ? 'fill-current' : ''}`}
