@@ -408,11 +408,14 @@ export default function InvestmentFormSheet({
       date: Date
       percentage: number
     }) => {
+      // `percentage` arrives as a % of capital; express it as a share of the total
+      // interest so the preview matches how the schedule reads elsewhere.
+      const interestShare = roiValue > 0 ? (percentage / roiValue) * 100 : 0
       rows.push({
         scheduleKey: key,
         label,
         generatedDate: date,
-        percentage: `${formatPercent(percentage)} of capital`,
+        percentage: `${formatPercent(interestShare)} of interest`,
         tone: 'return',
       })
     }
@@ -422,7 +425,7 @@ export default function InvestmentFormSheet({
         scheduleKey: scheduleKey('capital_payout', 1),
         label: 'Capital return',
         generatedDate: maturity,
-        percentage: '100% of capital',
+        percentage: 'Principal returned',
         tone: 'capital',
       })
     }
@@ -1150,7 +1153,7 @@ export default function InvestmentFormSheet({
                       Payout timeline
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Return percentages are shown as percentage of capital
+                      Return percentages are shown as percentage of interest
                       across the selected duration.
                     </p>
                   </div>

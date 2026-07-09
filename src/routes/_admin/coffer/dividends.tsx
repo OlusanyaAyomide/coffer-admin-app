@@ -52,11 +52,13 @@ function DividendDeskPage() {
         ),
       },
       {
-        accessorKey: 'percentage_of_capital',
-        header: '% of capital',
+        accessorKey: 'percentage_of_return',
+        header: '% of interest',
         cell: ({ row }) => (
           <span className="text-foreground">
-            {Number(row.original.percentage_of_capital.toFixed(2))}%
+            {row.original.type === 'capital_payout'
+              ? 'Principal'
+              : `${Number(row.original.percentage_of_return.toFixed(2))}%`}
           </span>
         ),
       },

@@ -73,6 +73,23 @@ export const DIVIDEND_TYPE_LABELS: Record<DividendType, string> = {
   capital_payout: 'Capital return',
 }
 
+/**
+ * Label a dividend schedule row's share. Interest/dividend payouts are expressed as a
+ * percentage of the total return (`percentage_of_return`), not of capital — a payout is a
+ * slice of the interest, never the principal. The `capital_payout` row returns the principal,
+ * so it is labeled as such rather than "0% of interest".
+ */
+export function dividendShareLabel(
+  type: DividendType,
+  percentageOfReturn: number,
+): string {
+  if (type === 'capital_payout') return 'Principal returned'
+  const rounded = Number.isFinite(percentageOfReturn)
+    ? Number(percentageOfReturn.toFixed(2))
+    : 0
+  return `${rounded}% of interest`
+}
+
 export const RETURN_PAYOUT_STRATEGY_LABELS: Record<
   ReturnPayoutStrategy,
   string

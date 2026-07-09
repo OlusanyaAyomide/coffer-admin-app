@@ -86,10 +86,12 @@ const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
 export default function InvestmentStatusControls({
   investmentId,
   status,
+  hasInvestors = false,
   onChanged,
 }: {
   investmentId: string
   status: AdminInvestmentStatus
+  hasInvestors?: boolean
   onChanged?: () => void
 }) {
   const { updateStatus, isUpdatingStatus } = useUpdateInvestmentStatus({
@@ -97,7 +99,10 @@ export default function InvestmentStatusControls({
     onSuccess: onChanged,
   })
 
-  const actions = ACTIONS[status] ?? []
+  // An investment with investors can never return to draft (mirrors the backend guard).
+  const actions = (ACTIONS[status] ?? []).filter(
+    (action) => !(hasInvestors && action.target === 'draft'),
+  )
   if (!actions.length) return null
 
   return (

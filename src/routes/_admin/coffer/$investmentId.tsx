@@ -44,6 +44,7 @@ import {
   DIVIDEND_FREQUENCY_LABELS,
   DIVIDEND_TYPE_LABELS,
   RETURN_PAYOUT_STRATEGY_LABELS,
+  dividendShareLabel,
   formatDate,
   formatMoney,
   INVESTMENT_STATUS_LABELS,
@@ -79,11 +80,6 @@ function toDateInput(value: string | null | undefined): string {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return ''
   return date.toISOString().slice(0, 10)
-}
-
-function formatPercent(value: number | null | undefined): string {
-  if (value == null || Number.isNaN(value)) return '—'
-  return `${Number(value.toFixed(2))}%`
 }
 
 function startOfDay(date: Date): Date {
@@ -278,6 +274,7 @@ function InvestmentDetailPage() {
             <InvestmentStatusControls
               investmentId={investment.id}
               status={investment.status}
+              hasInvestors={investment.units_sold > 0}
               onChanged={refetchDetail}
             />
             <Button
@@ -666,8 +663,10 @@ function InvestmentDetailPage() {
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {formatDate(schedule.payment_date)} ·{' '}
-                          {formatPercent(schedule.percentage_of_capital)} of
-                          capital
+                          {dividendShareLabel(
+                            schedule.type,
+                            schedule.percentage_of_return,
+                          )}
                         </p>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
@@ -728,8 +727,10 @@ function InvestmentDetailPage() {
                     {DIVIDEND_TYPE_LABELS[activeSchedule.type]}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatPercent(activeSchedule.percentage_of_capital)} of
-                    capital
+                    {dividendShareLabel(
+                      activeSchedule.type,
+                      activeSchedule.percentage_of_return,
+                    )}
                   </p>
                 </div>
                 <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
