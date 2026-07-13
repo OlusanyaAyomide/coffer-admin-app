@@ -39,6 +39,7 @@ import { Route as AdminFinancialsInternalRouteImport } from './routes/_admin/fin
 import { Route as AdminCommunicationUpdatesRouteImport } from './routes/_admin/communication/updates'
 import { Route as AdminCommunicationNotificationsRouteImport } from './routes/_admin/communication/notifications'
 import { Route as AdminCommunicationEmailRouteImport } from './routes/_admin/communication/email'
+import { Route as AdminCommunicationBannersRouteImport } from './routes/_admin/communication/banners'
 import { Route as AdminCofferPerformanceRouteImport } from './routes/_admin/coffer/performance'
 import { Route as AdminCofferMarketplaceRouteImport } from './routes/_admin/coffer/marketplace'
 import { Route as AdminCofferDividendsRouteImport } from './routes/_admin/coffer/dividends'
@@ -202,6 +203,12 @@ const AdminCommunicationEmailRoute = AdminCommunicationEmailRouteImport.update({
   path: '/communication/email',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCommunicationBannersRoute =
+  AdminCommunicationBannersRouteImport.update({
+    id: '/communication/banners',
+    path: '/communication/banners',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminCofferPerformanceRoute = AdminCofferPerformanceRouteImport.update({
   id: '/coffer/performance',
   path: '/coffer/performance',
@@ -256,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/coffer/dividends': typeof AdminCofferDividendsRoute
   '/coffer/marketplace': typeof AdminCofferMarketplaceRoute
   '/coffer/performance': typeof AdminCofferPerformanceRoute
+  '/communication/banners': typeof AdminCommunicationBannersRoute
   '/communication/email': typeof AdminCommunicationEmailRoute
   '/communication/notifications': typeof AdminCommunicationNotificationsRoute
   '/communication/updates': typeof AdminCommunicationUpdatesRoute
@@ -294,6 +302,7 @@ export interface FileRoutesByTo {
   '/coffer/dividends': typeof AdminCofferDividendsRoute
   '/coffer/marketplace': typeof AdminCofferMarketplaceRoute
   '/coffer/performance': typeof AdminCofferPerformanceRoute
+  '/communication/banners': typeof AdminCommunicationBannersRoute
   '/communication/email': typeof AdminCommunicationEmailRoute
   '/communication/notifications': typeof AdminCommunicationNotificationsRoute
   '/communication/updates': typeof AdminCommunicationUpdatesRoute
@@ -335,6 +344,7 @@ export interface FileRoutesById {
   '/_admin/coffer/dividends': typeof AdminCofferDividendsRoute
   '/_admin/coffer/marketplace': typeof AdminCofferMarketplaceRoute
   '/_admin/coffer/performance': typeof AdminCofferPerformanceRoute
+  '/_admin/communication/banners': typeof AdminCommunicationBannersRoute
   '/_admin/communication/email': typeof AdminCommunicationEmailRoute
   '/_admin/communication/notifications': typeof AdminCommunicationNotificationsRoute
   '/_admin/communication/updates': typeof AdminCommunicationUpdatesRoute
@@ -375,6 +385,7 @@ export interface FileRouteTypes {
     | '/coffer/dividends'
     | '/coffer/marketplace'
     | '/coffer/performance'
+    | '/communication/banners'
     | '/communication/email'
     | '/communication/notifications'
     | '/communication/updates'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/coffer/dividends'
     | '/coffer/marketplace'
     | '/coffer/performance'
+    | '/communication/banners'
     | '/communication/email'
     | '/communication/notifications'
     | '/communication/updates'
@@ -453,6 +465,7 @@ export interface FileRouteTypes {
     | '/_admin/coffer/dividends'
     | '/_admin/coffer/marketplace'
     | '/_admin/coffer/performance'
+    | '/_admin/communication/banners'
     | '/_admin/communication/email'
     | '/_admin/communication/notifications'
     | '/_admin/communication/updates'
@@ -698,6 +711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCommunicationEmailRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/communication/banners': {
+      id: '/_admin/communication/banners'
+      path: '/communication/banners'
+      fullPath: '/communication/banners'
+      preLoaderRoute: typeof AdminCommunicationBannersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/coffer/performance': {
       id: '/_admin/coffer/performance'
       path: '/coffer/performance'
@@ -781,6 +801,7 @@ interface AdminRouteChildren {
   AdminCofferDividendsRoute: typeof AdminCofferDividendsRoute
   AdminCofferMarketplaceRoute: typeof AdminCofferMarketplaceRoute
   AdminCofferPerformanceRoute: typeof AdminCofferPerformanceRoute
+  AdminCommunicationBannersRoute: typeof AdminCommunicationBannersRoute
   AdminCommunicationEmailRoute: typeof AdminCommunicationEmailRoute
   AdminCommunicationNotificationsRoute: typeof AdminCommunicationNotificationsRoute
   AdminCommunicationUpdatesRoute: typeof AdminCommunicationUpdatesRoute
@@ -816,6 +837,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCofferDividendsRoute: AdminCofferDividendsRoute,
   AdminCofferMarketplaceRoute: AdminCofferMarketplaceRoute,
   AdminCofferPerformanceRoute: AdminCofferPerformanceRoute,
+  AdminCommunicationBannersRoute: AdminCommunicationBannersRoute,
   AdminCommunicationEmailRoute: AdminCommunicationEmailRoute,
   AdminCommunicationNotificationsRoute: AdminCommunicationNotificationsRoute,
   AdminCommunicationUpdatesRoute: AdminCommunicationUpdatesRoute,

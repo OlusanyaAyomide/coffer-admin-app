@@ -124,6 +124,10 @@ export const adminNavData = {
       icon: Megaphone,
       items: [
         {
+          title: 'Banners',
+          url: '/communication/banners',
+        },
+        {
           title: 'Bulk Email',
           url: '/communication/email',
         },
