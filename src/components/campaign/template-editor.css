@@ -1,0 +1,69 @@
+/* Self-contained typographic styles for the campaign email editor (no
+   @tailwindcss/typography dependency). Mirrors how the body renders once
+   wrapped in the Coffer brand layout. */
+
+.campaign-editor .ProseMirror {
+  min-height: 280px;
+  padding: 16px 18px;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--foreground);
+}
+
+.campaign-editor .ProseMirror p {
+  margin: 0 0 0.75em;
+}
+
+.campaign-editor .ProseMirror h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin: 0.4em 0 0.4em;
+  line-height: 1.25;
+}
+
+.campaign-editor .ProseMirror h2 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin: 0.4em 0 0.4em;
+  line-height: 1.3;
+}
+
+.campaign-editor .ProseMirror ul,
+.campaign-editor .ProseMirror ol {
+  margin: 0 0 0.75em;
+  padding-left: 1.4em;
+}
+
+.campaign-editor .ProseMirror ul {
+  list-style: disc;
+}
+
+.campaign-editor .ProseMirror ol {
+  list-style: decimal;
+}
+
+.campaign-editor .ProseMirror a {
+  color: #2b3990;
+  text-decoration: underline;
+}
+
+.campaign-editor .ProseMirror:focus {
+  outline: none;
+}
+
+/* Placeholder decorations */
+.campaign-editor .placeholder-valid {
+  background: rgba(43, 57, 144, 0.1);
+  color: #2b3990;
+  border-radius: 4px;
+  padding: 0 3px;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.9em;
+}
+
+.campaign-editor .placeholder-invalid {
+  text-decoration: underline wavy #d97706;
+  text-underline-offset: 2px;
+}

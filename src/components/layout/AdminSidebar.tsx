@@ -46,7 +46,9 @@ export default function AdminSidebar() {
       const basePath = url.replace('/all', '')
       return pathname.startsWith(basePath + '/')
     }
-    return pathname === url || (url !== '/_admin' && pathname.startsWith(url))
+    // Match on a path boundary so sibling routes that share a prefix don't both
+    // light up (e.g. /communication/email must not match /communication/email-templates).
+    return pathname === url || (url !== '/_admin' && pathname.startsWith(url + '/'))
   }
 
   // Helper to check if any child of a group is active

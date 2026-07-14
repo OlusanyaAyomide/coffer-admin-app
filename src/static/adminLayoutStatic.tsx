@@ -132,6 +132,10 @@ export const adminNavData = {
           url: '/communication/email',
         },
         {
+          title: 'Email Templates',
+          url: '/communication/email-templates',
+        },
+        {
           title: 'Push Notifications',
           url: '/communication/notifications',
         },

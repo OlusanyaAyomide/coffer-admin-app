@@ -38,6 +38,7 @@ import { Route as AdminFinancialsLedgerRouteImport } from './routes/_admin/finan
 import { Route as AdminFinancialsInternalRouteImport } from './routes/_admin/financials/internal'
 import { Route as AdminCommunicationUpdatesRouteImport } from './routes/_admin/communication/updates'
 import { Route as AdminCommunicationNotificationsRouteImport } from './routes/_admin/communication/notifications'
+import { Route as AdminCommunicationEmailTemplatesRouteImport } from './routes/_admin/communication/email-templates'
 import { Route as AdminCommunicationEmailRouteImport } from './routes/_admin/communication/email'
 import { Route as AdminCommunicationBannersRouteImport } from './routes/_admin/communication/banners'
 import { Route as AdminCofferPerformanceRouteImport } from './routes/_admin/coffer/performance'
@@ -198,6 +199,12 @@ const AdminCommunicationNotificationsRoute =
     path: '/communication/notifications',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminCommunicationEmailTemplatesRoute =
+  AdminCommunicationEmailTemplatesRouteImport.update({
+    id: '/communication/email-templates',
+    path: '/communication/email-templates',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminCommunicationEmailRoute = AdminCommunicationEmailRouteImport.update({
   id: '/communication/email',
   path: '/communication/email',
@@ -265,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/coffer/performance': typeof AdminCofferPerformanceRoute
   '/communication/banners': typeof AdminCommunicationBannersRoute
   '/communication/email': typeof AdminCommunicationEmailRoute
+  '/communication/email-templates': typeof AdminCommunicationEmailTemplatesRoute
   '/communication/notifications': typeof AdminCommunicationNotificationsRoute
   '/communication/updates': typeof AdminCommunicationUpdatesRoute
   '/financials/internal': typeof AdminFinancialsInternalRoute
@@ -304,6 +312,7 @@ export interface FileRoutesByTo {
   '/coffer/performance': typeof AdminCofferPerformanceRoute
   '/communication/banners': typeof AdminCommunicationBannersRoute
   '/communication/email': typeof AdminCommunicationEmailRoute
+  '/communication/email-templates': typeof AdminCommunicationEmailTemplatesRoute
   '/communication/notifications': typeof AdminCommunicationNotificationsRoute
   '/communication/updates': typeof AdminCommunicationUpdatesRoute
   '/financials/internal': typeof AdminFinancialsInternalRoute
@@ -346,6 +355,7 @@ export interface FileRoutesById {
   '/_admin/coffer/performance': typeof AdminCofferPerformanceRoute
   '/_admin/communication/banners': typeof AdminCommunicationBannersRoute
   '/_admin/communication/email': typeof AdminCommunicationEmailRoute
+  '/_admin/communication/email-templates': typeof AdminCommunicationEmailTemplatesRoute
   '/_admin/communication/notifications': typeof AdminCommunicationNotificationsRoute
   '/_admin/communication/updates': typeof AdminCommunicationUpdatesRoute
   '/_admin/financials/internal': typeof AdminFinancialsInternalRoute
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/coffer/performance'
     | '/communication/banners'
     | '/communication/email'
+    | '/communication/email-templates'
     | '/communication/notifications'
     | '/communication/updates'
     | '/financials/internal'
@@ -426,6 +437,7 @@ export interface FileRouteTypes {
     | '/coffer/performance'
     | '/communication/banners'
     | '/communication/email'
+    | '/communication/email-templates'
     | '/communication/notifications'
     | '/communication/updates'
     | '/financials/internal'
@@ -467,6 +479,7 @@ export interface FileRouteTypes {
     | '/_admin/coffer/performance'
     | '/_admin/communication/banners'
     | '/_admin/communication/email'
+    | '/_admin/communication/email-templates'
     | '/_admin/communication/notifications'
     | '/_admin/communication/updates'
     | '/_admin/financials/internal'
@@ -704,6 +717,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCommunicationNotificationsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/communication/email-templates': {
+      id: '/_admin/communication/email-templates'
+      path: '/communication/email-templates'
+      fullPath: '/communication/email-templates'
+      preLoaderRoute: typeof AdminCommunicationEmailTemplatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/communication/email': {
       id: '/_admin/communication/email'
       path: '/communication/email'
@@ -803,6 +823,7 @@ interface AdminRouteChildren {
   AdminCofferPerformanceRoute: typeof AdminCofferPerformanceRoute
   AdminCommunicationBannersRoute: typeof AdminCommunicationBannersRoute
   AdminCommunicationEmailRoute: typeof AdminCommunicationEmailRoute
+  AdminCommunicationEmailTemplatesRoute: typeof AdminCommunicationEmailTemplatesRoute
   AdminCommunicationNotificationsRoute: typeof AdminCommunicationNotificationsRoute
   AdminCommunicationUpdatesRoute: typeof AdminCommunicationUpdatesRoute
   AdminFinancialsInternalRoute: typeof AdminFinancialsInternalRoute
@@ -839,6 +860,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCofferPerformanceRoute: AdminCofferPerformanceRoute,
   AdminCommunicationBannersRoute: AdminCommunicationBannersRoute,
   AdminCommunicationEmailRoute: AdminCommunicationEmailRoute,
+  AdminCommunicationEmailTemplatesRoute: AdminCommunicationEmailTemplatesRoute,
   AdminCommunicationNotificationsRoute: AdminCommunicationNotificationsRoute,
   AdminCommunicationUpdatesRoute: AdminCommunicationUpdatesRoute,
   AdminFinancialsInternalRoute: AdminFinancialsInternalRoute,
