@@ -5,7 +5,6 @@ import { ImageIcon, Star } from 'lucide-react'
 import type {
   AdminInvestmentStatus,
   AdminInvestmentSummary,
-  InvestmentCurrency,
 } from '@/types/InvestmentTypes'
 import type { ExtendedColumnDef } from '@/components/shared/BaseDataTable'
 import BaseDataTable from '@/components/shared/BaseDataTable'
@@ -13,9 +12,10 @@ import { TableSearch } from '@/components/shared/TableSearch'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
+  INVESTMENT_VISIBILITY_LABELS,
   formatMoney,
-  INVESTMENT_STATUS_LABELS,
-  investmentStatusBadgeVariant,
+  investmentDisplayStatus,
+  investmentVisibilityBadgeVariant,
 } from '@/lib/cofferFormat'
 import useAdminInvestments from '@/hooks/useAdminInvestments'
 
@@ -89,9 +89,17 @@ export default function InvestmentsTable({
       {
         accessorKey: 'status',
         header: 'Status',
+        cell: ({ row }) => {
+          const { label, variant } = investmentDisplayStatus(row.original)
+          return <Badge variant={variant}>{label}</Badge>
+        },
+      },
+      {
+        accessorKey: 'visibility',
+        header: 'Visibility',
         cell: ({ row }) => (
-          <Badge variant={investmentStatusBadgeVariant(row.original.status)}>
-            {INVESTMENT_STATUS_LABELS[row.original.status]}
+          <Badge variant={investmentVisibilityBadgeVariant(row.original.visibility)}>
+            {INVESTMENT_VISIBILITY_LABELS[row.original.visibility]}
           </Badge>
         ),
       },
@@ -102,7 +110,7 @@ export default function InvestmentsTable({
           <span className="text-foreground">
             {formatMoney(
               row.original.price_per_unit,
-              row.original.currency as InvestmentCurrency,
+              row.original.currency,
             )}
           </span>
         ),

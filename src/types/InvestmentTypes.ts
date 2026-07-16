@@ -138,6 +138,14 @@ export type AdminInvestmentStatus =
   | 'matured'
   | 'cancelled'
 
+/**
+ * Storefront visibility — orthogonal to `status`. `status` records what happened
+ * to a plan; `visibility` records whether we are merchandising it, so a plan can
+ * be pulled off the marketplace at any point in its life without rewriting its
+ * history. Every visibility can reach every other (no transition map).
+ */
+export type AdminInvestmentVisibility = 'visible' | 'hidden' | 'archived'
+
 export type DividendFrequency =
   | 'ending'
   | 'monthly'
@@ -188,6 +196,7 @@ export type AdminInvestmentSummary = {
   investment_duration_in_month: number
   investor_count: number
   is_featured: boolean
+  visibility: AdminInvestmentVisibility
   sort_order: number
   tempoary_image_url: string | null
   created_at: string
@@ -261,6 +270,7 @@ export type AdminInvestmentDetail = {
   maturity_date: string
   investment_duration_in_month: number
   is_featured: boolean
+  visibility: AdminInvestmentVisibility
   sort_order: number
   key_highlights: Record<string, unknown> | null
   terms_conditions: string | null

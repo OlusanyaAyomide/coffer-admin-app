@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import type {
   AdminInvestmentDetail,
   AdminInvestmentStatus,
+  AdminInvestmentVisibility,
   ItemResponse,
   UpdateDividendSchedulesBody,
 } from '@/types/InvestmentTypes'
@@ -64,6 +65,34 @@ export function useSetInvestmentFeatured({
   })
 
   return { setFeatured: mutate, isSettingFeatured: isPending }
+}
+
+export function useSetInvestmentVisibility({
+  investmentId,
+  onSuccess,
+}: {
+  investmentId: string
+  onSuccess?: () => void
+}) {
+  const queryClient = useQueryClient()
+  const URL: SlashStringType = `/admin/investment/${investmentId}/visibility`
+
+  const { mutate, isPending } = usePostRequest<
+    ItemResponse<AdminInvestmentDetail>,
+    { visibility: AdminInvestmentVisibility }
+  >({
+    URL,
+    isPatch: true,
+    mutationKey: ['investment-visibility', investmentId],
+    successText: 'Investment visibility updated',
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-investments'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-investment-detail'] })
+      onSuccess?.()
+    },
+  })
+
+  return { setVisibility: mutate, isSettingVisibility: isPending }
 }
 
 export function useDeleteInvestment({

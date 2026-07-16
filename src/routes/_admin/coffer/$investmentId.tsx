@@ -7,15 +7,21 @@ import {
   ImageIcon,
   Pencil,
   Star,
-  TrendingUp,
   Trash2,
+  TrendingUp,
   Users,
 } from 'lucide-react'
 import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
 
+import type { AdminDividendSchedule } from '@/types/InvestmentTypes'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
@@ -43,12 +49,14 @@ import HeaderNavButton from '@/components/shared/HeaderNavButton'
 import {
   DIVIDEND_FREQUENCY_LABELS,
   DIVIDEND_TYPE_LABELS,
+  INVESTMENT_VISIBILITY_LABELS,
+  MAX_FEATURED_INVESTMENTS,
   RETURN_PAYOUT_STRATEGY_LABELS,
   dividendShareLabel,
   formatDate,
   formatMoney,
-  INVESTMENT_STATUS_LABELS,
-  investmentStatusBadgeVariant,
+  investmentDisplayStatus,
+  investmentVisibilityBadgeVariant,
 } from '@/lib/cofferFormat'
 import useAdminInvestmentDetail from '@/hooks/useAdminInvestmentDetail'
 import {
@@ -58,9 +66,9 @@ import {
 } from '@/hooks/useInvestmentActions'
 import InvestmentFormSheet from '@/components/coffer/InvestmentFormSheet'
 import InvestmentStatusControls from '@/components/coffer/InvestmentStatusControls'
+import InvestmentVisibilityControls from '@/components/coffer/InvestmentVisibilityControls'
 import InvestorTable from '@/components/coffer/InvestorTable'
 import DatePicker from '@/components/shared/DatePicker'
-import type { AdminDividendSchedule } from '@/types/InvestmentTypes'
 
 export const Route = createFileRoute('/_admin/coffer/$investmentId')({
   component: InvestmentDetailPage,
@@ -223,6 +231,12 @@ function InvestmentDetailPage() {
   }
 
   const canEdit = investment && investment.status !== 'matured'
+  // Featuring promotes a plan into the app's Trending row, which is a buying
+  // surface — so only a plan that can still be bought may be featured. Already
+  // featured plans keep the toggle so they can always be unfeatured.
+  const canFeature =
+    investment &&
+    (investment.is_featured || investment.status === 'awaiting_start')
   const canDelete =
     investment &&
     investment.units_sold === 0 &&
@@ -277,19 +291,41 @@ function InvestmentDetailPage() {
               hasInvestors={investment.units_sold > 0}
               onChanged={refetchDetail}
             />
-            <Button
-              variant={investment.is_featured ? 'default' : 'outline'}
-              className="gap-2"
-              disabled={isSettingFeatured}
-              onClick={() =>
-                setFeatured({ is_featured: !investment.is_featured })
-              }
-            >
-              <Star
-                className={`h-4 w-4 ${investment.is_featured ? 'fill-current' : ''}`}
-              />
-              {investment.is_featured ? 'Featured' : 'Feature'}
-            </Button>
+            <InvestmentVisibilityControls
+              investmentId={investment.id}
+              visibility={investment.visibility}
+              status={investment.status}
+              onChanged={refetchDetail}
+            />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {/* A disabled button fires no pointer events, so the tooltip
+                    needs a wrapper to hang the hover off — otherwise the reason
+                    it is disabled is exactly what you cannot read. */}
+                <span className="inline-flex">
+                  <Button
+                    variant={investment.is_featured ? 'default' : 'outline'}
+                    className="gap-2"
+                    disabled={isSettingFeatured || !canFeature}
+                    onClick={() =>
+                      setFeatured({ is_featured: !investment.is_featured })
+                    }
+                  >
+                    <Star
+                      className={`h-4 w-4 ${investment.is_featured ? 'fill-current' : ''}`}
+                    />
+                    {investment.is_featured ? 'Featured' : 'Feature'}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {!canFeature
+                  ? 'Only an investment that is awaiting start can be featured. Publish it first.'
+                  : investment.is_featured
+                    ? 'Featured: this leads the app’s Trending row. Click to unfeature.'
+                    : `Surface this at the top of the app’s Trending row. Up to ${MAX_FEATURED_INVESTMENTS} investments can be featured at a time.`}
+              </TooltipContent>
+            </Tooltip>
             {canEdit && (
               <InvestmentFormSheet
                 investment={investment}
@@ -378,11 +414,18 @@ function InvestmentDetailPage() {
                 <h1 className="text-2xl font-medium text-foreground">
                   {investment.title}
                 </h1>
-                <Badge
-                  variant={investmentStatusBadgeVariant(investment.status)}
-                >
-                  {INVESTMENT_STATUS_LABELS[investment.status]}
+                <Badge variant={investmentDisplayStatus(investment).variant}>
+                  {investmentDisplayStatus(investment).label}
                 </Badge>
+                {investment.visibility !== 'visible' && (
+                  <Badge
+                    variant={investmentVisibilityBadgeVariant(
+                      investment.visibility,
+                    )}
+                  >
+                    {INVESTMENT_VISIBILITY_LABELS[investment.visibility]}
+                  </Badge>
+                )}
                 {investment.is_featured && (
                   <Badge variant="secondary" className="gap-1">
                     <Star className="h-3 w-3 fill-current" />

@@ -11,23 +11,38 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useUpdateInvestmentStatus } from '@/hooks/useInvestmentActions'
 
 type StatusAction = {
   target: AdminInvestmentStatus
   label: string
+  tooltip: string
   variant?: 'default' | 'outline' | 'destructive'
   confirm?: { title: string; description: string }
 }
 
+const CANCEL_TOOLTIP =
+  'End this investment for good. It leaves the marketplace and can never take new money. Prefer Unpublish if you only need it off the marketplace for now.'
+
 // Manual transitions allowed from each status (mirrors the backend map).
 const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
   draft: [
-    { target: 'awaiting_start', label: 'Publish' },
+    {
+      target: 'awaiting_start',
+      label: 'Publish',
+      tooltip:
+        'Put this on the marketplace so users can start investing. It stays awaiting start until its start date, when it activates automatically.',
+    },
     {
       target: 'cancelled',
       label: 'Cancel',
       variant: 'destructive',
+      tooltip: CANCEL_TOOLTIP,
       confirm: {
         title: 'Cancel investment?',
         description: 'This investment will no longer be available to users.',
@@ -35,11 +50,18 @@ const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
     },
   ],
   awaiting_start: [
-    { target: 'draft', label: 'Unpublish', variant: 'outline' },
+    {
+      target: 'draft',
+      label: 'Unpublish',
+      variant: 'outline',
+      tooltip:
+        'Take this back to draft: it leaves the marketplace and can be edited, then published again. This is how you pull an investment that has not started yet.',
+    },
     {
       target: 'cancelled',
       label: 'Cancel',
       variant: 'destructive',
+      tooltip: CANCEL_TOOLTIP,
       confirm: {
         title: 'Cancel investment?',
         description: 'This investment will no longer be available to users.',
@@ -51,6 +73,8 @@ const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
       target: 'matured',
       label: 'Mark matured',
       variant: 'outline',
+      tooltip:
+        'End the active period now and treat the investment as complete. An override — normally a plan matures on its own at its maturity date.',
       confirm: {
         title: 'Mark as matured?',
         description:
@@ -61,6 +85,8 @@ const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
       target: 'cancelled',
       label: 'Cancel',
       variant: 'destructive',
+      tooltip:
+        'End this investment for good. It already has investors, so cancelling affects real money — use Hide if you only need it off the marketplace.',
       confirm: {
         title: 'Cancel active investment?',
         description:
@@ -74,6 +100,8 @@ const ACTIONS: Record<AdminInvestmentStatus, Array<StatusAction>> = {
       target: 'draft',
       label: 'Restore',
       variant: 'outline',
+      tooltip:
+        'Move this back to draft so it can be reviewed, edited, and published again.',
       confirm: {
         title: 'Restore investment?',
         description:
@@ -107,47 +135,53 @@ export default function InvestmentStatusControls({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {actions.map((action) =>
-        action.confirm ? (
-          <AlertDialog key={action.target}>
-            <AlertDialogTrigger asChild>
-              <Button
-                size="sm"
-                variant={action.variant ?? 'default'}
-                disabled={isUpdatingStatus}
-              >
-                {action.label}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{action.confirm.title}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {action.confirm.description}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Keep</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => updateStatus({ status: action.target })}
-                >
-                  {action.label}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        ) : (
+      {actions.map((action) => {
+        const button = (
           <Button
-            key={action.target}
             size="sm"
             variant={action.variant ?? 'default'}
             disabled={isUpdatingStatus}
-            onClick={() => updateStatus({ status: action.target })}
+            onClick={
+              action.confirm
+                ? undefined
+                : () => updateStatus({ status: action.target })
+            }
           >
             {action.label}
           </Button>
-        ),
-      )}
+        )
+
+        return (
+          <Tooltip key={action.target}>
+            {action.confirm ? (
+              <AlertDialog>
+                <TooltipTrigger asChild>
+                  <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
+                </TooltipTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{action.confirm.title}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {action.confirm.description}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Keep</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => updateStatus({ status: action.target })}
+                    >
+                      {action.label}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            ) : (
+              <TooltipTrigger asChild>{button}</TooltipTrigger>
+            )}
+            <TooltipContent>{action.tooltip}</TooltipContent>
+          </Tooltip>
+        )
+      })}
     </div>
   )
 }

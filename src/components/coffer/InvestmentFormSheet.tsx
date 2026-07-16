@@ -45,6 +45,7 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import {
   DIVIDEND_FREQUENCY_LABELS,
+  MAX_PERCENTAGE,
   RETURN_PAYOUT_STRATEGY_LABELS,
   formatDate,
 } from '@/lib/cofferFormat'
@@ -215,6 +216,13 @@ export default function InvestmentFormSheet({
 }: Props) {
   const isEdit = Boolean(investment)
   const isActiveEdit = investment?.status === 'active'
+  // Featuring promotes a plan into the app's Trending row, a buying surface, so
+  // only an awaiting_start plan qualifies. A new investment is always created as
+  // a draft, so it can never be featured on the way in — publish first, then
+  // feature. An already-featured plan keeps the switch so it can be turned off.
+  const canFeature =
+    isEdit &&
+    (investment?.is_featured || investment?.status === 'awaiting_start')
   // Once a plan's start date has passed it is fixed — lock only the start-date
   // field so the admin can still edit everything else. The backend ignores an
   // incoming start_date in this case too.
@@ -383,6 +391,9 @@ export default function InvestmentFormSheet({
   const upfrontValid =
     !usesUpfrontInput ||
     (upfrontValue !== undefined && upfrontValue > 0 && upfrontValue < roiValue)
+  // The column is Decimal(5,2); past this the API rejects the whole create, so
+  // catch it on the field rather than at submit.
+  const roiExceedsMax = roiValue > MAX_PERCENTAGE
 
   const timelineRows = useMemo<Array<TimelineRow>>(() => {
     if (!startDate || durationValue < 1) return []
@@ -540,6 +551,7 @@ export default function InvestmentFormSheet({
         (toNumber(totalUnits) ?? 0) >= 1 &&
         (toNumber(minimumUnits) ?? 0) >= 1,
       (toNumber(roiPercentage) ?? -1) >= 0 &&
+        !roiExceedsMax &&
         startDate !== '' &&
         (toNumber(durationMonths) ?? 0) >= 1 &&
         upfrontValid,
@@ -939,12 +951,15 @@ export default function InvestmentFormSheet({
                     <div className="space-y-0.5">
                       <Label htmlFor="inv-featured">Featured</Label>
                       <p className="text-xs text-muted-foreground">
-                        Surface first in the app’s Trending row.
+                        {canFeature
+                          ? 'Surface first in the app’s Trending row.'
+                          : 'Only an investment that is awaiting start can be featured.'}
                       </p>
                     </div>
                     <Switch
                       id="inv-featured"
                       checked={isFeatured}
+                      disabled={!canFeature}
                       onCheckedChange={setIsFeatured}
                     />
                   </div>
@@ -1044,6 +1059,11 @@ export default function InvestmentFormSheet({
                       onChange={setRoiPercentage}
                       disabled={sensitiveFieldsLocked}
                     />
+                    {roiExceedsMax && (
+                      <p className="text-xs text-destructive">
+                        Must be {MAX_PERCENTAGE}% or less.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>Return payout pattern</Label>
