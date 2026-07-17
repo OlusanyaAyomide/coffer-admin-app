@@ -96,9 +96,16 @@ export const adminNavData = {
     },
     {
       title: 'Financials',
-      url: '#',
+      url: '/financials',
       icon: CreditCard,
       items: [
+        {
+          title: 'Overview',
+          url: '/financials',
+          // Index route: match only /financials exactly, or every /financials/* sub-page
+          // would light this up too.
+          exact: true,
+        },
         {
           title: 'Transaction Ledger',
           url: '/financials/ledger',

@@ -38,8 +38,11 @@ export default function AdminSidebar() {
   })
 
   // Helper to check if a route is active
-  const checkActive = (url: string) => {
+  const checkActive = (url: string, exact = false) => {
     if (url === '#' || url === '/') return false
+    // Index routes (e.g. /financials Overview) share their prefix with sibling routes
+    // (/financials/ledger), so they must match exactly or every sub-page lights them up too.
+    if (exact) return pathname === url
     // Generic: URLs ending with /all should match any path starting with the base
     // e.g., /users/all matches /users/[uuid], /investments/all matches /investments/[id]
     if (url.endsWith('/all')) {
@@ -48,16 +51,24 @@ export default function AdminSidebar() {
     }
     // Match on a path boundary so sibling routes that share a prefix don't both
     // light up (e.g. /communication/email must not match /communication/email-templates).
-    return pathname === url || (url !== '/_admin' && pathname.startsWith(url + '/'))
+    return (
+      pathname === url || (url !== '/_admin' && pathname.startsWith(url + '/'))
+    )
   }
 
   // Helper to check if any child of a group is active
-  const isGroupActive = (items: typeof adminNavData.navMain[0]['items']) => {
-    return items?.some(item => checkActive(item.url))
+  const isGroupActive = (items: (typeof adminNavData.navMain)[0]['items']) => {
+    return items?.some((item) => checkActive(item.url, (item as { exact?: boolean }).exact))
   }
 
   // Tooltip wrapper for simple items in collapsed state
-  const TooltipWrapper = ({ children, label }: { children: React.ReactNode; label: string }) => {
+  const TooltipWrapper = ({
+    children,
+    label,
+  }: {
+    children: React.ReactNode
+    label: string
+  }) => {
     if (!isCollapsed) return <>{children}</>
     return (
       <Tooltip>
@@ -70,9 +81,9 @@ export default function AdminSidebar() {
   // Submenu component for collapsed state
   const CollapsedSubmenu = ({
     item,
-    isActive
+    isActive,
   }: {
-    item: typeof adminNavData.navMain[0]
+    item: (typeof adminNavData.navMain)[0]
     isActive: boolean
   }) => {
     if (!item.items) return null
@@ -83,8 +94,9 @@ export default function AdminSidebar() {
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-center h-11 px-0 text-white/70 hover:bg-white/10 hover:text-white relative transition-all duration-200 ease-in-out",
-              isActive && "bg-white text-primary rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary"
+              'w-full justify-center h-11 px-0 text-white/70 hover:bg-white/10 hover:text-white relative transition-all duration-200 ease-in-out',
+              isActive &&
+                'bg-white text-primary rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary',
             )}
           >
             {item.icon && <item.icon className="size-5 shrink-0" />}
@@ -94,15 +106,16 @@ export default function AdminSidebar() {
           <div className="font-semibold text-sm mb-2 px-2">{item.title}</div>
           <ul className="flex flex-col">
             {item.items.map((subItem) => {
-              const isSubActive = checkActive(subItem.url)
+              const isSubActive = checkActive(subItem.url, (subItem as { exact?: boolean }).exact)
               return (
                 <li key={subItem.title}>
                   <TransitionLink to={subItem.url}>
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start h-8 px-2 text-white/70 hover:bg-white/10",
-                        isSubActive && "text-foreground font-semibold bg-white/10"
+                        'w-full justify-start h-8 px-2 text-white/70 hover:bg-white/10',
+                        isSubActive &&
+                          'text-foreground font-semibold bg-white/10',
                       )}
                     >
                       <span className="text-sm">{subItem.title}</span>
@@ -120,8 +133,8 @@ export default function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-200 ease-linear sticky top-0",
-        isCollapsed ? "w-16" : "w-64"
+        'flex flex-col h-screen bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-200 ease-linear sticky top-0',
+        isCollapsed ? 'w-16' : 'w-64',
       )}
     >
       {/* Header */}
@@ -136,8 +149,8 @@ export default function AdminSidebar() {
           size="icon-sm"
           onClick={toggleSidebar}
           className={cn(
-            "text-white/70 hover:bg-white/10 hover:text-white",
-            isCollapsed && "mx-auto"
+            'text-white/70 hover:bg-white/10 hover:text-white',
+            isCollapsed && 'mx-auto',
           )}
         >
           <PanelLeft className="size-4" />
@@ -156,7 +169,10 @@ export default function AdminSidebar() {
               if (isCollapsed) {
                 return (
                   <li key={item.title}>
-                    <CollapsedSubmenu item={item} isActive={isActive || false} />
+                    <CollapsedSubmenu
+                      item={item}
+                      isActive={isActive || false}
+                    />
                   </li>
                 )
               }
@@ -173,39 +189,49 @@ export default function AdminSidebar() {
                       <Button
                         variant="ghost"
                         className={cn(
-                          "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5 hover:text-white relative disabled:opacity-100",
-                          "aria-expanded:bg-transparent aria-expanded:text-white",
-                          "data-[state=open]:text-white data-[state=open]:font-semibold",
-                          isActive && "text-white font-semibold bg-white/5",
-                          isActive && "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-7 before:w-1 before:bg-white before:rounded-r-full"
+                          'w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5 hover:text-white relative disabled:opacity-100',
+                          'aria-expanded:bg-transparent aria-expanded:text-white',
+                          'data-[state=open]:text-white data-[state=open]:font-semibold',
+                          isActive && 'text-white font-semibold bg-white/5',
+                          isActive &&
+                            'before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-7 before:w-1 before:bg-white before:rounded-r-full',
                         )}
                       >
                         {item.icon && <item.icon className="size-5 shrink-0" />}
-                        <span className="flex-1 text-left text-sm">{item.title}</span>
+                        <span className="flex-1 text-left text-sm">
+                          {item.title}
+                        </span>
                         <ChevronRight className="size-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <ul className="mt-1 ml-4 pl-4 border-l border-sidebar-border flex flex-col">
                         {item.items.map((subItem) => {
-                          const isSubActive = checkActive(subItem.url)
+                          const isSubActive = checkActive(subItem.url, (subItem as { exact?: boolean }).exact)
                           return (
                             <li key={subItem.title}>
                               <TransitionLink to={subItem.url}>
                                 <Button
                                   variant="ghost"
                                   className={cn(
-                                    "w-full justify-start h-8 px-3 text-white/70 hover:bg-white/5 hover:text-white relative font-medium transition-all duration-200 ease-in-out",
-                                    isSubActive && "bg-white text-primary! rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7"
+                                    'w-full justify-start h-8 px-3 text-white/70 hover:bg-white/5 hover:text-white relative font-medium transition-all duration-200 ease-in-out',
+                                    isSubActive &&
+                                      'bg-white text-primary! rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white hover:text-primary pl-7',
                                   )}
                                 >
-                                  <span className="text-sm">{subItem.title}</span>
+                                  <span className="text-sm">
+                                    {subItem.title}
+                                  </span>
                                   {/* @ts-ignore */}
                                   {subItem.badge && (
-                                    <span className={cn(
-                                      "ml-auto text-[10px] px-1.5 py-0.5 rounded-full",
-                                      isSubActive ? "bg-primary/10 text-primary" : "bg-accent text-sidebar-foreground"
-                                    )}>
+                                    <span
+                                      className={cn(
+                                        'ml-auto text-[10px] px-1.5 py-0.5 rounded-full',
+                                        isSubActive
+                                          ? 'bg-primary/10 text-primary'
+                                          : 'bg-accent text-sidebar-foreground',
+                                      )}
+                                    >
                                       {/* @ts-ignore */}
                                       {subItem.badge}
                                     </span>
@@ -231,13 +257,16 @@ export default function AdminSidebar() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5! hover:text-white relative transition-all duration-200 ease-in-out",
-                        isCollapsed && "justify-center px-0",
-                        isItemActive && "bg-white text-primary rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white! hover:text-primary pl-2"
+                        'w-full justify-start gap-3 h-11 px-3 text-white/70 hover:bg-white/5! hover:text-white relative transition-all duration-200 ease-in-out',
+                        isCollapsed && 'justify-center px-0',
+                        isItemActive &&
+                          'bg-white text-primary rounded-l-md rounded-r-none font-bold shadow-sm hover:bg-white! hover:text-primary pl-2',
                       )}
                     >
                       {item.icon && <item.icon className="size-5 shrink-0" />}
-                      {!isCollapsed && <span className="text-sm">{item.title}</span>}
+                      {!isCollapsed && (
+                        <span className="text-sm">{item.title}</span>
+                      )}
                     </Button>
                   </TransitionLink>
                 </TooltipWrapper>
@@ -267,9 +296,8 @@ export default function AdminSidebar() {
             <LogOut className="size-5 shrink-0" />
             <span className="text-sm">Logout</span>
           </Button>
-        )
-        }
-      </div >
-    </aside >
+        )}
+      </div>
+    </aside>
   )
 }

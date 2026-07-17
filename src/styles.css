@@ -1,7 +1,7 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -35,11 +35,17 @@
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
+  /* Semantic money-flow colors — direction, not category. Deposits read as gain, withdrawals
+     as outflow, net as the brand line, fees as a distinct third role. */
+  --chart-inflow: oklch(0.63 0.13 162);
+  --chart-outflow: oklch(0.71 0.15 66);
+  --chart-net: oklch(0.45 0.15 271);
+  --chart-fee: oklch(0.55 0.16 300);
   /* Squarish geometry — small base radius, components opt up to lg/xl. */
   --radius: 0.5rem;
   /* Brand navy — sidebar / dark surfaces. */
-  --brand: #0D1332;
-  --sidebar: #0D1332;
+  --brand: #0d1332;
+  --sidebar: #0d1332;
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.985 0 0);
   --sidebar-primary-foreground: oklch(38.887% 0.14383 271.13);
@@ -73,6 +79,11 @@
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
+  /* Money-flow semantics, lifted for legibility on the dark content surface. */
+  --chart-inflow: oklch(0.72 0.14 162);
+  --chart-outflow: oklch(0.79 0.15 70);
+  --chart-net: oklch(0.72 0.13 264);
+  --chart-fee: oklch(0.68 0.16 300);
   --sidebar: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: var(--primary);
@@ -99,6 +110,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --color-chart-inflow: var(--chart-inflow);
+  --color-chart-outflow: var(--chart-outflow);
+  --color-chart-net: var(--chart-net);
+  --color-chart-fee: var(--chart-fee);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -148,22 +163,22 @@
   box-shadow: var(--shadow);
 }
 
-.toaster.group [data-sonner-toast][data-type="success"] {
+.toaster.group [data-sonner-toast][data-type='success'] {
   background: var(--primary-foreground);
   outline: 2px solid var(--primary);
 }
 
-.toaster.group [data-sonner-toast][data-type="error"] {
-  background: #FCF5F6;
+.toaster.group [data-sonner-toast][data-type='error'] {
+  background: #fcf5f6;
   outline: 2px solid var(--destructive);
 }
 
 .page-title {
-  @apply text-[18px] leading-[20px] md:text-[24px] md:leading-[26px] lg:text-[28px] lg:leading-[32px] font-medium
+  @apply text-[18px] leading-[20px] md:text-[24px] md:leading-[26px] lg:text-[28px] lg:leading-[32px] font-medium;
 }
 
 .flex-center {
-  @apply flex items-center
+  @apply flex items-center;
 }
 
 [data-sonner-toaster] {

@@ -17,6 +17,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthAcceptAdminInvitationRouteImport } from './routes/_auth/accept-admin-invitation'
 import { Route as AdminOverviewRouteImport } from './routes/_admin/overview'
 import { Route as AdminKycIndexRouteImport } from './routes/_admin/kyc/index'
+import { Route as AdminFinancialsIndexRouteImport } from './routes/_admin/financials/index'
 import { Route as AdminUsersReferralTreeRouteImport } from './routes/_admin/users/referral-tree'
 import { Route as AdminUsersAllRouteImport } from './routes/_admin/users/all'
 import { Route as AdminUsersActivityLogsRouteImport } from './routes/_admin/users/activity-logs'
@@ -87,6 +88,11 @@ const AdminOverviewRoute = AdminOverviewRouteImport.update({
 const AdminKycIndexRoute = AdminKycIndexRouteImport.update({
   id: '/kyc/',
   path: '/kyc/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFinancialsIndexRoute = AdminFinancialsIndexRouteImport.update({
+  id: '/financials/',
+  path: '/financials/',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersReferralTreeRoute = AdminUsersReferralTreeRouteImport.update({
@@ -294,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
+  '/financials': typeof AdminFinancialsIndexRoute
   '/kyc': typeof AdminKycIndexRoute
   '/locker/cabals/$cabalId': typeof AdminLockerCabalsCabalIdRoute
   '/locker/cabals': typeof AdminLockerCabalsIndexRoute
@@ -334,6 +341,7 @@ export interface FileRoutesByTo {
   '/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/users/all': typeof AdminUsersAllRoute
   '/users/referral-tree': typeof AdminUsersReferralTreeRoute
+  '/financials': typeof AdminFinancialsIndexRoute
   '/kyc': typeof AdminKycIndexRoute
   '/locker/cabals/$cabalId': typeof AdminLockerCabalsCabalIdRoute
   '/locker/cabals': typeof AdminLockerCabalsIndexRoute
@@ -377,6 +385,7 @@ export interface FileRoutesById {
   '/_admin/users/activity-logs': typeof AdminUsersActivityLogsRoute
   '/_admin/users/all': typeof AdminUsersAllRoute
   '/_admin/users/referral-tree': typeof AdminUsersReferralTreeRoute
+  '/_admin/financials/': typeof AdminFinancialsIndexRoute
   '/_admin/kyc/': typeof AdminKycIndexRoute
   '/_admin/locker/cabals/$cabalId': typeof AdminLockerCabalsCabalIdRoute
   '/_admin/locker/cabals/': typeof AdminLockerCabalsIndexRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/users/activity-logs'
     | '/users/all'
     | '/users/referral-tree'
+    | '/financials'
     | '/kyc'
     | '/locker/cabals/$cabalId'
     | '/locker/cabals'
@@ -459,6 +469,7 @@ export interface FileRouteTypes {
     | '/users/activity-logs'
     | '/users/all'
     | '/users/referral-tree'
+    | '/financials'
     | '/kyc'
     | '/locker/cabals/$cabalId'
     | '/locker/cabals'
@@ -501,6 +512,7 @@ export interface FileRouteTypes {
     | '/_admin/users/activity-logs'
     | '/_admin/users/all'
     | '/_admin/users/referral-tree'
+    | '/_admin/financials/'
     | '/_admin/kyc/'
     | '/_admin/locker/cabals/$cabalId'
     | '/_admin/locker/cabals/'
@@ -568,6 +580,13 @@ declare module '@tanstack/react-router' {
       path: '/kyc'
       fullPath: '/kyc'
       preLoaderRoute: typeof AdminKycIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/financials/': {
+      id: '/_admin/financials/'
+      path: '/financials'
+      fullPath: '/financials'
+      preLoaderRoute: typeof AdminFinancialsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_admin/users/referral-tree': {
@@ -845,6 +864,7 @@ interface AdminRouteChildren {
   AdminUsersActivityLogsRoute: typeof AdminUsersActivityLogsRoute
   AdminUsersAllRoute: typeof AdminUsersAllRoute
   AdminUsersReferralTreeRoute: typeof AdminUsersReferralTreeRoute
+  AdminFinancialsIndexRoute: typeof AdminFinancialsIndexRoute
   AdminKycIndexRoute: typeof AdminKycIndexRoute
   AdminLockerCabalsCabalIdRoute: typeof AdminLockerCabalsCabalIdRoute
   AdminLockerCabalsIndexRoute: typeof AdminLockerCabalsIndexRoute
@@ -882,6 +902,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersActivityLogsRoute: AdminUsersActivityLogsRoute,
   AdminUsersAllRoute: AdminUsersAllRoute,
   AdminUsersReferralTreeRoute: AdminUsersReferralTreeRoute,
+  AdminFinancialsIndexRoute: AdminFinancialsIndexRoute,
   AdminKycIndexRoute: AdminKycIndexRoute,
   AdminLockerCabalsCabalIdRoute: AdminLockerCabalsCabalIdRoute,
   AdminLockerCabalsIndexRoute: AdminLockerCabalsIndexRoute,
