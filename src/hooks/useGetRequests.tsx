@@ -2,7 +2,6 @@
 
 import {
   focusManager,
-  useIsMutating,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -33,9 +32,6 @@ export default function useGetRequest<T, G>({
     ...(params ? [params] : []),
   ];
 
-  const mutationCount = useIsMutating({ mutationKey: ['refresh-token'] });
-  const isRefreshing = mutationCount > 0;
-
   const queryClient = useQueryClient();
 
   focusManager.setEventListener((handleFocus) => {
@@ -65,7 +61,7 @@ export default function useGetRequest<T, G>({
 
   return useQuery<T, AxiosError<G>>({
     queryKey: queryKeys,
-    enabled: !isRefreshing && enabled,
+    enabled,
 
     queryFn: async () => {
       // workspacePrefix logic is fully removed; URL is used as provided
